@@ -1,0 +1,684 @@
+<!doctype html>
+<html lang="ro">
+<head>
+<meta charset="utf-8">
+<title>Cadastru 1.9.0 – Manual de utilizare</title>
+<link rel="stylesheet" href="stil.css">
+</head>
+<body>
+
+<section class="cover">
+  <div class="band"></div>
+  <img class="icon" src="img/icon.png" alt="">
+  <div class="kicker">Aplicație GIS pentru Windows</div>
+  <div class="title">Cadastru</div>
+  <div class="sub">Manual de utilizare · versiunea 1.9.0</div>
+  <div class="shot"><img src="img/principal.png" alt=""></div>
+  <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Octombrie 2026</span></div>
+</section>
+
+<nav id="toc"></nav>
+
+<!-- ===================================================================== -->
+<h2 id="c1"><span class="n">1</span>Despre Cadastru</h2>
+
+<p class="lead">Cadastru este o aplicație GIS de birou pentru Windows. Deschide hărți vectoriale și raster, le afișează împreună în orice sistem de coordonate, le convertește între formate și le reproiectează, inclusiv cu transformarea oficială TransDatRO a ANCPI. Are hărți de fundal online, instrumente de identificare și măsurare, tipărire și export PDF.</p>
+
+<h3 id="c1-1"><span class="n">1.1</span>Ce face aplicația</h3>
+<ul>
+  <li><b>Vizualizare</b>: straturi vectoriale (puncte, linii, poligoane) și raster (ortofotoplanuri, modele digitale ale terenului, hărți scanate), suprapuse, cu stiluri, etichete și opacitate.</li>
+  <li><b>Reproiecție din mers</b>: fiecare strat este afișat în sistemul hărții, indiferent de sistemul fișierului. Implicit harta este în <b>Stereo 70 (EPSG:3844)</b>.</li>
+  <li><b>Formate</b>: Shapefile, GeoPackage, GeoJSON, KML/KMZ, GPX, DXF, CSV, GeoTIFF, ASCII Grid, imagini cu world file, CGXML (ANCPI) și Esri File Geodatabase.</li>
+  <li><b>Conversie</b>: un strat, toate straturile sau dosare întregi, în alt format și/sau alt sistem de coordonate.</li>
+  <li><b>TransDatRO</b>: transformările oficiale ETRS89 ↔ Stereo 70 / Stereo 30 și altitudinile Marea Neagră 1975, cu precizie centimetrică.</li>
+  <li><b>Hărți de fundal</b>: OpenStreetMap, Esri, Google, Bing, CARTO și altele, reproiectate exact peste date.</li>
+  <li><b>Instrumente</b>: identificare, măsurare (distanțe, arii), tabel de atribute, convertor de coordonate.</li>
+  <li><b>Tipărire și PDF</b>: planșă cu titlu, legendă, scară, nord și caroiaj de coordonate.</li>
+  <li><b>Linie de comandă</b>: <code>cadastru-cli.exe</code> pentru conversii și transformări automate.</li>
+</ul>
+
+<h3 id="c1-2"><span class="n">1.2</span>Cerințe de sistem</h3>
+<ul>
+  <li>Windows 10 sau Windows 11, pe 64 de biți.</li>
+  <li>Placă video cu OpenGL 2.0 sau mai nou (orice placă Intel, AMD sau NVIDIA din ultimii zece ani).</li>
+  <li>Conexiune la internet doar pentru hărțile de fundal. Restul aplicației funcționează fără internet.</li>
+  <li>Memorie: rasterele se încarcă integral în memorie, deci pentru ortofotoplanuri mari este nevoie de memorie pe măsură.</li>
+</ul>
+
+<h3 id="c1-3"><span class="n">1.3</span>Instalare și pornire</h3>
+<p>Aplicația nu are program de instalare și nu folosește biblioteci externe (DLL). Copiați dosarul <code>Cadastru</code> oriunde doriți, local sau pe un disc de rețea, și porniți <code>cadastru.exe</code> cu dublu-click.</p>
+<div class="warn"><b>Avertizare Windows.</b> La prima pornire, Windows SmartScreen poate afișa „Windows a protejat computerul”, deoarece executabilul nu este semnat digital. Apăsați <span class="ui">Mai multe informații</span>, apoi <span class="ui">Rulează oricum</span>. Mesajul nu mai apare după aceea.</div>
+<p>La pornire, harta este în <b>Stereo 70 (EPSG:3844)</b>, centrată pe România, cu harta de fundal <b>OpenStreetMap</b>. Fișierele pot fi deschise imediat (capitolul 3).</p>
+
+<h3 id="c1-4"><span class="n">1.4</span>Conținutul dosarului aplicației</h3>
+<table>
+  <tr><th style="width:34%">Fișier / dosar</th><th>Rol</th></tr>
+  <tr><td><code>cadastru.exe</code></td><td>Aplicația cu interfață grafică.</td></tr>
+  <tr><td><code>cadastru-cli.exe</code></td><td>Linia de comandă, pentru conversii în scripturi (capitolul 12).</td></tr>
+  <tr><td><code>Manual_Cadastru.pdf</code></td><td>Acest manual. Este inclus și în aplicație: <span class="ui">Ajutor → Manual de utilizare</span> sau tasta <kbd>F1</kbd>.</td></tr>
+  <tr><td><code>Documentatie_tehnica_Cadastru.pdf</code></td><td>Descrierea tehnică a aplicației: arhitectură, algoritmi, formate, construire din sursă.</td></tr>
+  <tr><td><code>CITESTE-MA.md</code></td><td>Rezumatul funcțiilor, în format text.</td></tr>
+  <tr><td><code>exemple\</code></td><td>Date de test în toate formatele și spațiul de lucru <code>test.cgw</code>.</td></tr>
+  <tr><td><code>sursa\</code></td><td>Codul sursă complet (Rust).</td></tr>
+</table>
+
+<!-- ===================================================================== -->
+<h2 id="c2"><span class="n">2</span>Fereastra principală</h2>
+
+<figure class="wide"><img src="img/principal_adnotat.png" alt=""><figcaption><b>Figura 2.1.</b> Fereastra principală, cu unitățile administrativ-teritoriale ale județului Argeș.</figcaption></figure>
+
+<ol class="legend">
+  <li><b>Bara de meniuri</b>: Fișier, Vizualizare, Instrumente, Ajutor.</li>
+  <li><b>Bara de instrumente</b>: deschidere, instrumentele hărții (inclusiv Selectare), navigare, tabel, căutare, convertor.</li>
+  <li><b>Basemap</b>: alegerea hărții de fundal.</li>
+  <li><b>Sistemul de coordonate al hărții</b>: click pentru a-l schimba.</li>
+  <li><b>Lista straturilor</b>, cu bife de vizibilitate.</li>
+  <li><b>Proprietățile stratului selectat</b>: fișier, conținut, sistem, opacitate, stil, câmpuri.</li>
+  <li><b>Controlul de navigație</b>: deplasare și zoom.</li>
+  <li><b>Harta</b>.</li>
+  <li><b>Scara grafică</b>.</li>
+  <li><b>Bara de stare</b>: coordonatele cursorului, scara, mesaje.</li>
+  <li><b>Limba interfeței</b>: <b>RO</b> | <b>EN</b> (secțiunea 2.5).</li>
+</ol>
+
+<h3 id="c2-1"><span class="n">2.1</span>Meniurile</h3>
+<div class="cols">
+  <figure><img src="img/menu_fisier.png" alt=""><figcaption><b>Figura 2.2.</b> Meniul Fișier.</figcaption></figure>
+  <figure><img src="img/menu_vizualizare.png" alt=""><figcaption><b>Figura 2.3.</b> Meniul Vizualizare.</figcaption></figure>
+</div>
+<div class="cols">
+  <figure><img src="img/menu_instrumente.png" alt=""><figcaption><b>Figura 2.4.</b> Meniul Instrumente.</figcaption></figure>
+  <figure><img src="img/menu_ajutor.png" alt=""><figcaption><b>Figura 2.5.</b> Meniul Ajutor.</figcaption></figure>
+</div>
+<table>
+  <tr><th style="width:24%">Meniu</th><th>Conține</th></tr>
+  <tr><td><b>Fișier</b></td><td>Deschidere de date, File Geodatabase, toate fișierele de un tip dintr-un dosar și dosare CGXML; filtrul de încărcare (doar entitățile din România); spațiul de lucru (deschide, salvează, salvează ca); export; închiderea tuturor straturilor; <b>Tipărire</b> și <b>Salvează ca PDF</b>; ieșire.</td></tr>
+  <tr><td><b>Vizualizare</b></td><td>Extindere completă, zoom la stratul selectat, sistemul hărții, tabelul de atribute, vederea anterioară/următoare, afișarea etichetelor, controlul de navigație, fereastra de identificare, tema (gri închis sau luminoasă), limba interfeței (română sau engleză).</td></tr>
+  <tr><td><b>Instrumente</b></td><td>Instrumentele hărții, selecția (Selectare, Deselectează tot, Zoom la selecție, selectare doar în stratul activ), Selectare după atribute, Căutare, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML.</td></tr>
+  <tr><td><b>Ajutor</b></td><td>Manualul de utilizare (acest document, <kbd>F1</kbd>), lista de scurtături, informații despre aplicație și autor.</td></tr>
+</table>
+
+<h3 id="c2-2"><span class="n">2.2</span>Bara de instrumente</h3>
+<table>
+  <tr><th style="width:27%">Buton</th><th style="width:12%">Tastă</th><th>Acțiune</th></tr>
+  <tr><td>Deschide</td><td><kbd>Ctrl+O</kbd></td><td>Deschide fișiere de date.</td></tr>
+  <tr><td>Deplasare</td><td><kbd>P</kbd></td><td>Trageți harta cu mouse-ul. Dublu-click mărește de două ori.</td></tr>
+  <tr><td>Zoom +</td><td><kbd>Z</kbd></td><td>Click: mărire ×2 în punctul ales. Dreptunghi: zoom pe zona desenată.</td></tr>
+  <tr><td>Zoom −</td><td><kbd>X</kbd></td><td>Click: micșorare ×2. Dreptunghi: vederea curentă încape în dreptunghiul desenat.</td></tr>
+  <tr><td>Identificare</td><td><kbd>I</kbd></td><td>Atributele entității și valorile pixelilor de sub cursor (secțiunea 7.1).</td></tr>
+  <tr><td>Selectare</td><td><kbd>S</kbd></td><td>Selectează entități prin click sau dreptunghi (secțiunea 7.7).</td></tr>
+  <tr><td>Selectare după atribute</td><td><kbd>Ctrl+Shift+F</kbd></td><td>Selectează entitățile unui strat cu o expresie, de exemplu <code>status = 1 AND is_active = 1</code> (secțiunea 7.9).</td></tr>
+  <tr><td>Măsurare</td><td><kbd>M</kbd></td><td>Distanțe, arii și perimetre (secțiunea 7.2).</td></tr>
+  <tr><td>Extindere completă</td><td><kbd>Home</kbd></td><td>Arată toate straturile (fără straturi: toată România).</td></tr>
+  <tr><td>+ / −</td><td><kbd>+</kbd> <kbd>−</kbd></td><td>Mărire / micșorare față de centrul hărții.</td></tr>
+  <tr><td>← / →</td><td><kbd>Backspace</kbd> / <kbd>Alt+→</kbd></td><td>Vederea anterioară / următoare.</td></tr>
+  <tr><td>Tabel</td><td><kbd>T</kbd></td><td>Tabelul de atribute (secțiunea 7.3).</td></tr>
+  <tr><td>Căutare</td><td><kbd>Ctrl+F</kbd></td><td>Caută locuri, adrese, coordonate sau entități după câmpuri (secțiunea 7.8).</td></tr>
+  <tr><td>Convertor</td><td></td><td>Convertorul de coordonate (secțiunea 7.5).</td></tr>
+  <tr><td>Basemap</td><td></td><td>Harta de fundal (capitolul 5).</td></tr>
+  <tr><td>Sistemul hărții</td><td></td><td>Afișează și schimbă sistemul de coordonate al hărții (secțiunea 8.1). Când bara este îngustă apare doar codul (de exemplu EPSG:3844); numele complet este în indiciul butonului.</td></tr>
+  <tr><td>RO | EN</td><td></td><td>Comutatorul de limbă, în dreapta barei (secțiunea 2.5).</td></tr>
+</table>
+
+<h3 id="c2-3"><span class="n">2.3</span>Panoul Straturi și bara de stare</h3>
+<p>În stânga se află lista straturilor. Stratul aflat <b>sus</b> în listă se desenează <b>deasupra</b> celorlalte. Bifa din dreptul fiecărui strat îl ascunde sau îl afișează. Click pe nume selectează stratul. Dedesubt apar proprietățile lui (capitolul 6).</p>
+<p>Bara de stare de jos arată coordonatele cursorului în sistemul hărții (X, Y), aceleași coordonate în WGS84, în grade zecimale și în grade-minute-secunde, scara numerică a hărții și ultimul mesaj al aplicației (de exemplu numărul de entități încărcate sau o eroare). Cât timp filtrul de încărcare este activ, în stânga apare indicatorul <span class="ui">Filtru la încărcare: România</span> (secțiunea 3.8).</p>
+<div class="tip"><b>Sfat.</b> Numele unui strat cu sistem de coordonate <i>presupus</i> (fișier fără <code>.prj</code>) este scris cu portocaliu. Vezi secțiunea 3.6.</div>
+
+<h3 id="c2-4"><span class="n">2.4</span>Teme</h3>
+<div class="cols"><p>Aplicația are două teme: <b>gri închis</b> (implicită) și <b>luminoasă</b>. Se schimbă din <span class="ui">Vizualizare → Temă</span>, iar alegerea se păstrează la repornire.</p>
+<figure><img src="img/tema_luminoasa.png" alt=""><figcaption><b>Figura 2.6.</b> Tema luminoasă.</figcaption></figure></div>
+
+<h3 id="c2-5"><span class="n">2.5</span>Limba interfeței</h3>
+<div class="cols"><div>
+<p>Interfața poate fi afișată în <b>română</b> (limba implicită) sau în <b>engleză</b>. Limba se schimbă oricând, fără repornire:</p>
+<ul>
+  <li>cu comutatorul <b>RO | EN</b> din dreapta barei de instrumente (limba activă este evidențiată);</li>
+  <li>din <span class="ui">Vizualizare → Limbă / Language</span>.</li>
+</ul>
+<p>Se traduc meniurile, butoanele, ferestrele de dialog, mesajele din bara de stare, erorile și textele planșei tipărite (legendă, scară, sistem, dată). Alegerea se păstrează la repornire, în <code>setari.json</code>.</p>
+<p>Nu se traduc datele: numele straturilor și ale câmpurilor, valorile atributelor și numele fișierelor rămân cum sunt în fișiere. Acest manual și linia de comandă (<code>cadastru-cli</code>) sunt în limba română; în engleză, meniul Ajutor indică „User manual (PDF, Romanian)”.</p>
+</div>
+<figure><img src="img/interfata_en.png" alt=""><figcaption><b>Figura 2.7.</b> Interfața în limba engleză.</figcaption></figure></div>
+
+<!-- ===================================================================== -->
+<h2 id="c3"><span class="n">3</span>Deschiderea datelor</h2>
+
+<h3 id="c3-1"><span class="n">3.1</span>Moduri de deschidere</h3>
+<ul>
+  <li><span class="ui">Fișier → Deschide date…</span> (<kbd>Ctrl+O</kbd>) sau butonul <span class="ui">Deschide</span>: se pot alege mai multe fișiere deodată.</li>
+  <li><b>Tragere peste fereastră</b>: trageți fișiere sau dosare din Windows Explorer peste hartă.</li>
+  <li><span class="ui">Fișier → Deschide File Geodatabase (.gdb)…</span>: alegeți dosarul <code>.gdb</code> (secțiunea 3.4).</li>
+  <li><span class="ui">Fișier → Deschide toate fișierele de un tip dintr-un dosar…</span>: toate fișierele Shapefile, DXF, GeoTIFF etc. dintr-un dosar și din subdosarele lui (secțiunea 3.7).</li>
+  <li><span class="ui">Fișier → Deschide dosar cu fișiere CGXML…</span>: toate fișierele CGXML dintr-un dosar (secțiunea 3.5).</li>
+  <li><b>Din linia de comandă sau prin asociere</b>: <code>cadastru.exe parcele.shp orto.tif</code>. Un fișier <code>.cgw</code> dat ca argument deschide spațiul de lucru.</li>
+</ul>
+<p>Dacă bifa <span class="ui">Fișier → La deschidere: doar entitățile din interiorul României</span> este activă, din fișierele vectoriale se încarcă doar entitățile aflate în România (secțiunea 3.8).</p>
+<p>Fișierele mari se încarcă în fundal: aplicația rămâne utilizabilă, iar la final bara de stare arată ce s-a încărcat. Un GeoPackage, un File Geodatabase sau un KML cu mai multe straturi adaugă câte un strat pentru fiecare.</p>
+
+<h3 id="c3-2"><span class="n">3.2</span>Formate suportate</h3>
+<table>
+  <tr><th style="width:26%">Format</th><th style="width:20%">Extensii</th><th class="c" style="width:8%">Citire</th><th class="c" style="width:8%">Scriere</th><th>Observații</th></tr>
+  <tr><td>ESRI Shapefile</td><td>.shp .dbf .prj .cpg</td><td class="c">✔</td><td class="c">✔</td><td>2D/3D, poligoane cu goluri; codificarea DBF este detectată automat; scriere în UTF-8 sau Windows-1250.</td></tr>
+  <tr><td>GeoPackage</td><td>.gpkg</td><td class="c">✔</td><td class="c">✔</td><td>Toate straturile; mai multe straturi într-un fișier.</td></tr>
+  <tr><td>GeoJSON</td><td>.geojson .json</td><td class="c">✔</td><td class="c">✔</td><td>Sistemul din membrul „crs”, altfel WGS84.</td></tr>
+  <tr><td>KML / KMZ</td><td>.kml .kmz</td><td class="c">✔</td><td class="c">✔</td><td>Foldere, ExtendedData; la scriere datele trec automat în WGS84.</td></tr>
+  <tr><td>GPX</td><td>.gpx</td><td class="c">✔</td><td class="c">✔</td><td>Puncte, rute, trasee, cotă.</td></tr>
+  <tr><td>AutoCAD DXF</td><td>.dxf</td><td class="c">✔</td><td class="c">✔</td><td>Linii, polilinii (cu arce), cercuri, texte, blocuri, hașuri; scriere DXF R12.</td></tr>
+  <tr><td>CSV / text</td><td>.csv .txt</td><td class="c">✔</td><td class="c">✔</td><td>Coloane X/Y/Z sau WKT; dialog de import (secțiunea 3.3).</td></tr>
+  <tr><td>GeoTIFF</td><td>.tif .tiff</td><td class="c">✔</td><td class="c">✔</td><td>8–64 biți, RGB, paletă, compresii uzuale, NoData, BigTIFF.</td></tr>
+  <tr><td>ESRI ASCII Grid</td><td>.asc</td><td class="c">✔</td><td class="c">✔</td><td>Modele digitale ale terenului.</td></tr>
+  <tr><td>Imagini georeferențiate</td><td>.png .jpg .bmp + world file</td><td class="c">✔</td><td class="c">✔*</td><td>*PNG și JPEG; la scriere se creează world file, .prj și .aux.xml.</td></tr>
+  <tr><td>CGXML (ANCPI)</td><td>.cgxml, .zip, dosar</td><td class="c">✔</td><td class="c">–</td><td>Straturile „teren” și „constructii” (secțiunea 3.5).</td></tr>
+  <tr><td>Esri File Geodatabase</td><td>dosar .gdb</td><td class="c">✔</td><td class="c">–</td><td>Fără ArcGIS (secțiunea 3.4).</td></tr>
+</table>
+
+<h3 id="c3-3"><span class="n">3.3</span>Fișiere text și CSV</h3>
+<p>La deschiderea unui fișier CSV sau TXT apare dialogul de import. Aplicația recunoaște singură separatorul (virgulă, punct și virgulă, tab), zecimalele cu virgulă și coloanele de coordonate. Verificați și, la nevoie, corectați:</p>
+<ul>
+  <li><b>X (Est / longitudine)</b>, <b>Y (Nord / latitudine)</b> și opțional <b>Z (cotă)</b>;</li>
+  <li><b>sistemul de coordonate</b> al punctelor;</li>
+  <li><span class="ui">Inversează X și Y</span>, pentru fișierele topografice în care X este Nordul (convenția din Stereo 70).</li>
+</ul>
+<figure class="half"><img src="img/csv.png" alt=""><figcaption><b>Figura 3.1.</b> Importul unui fișier text, cu previzualizarea coloanelor.</figcaption></figure>
+<p>Un fișier cu o coloană de geometrie în format WKT (<code>POLYGON((…))</code>) este recunoscut automat.</p>
+
+<h3 id="c3-4"><span class="n">3.4</span>Esri File Geodatabase (.gdb)</h3>
+<p>Un File Geodatabase este un <b>dosar</b> cu extensia <code>.gdb</code>. Se deschide din <span class="ui">Fișier → Deschide File Geodatabase (.gdb)…</span> (alegeți chiar dosarul <code>.gdb</code>), prin tragerea dosarului peste fereastră sau alegând din <span class="ui">Deschide date</span> orice fișier <code>.gdbtable</code> din interiorul lui. Fiecare feature class devine un strat, inclusiv cele din feature dataset-uri.</p>
+<figure class="half"><img src="img/gdb.png" alt=""><figcaption><b>Figura 3.2.</b> Geodatabase-ul de exemplu <code>exemple\cadastru.gdb</code>, cu trei feature class-uri.</figcaption></figure>
+<ul>
+  <li>Nu este nevoie de ArcGIS sau de alte programe Esri.</li>
+  <li>Sunt citite geodatabase-urile din ArcGIS 10.x și ArcGIS Pro, inclusiv câmpurile noi din Pro 3.2 (întregi pe 64 de biți, dată, oră, dată cu fus orar).</li>
+  <li>Curbele (arce, cercuri, Bézier, arce de elipsă) sunt transformate în segmente dese, cu abatere de cel mult 1 mm.</li>
+  <li>Nu sunt citite: geodatabase-urile comprimate, personal geodatabase (<code>.mdb</code>), multipatch, adnotările, câmpurile binare și raster. Scrierea în <code>.gdb</code> nu este disponibilă: exportați în GeoPackage sau Shapefile.</li>
+</ul>
+
+<h3 id="c3-5"><span class="n">3.5</span>Fișiere CGXML (cadastru ANCPI)</h3>
+<p>Fișierele <code>.cgxml</code>, arhivele <code>.zip</code> care le conțin și dosarele întregi sunt convertite la deschidere în două straturi: <b>teren</b> (parcelele) și <b>constructii</b>, în Stereo 70. Conversia urmează regulile programului CGXML2SHP: punctele sortate după număr, eliminarea punctelor duplicate, enclavele și parcelele din mai multe părți. Parcelele sunt etichetate automat cu numărul cadastral.</p>
+<p>Statisticile conversiei (fișiere, terenuri, puncte, enclave, părți multiple, puncte ignorate) apar în bara de stare.</p>
+<figure class="small"><img src="img/cgxml_opt.png" alt=""><figcaption><b>Figura 3.3.</b> <span class="ui">Instrumente → Opțiuni import CGXML</span>.</figcaption></figure>
+<table>
+  <tr><th style="width:36%">Opțiune</th><th>Efect</th></tr>
+  <tr><td>Închide inelul poligon</td><td>Adaugă ultimul punct egal cu primul dacă inelul nu este închis.</td></tr>
+  <tr><td>Atribute extinse</td><td>Câmpurile complete (suprafețe, sector, topo, categorie de folosință, acte, proprietari); debifat, doar câmpurile de bază.</td></tr>
+  <tr><td>Include construcții</td><td>Creează și stratul „constructii”.</td></tr>
+  <tr><td>Forțează inversare X / Y</td><td>Pentru fișierele cu X și Y schimbate între ele.</td></tr>
+  <tr><td>Include CNP/CUI în PROPRIETAR</td><td>Dezactivat implicit, pentru protecția datelor personale (GDPR).</td></tr>
+</table>
+<p>Din meniul contextual al unui strat CGXML se pot salva fișierele <code>teren.shp</code> și <code>constructii.shp</code> sau se poate reîncărca lucrarea cu X și Y inversate.</p>
+
+<h3 id="c3-6"><span class="n">3.6</span>Sistemul de coordonate al fișierelor</h3>
+<ul>
+  <li>Sistemul este citit din fișier (<code>.prj</code>, GeoPackage, cheile GeoTIFF, definiția din GeoJSON sau File Geodatabase). Fișierele <code>.prj</code> scrise de ArcGIS pentru „Stereo_70” sunt recunoscute ca EPSG:3844.</li>
+  <li>Dacă fișierul nu are sistem, aplicația îl <b>presupune</b> după coordonate: WGS84 pentru valori în grade, Stereo 70 pentru valori în metri din România. Numele stratului apare atunci cu <b>portocaliu</b>.</li>
+  <li>Corectarea: click dreapta pe strat → <span class="ui">Setează sistemul de coordonate…</span>, sau butonul <span class="ui">schimbă</span> din proprietățile stratului.</li>
+</ul>
+
+<h3 id="c3-7"><span class="n">3.7</span>Toate fișierele de un tip dintr-un dosar</h3>
+<p><span class="ui">Fișier → Deschide toate fișierele de un tip dintr-un dosar…</span> deschide deodată, de exemplu, toate shapefile-urile dintr-o lucrare organizată pe subdosare.</p>
+<div class="cols">
+  <figure><img src="img/deschidere_masa.png" alt=""><figcaption><b>Figura 3.4.</b> Alegerea tipului de fișiere dintr-un dosar cu subdosare.</figcaption></figure>
+  <div>
+    <ol>
+      <li>Alegeți dosarul. Aplicația caută fișierele GIS din el și, implicit, din toate subdosarele, la orice adâncime.</li>
+      <li>Fereastra arată tipurile găsite, vectoriale și raster, cu numărul de fișiere: în dosar și în subdosare. Alegeți <b>tipul</b> (este propus cel mai numeros).</li>
+      <li>Bifa <span class="ui">Inclusiv subdosarele (recursiv)</span> poate limita căutarea la dosarul ales. Lista arată fișierele care vor fi deschise, numărul lor și mărimea totală.</li>
+      <li>Apăsați <span class="ui">Deschide N fișiere</span>.</li>
+    </ol>
+  </div>
+</div>
+<p>Fișierele se citesc în fundal, pe mai multe fire, iar straturile apar pe hartă pe măsură ce sunt gata; la final harta se încadrează pe ele. În bara de stare, butonul <span class="ui">Oprește (k/N)</span> întrerupe deschiderea; straturile deja încărcate rămân. Fișierele care nu pot fi citite sunt raportate la final, într-o singură listă.</p>
+<p>Straturile primesc ca nume <b>calea din subdosare</b>, de exemplu <i>Comuna A/parcele</i>, ca să se deosebească fișierele cu același nume din dosare diferite (opțiunea poate fi debifată). Un GeoPackage sau un File Geodatabase cu mai multe straturi dă nume de forma <i>Comuna A/date · parcele</i>. Dosarele <code>.gdb</code> apar ca tipul „Esri File Geodatabase”.</p>
+<div class="note"><b>De reținut.</b> Fișierele CSV/TXT (care cer alegerea coloanelor) și CGXML/ZIP (care au comanda lor, secțiunea 3.5) nu se deschid prin această comandă. În memorie, datele ocupă de câteva ori mărimea fișierelor; peste 300 de fișiere sau 500 MB, fereastra afișează un avertisment.</div>
+
+<h3 id="c3-8"><span class="n">3.8</span>Filtrul de încărcare: doar entitățile din România</h3>
+<p>Seturile de date naționale sau europene conțin adesea entități din afara țării (puncte cu coordonate greșite, vecini, date de test). Bifa <span class="ui">Fișier → La deschidere: doar entitățile din interiorul României (EPSG:3844)</span> le lasă afară încă de la încărcare: în aplicație ajung numai entitățile aflate în interiorul încadrării României în Stereo 70.</p>
+<div class="cols">
+  <figure><img src="img/filtru_incarcare.png" alt=""><figcaption><b>Figura 3.5.</b> Fereastra filtrului de încărcare.</figcaption></figure>
+  <div>
+    <ul>
+      <li>Filtrul se aplică fișierelor vectoriale deschise <b>după</b> bifare: <span class="ui">Deschide date…</span>, fișierele trase peste fereastră, deschiderea în masă (unde bifa apare și în fereastra de alegere) și importul CSV. Rasterele nu sunt afectate, iar spațiile de lucru se redeschid întotdeauna întregi.</li>
+      <li>Cât timp filtrul este activ, în bara de stare apare indicatorul portocaliu <span class="ui">Filtru la încărcare: România</span>; click pe el deschide opțiunile.</li>
+      <li>După încărcare, bara de stare arată rezultatul, de exemplu <i>Filtru România: orase: păstrate 9 din 15 (6 în afara zonei)</i>. Un fișier din care nu rămâne nicio entitate nu se mai adaugă pe hartă și este raportat.</li>
+    </ul>
+  </div>
+</div>
+<p><b>Cum se face testul.</b> Coordonatele fiecărei entități se transformă în Stereo 70 (EPSG:3844) doar pentru test; stratul își păstrează sistemul și coordonatele originale. Un fișier fără sistem de coordonate este luat în sistemul ghicit după valori (WGS84 sau Stereo 70). Entitățile fără geometrie sunt și ele lăsate afară.</p>
+<p><b>Zona implicită</b> este dreptunghiul <code>114000, 235000 – 885000, 764000</code> (X min, Y min – X max, Y max, în metri, EPSG:3844): încadrarea României între 20,22°–29,76° E și 43,62°–48,27° N, rotunjită la kilometru. Este un dreptunghi, nu conturul țării: zonele vecine din colțurile lui (de exemplu nordul Bulgariei, estul Serbiei) trec de filtru.</p>
+<p>Din <span class="ui">Fișier → Opțiunile filtrului de încărcare…</span> se pot alege:</p>
+<ul>
+  <li><b>Entitățile păstrate</b>: <i>aflate în întregime în interior</i> (implicit; o linie sau un poligon care iese din zonă este lăsat afară) sau <i>și cele care doar ating zona</i>;</li>
+  <li><b>Zona</b>: alt dreptunghi în EPSG:3844, scris ca <code>minX, minY, maxX, maxY</code> (de exemplu încadrarea unui județ); butonul <span class="ui">România (implicit)</span> revine la valorile de mai sus;</li>
+  <li><b>Pentru un strat deja încărcat</b>: butonul <span class="ui">Scoate entitățile din afara zonei</span> aplică același filtru unui strat de pe hartă (doar în memorie; fișierul nu se modifică). Aceeași fereastră se deschide din meniul contextual al stratului: <span class="ui">Scoate entitățile din afara României…</span>.</li>
+</ul>
+<div class="note"><b>De reținut.</b> Setările filtrului se păstrează la închiderea aplicației. Dacă un fișier pare să aibă „prea puține” entități, verificați indicatorul din bara de stare. În linia de comandă, același filtru se cere cu <code>--doar-romania</code> (capitolul 12).</div>
+
+<!-- ===================================================================== -->
+<h2 id="c4"><span class="n">4</span>Navigarea pe hartă</h2>
+
+<h3 id="c4-1"><span class="n">4.1</span>Mouse și tastatură</h3>
+<table>
+  <tr><th style="width:36%">Acțiune</th><th>Efect</th></tr>
+  <tr><td>Rotița mouse-ului</td><td>Zoom față de poziția cursorului.</td></tr>
+  <tr><td>Tragere cu butonul stâng</td><td>Deplasarea hărții, cu instrumentele Deplasare, Identificare și Măsurare.</td></tr>
+  <tr><td>Tragere cu butonul din mijloc</td><td>Deplasarea hărții, cu orice instrument.</td></tr>
+  <tr><td>Dublu-click (Deplasare)</td><td>Zoom ×2 în punctul ales.</td></tr>
+  <tr><td>Săgețile tastaturii</td><td>Deplasare cu un sfert de ecran.</td></tr>
+  <tr><td><kbd>+</kbd> / <kbd>−</kbd></td><td>Mărire / micșorare.</td></tr>
+  <tr><td><kbd>Home</kbd></td><td>Extindere completă.</td></tr>
+  <tr><td><kbd>Backspace</kbd> / <kbd>Alt+→</kbd></td><td>Vederea anterioară / următoare.</td></tr>
+</table>
+
+<h3 id="c4-2"><span class="n">4.2</span>Controlul de navigație</h3>
+<p>În colțul din stânga-sus al hărții se află controlul de navigație. Un click pe o săgeată deplasează harta cu un sfert de ecran, iar o săgeată ținută apăsată o deplasează continuu. Butonul din centru face extinderea completă, iar butoanele <b>+</b> și <b>−</b> măresc și micșorează harta. Controlul se poate ascunde din <span class="ui">Vizualizare → Controale de navigație pe hartă</span>.</p>
+
+<h3 id="c4-3"><span class="n">4.3</span>Zoom la strat și extindere completă</h3>
+<p><span class="ui">Vizualizare → Zoom la stratul selectat</span> (sau click dreapta pe strat → <span class="ui">Zoom la strat</span>) arată întregul strat. <span class="ui">Extindere completă</span> arată toate straturile. Când nu este deschis niciun strat, extinderea completă arată toată România.</p>
+
+<!-- ===================================================================== -->
+<h2 id="c5"><span class="n">5</span>Hărți de fundal (Basemap)</h2>
+
+<div class="cols"><div><p>Butonul <span class="ui">Basemap</span> din bara de instrumente alege harta de fundal. Hărțile sunt grupate pe furnizori, în submeniuri. Lista conține și opțiunea <span class="ui">Fără basemap</span>.</p>
+<p>La pornire este afișată harta OpenStreetMap standard. Alegerea făcută se păstrează în spațiul de lucru.</p></div>
+<figure><img src="img/basemap.png" alt=""><figcaption><b>Figura 5.1.</b> Meniul Basemap, cu hărțile Esri.</figcaption></figure></div>
+<table>
+  <tr><th style="width:22%">Furnizor</th><th>Hărți</th></tr>
+  <tr><td>OpenStreetMap</td><td>Standard (implicită la pornire), Humanitarian, France, DE, CyclOSM, OpenTopoMap (topografică).</td></tr>
+  <tr><td>Esri</td><td>World Imagery (satelit), Imagery Hybrid (satelit + etichete), Street Map, Topo Map, National Geographic, Terrain, Shaded Relief, Physical Map, Light Gray și Dark Gray Canvas.</td></tr>
+  <tr><td>Google</td><td>Hărți, Satelit, Hibrid, Teren.</td></tr>
+  <tr><td>Bing</td><td>Aerial, Hibrid.</td></tr>
+  <tr><td>CARTO</td><td>Positron, Dark Matter, Voyager.</td></tr>
+  <tr><td>Altele</td><td>TopPlusOpen (BKG, topografică), Sentinel-2 cloudless (EOX).</td></tr>
+</table>
+<ul>
+  <li><b>Suprapunere exactă</b>: hărțile de fundal sunt reproiectate în sistemul hărții (de exemplu Stereo 70) și se suprapun corect peste date, la orice scară.</li>
+  <li><b>Opacitate</b>: cursorul din meniul Basemap estompează harta de fundal, ca datele să iasă în evidență.</li>
+  <li><b>Șablon XYZ personalizat</b>: pentru orice alt serviciu de tile-uri, introduceți adresa în forma <code>https://server/{z}/{x}/{y}.png</code>. Mai sunt acceptate <code>{s}</code> (subdomeniu), <code>{-y}</code> (TMS) și <code>{q}</code> (quadkey).</li>
+  <li><b>Cache</b>: tile-urile descărcate se păstrează pe disc (<code>%LOCALAPPDATA%\Cadastru\tile-cache</code>) și se reîmprospătează după 30 de zile. Fără internet sunt folosite cele din cache. Cache-ul se golește din meniul Basemap și nu depășește circa 1 GB.</li>
+  <li><b>Proxy</b>: aplicația folosește proxy-ul din setările Windows sau din variabilele <code>HTTPS_PROXY</code> / <code>HTTP_PROXY</code>. Scripturile de configurare automată (PAC) nu sunt suportate.</li>
+  <li>Atribuirea furnizorului apare în colțul din dreapta-jos al hărții. Dacă tile-urile nu se pot descărca, tot acolo apare motivul.</li>
+</ul>
+<div class="warn"><b>Condiții de utilizare.</b> Fiecare furnizor are condițiile lui. OpenStreetMap, Esri, CARTO și EOX permit utilizarea moderată, cu atribuire. Google și Bing nu permit oficial accesul direct la tile-uri în afara propriilor API-uri; aceste opțiuni sunt incluse la cerere, iar folosirea lor rămâne pe răspunderea utilizatorului.</div>
+
+<!-- ===================================================================== -->
+<h2 id="c6"><span class="n">6</span>Lucrul cu straturile</h2>
+
+<h3 id="c6-1"><span class="n">6.1</span>Ordine, vizibilitate, opacitate</h3>
+<ul>
+  <li>Butoanele <span class="ui">Sus</span> și <span class="ui">Jos</span> mută stratul selectat în listă. <span class="ui">Elimină</span> îl scoate din hartă (fișierul nu este afectat).</li>
+  <li>Bifa din stânga numelui ascunde sau afișează stratul.</li>
+  <li>Cursorul <span class="ui">Opacitate</span> din proprietăți face stratul transparent (0 = invizibil, 1 = opac).</li>
+</ul>
+
+<div class="keep"><h3 id="c6-2"><span class="n">6.2</span>Meniul contextual al stratului</h3>
+<div class="cols">
+  <figure><img src="img/meniu_strat.png" alt=""><figcaption><b>Figura 6.1.</b> Click dreapta pe un strat.</figcaption></figure>
+  <div>
+    <dl>
+      <dt>Zoom la strat</dt><dd>Arată tot stratul.</dd>
+      <dt>Tabel de atribute</dt><dd>Deschide tabelul stratului.</dd>
+      <dt>Setează sistemul de coordonate…</dt><dd>Corectează sistemul unui fișier fără <code>.prj</code> sau cu <code>.prj</code> greșit. Datele nu sunt transformate, doar interpretate altfel.</dd>
+      <dt>Folosește sistemul stratului pentru hartă</dt><dd>Trece harta în sistemul acestui strat.</dd>
+      <dt>Export…</dt><dd>Salvează stratul în alt format sau sistem (capitolul 9).</dd>
+      <dt>Selecție</dt><dd>Selectare după atribute, selectează tot, inversează, deselectează, zoom și exportul selecției (secțiunile 7.7, 7.9).</dd>
+      <dt>Scoate entitățile din afara României…</dt><dd>Filtrul de zonă aplicat stratului încărcat (secțiunea 3.8).</dd>
+      <dt>Elimină</dt><dd>Scoate stratul din hartă.</dd>
+    </dl>
+  </div>
+</div></div>
+
+<div class="keep"><h3 id="c6-3"><span class="n">6.3</span>Stilul straturilor vectoriale</h3>
+<div class="cols">
+  <figure><img src="img/stil_vector.png" alt=""><figcaption><b>Figura 6.2.</b> Secțiunea Stil a unui strat vectorial.</figcaption></figure>
+  <div>
+    <p>Deschideți secțiunea <span class="ui">Stil</span> din proprietățile stratului:</p>
+    <ul>
+      <li><b>Contur</b>: culoarea liniilor și a marginilor poligoanelor.</li>
+      <li><b>Grosime</b>: grosimea conturului, în pixeli (0 = fără contur).</li>
+      <li><b>Umplere</b>: culoarea și transparența poligoanelor și a punctelor.</li>
+      <li><b>Mărime punct</b>: raza simbolului pentru puncte.</li>
+      <li><b>Etichete</b>: câmpul afișat ca etichetă (sau niciunul).</li>
+      <li><b>Text etichetă</b>: mărimea și culoarea etichetelor.</li>
+    </ul>
+    <p>Secțiunea <span class="ui">Câmpuri</span> listează câmpurile stratului și tipul lor.</p>
+  </div>
+</div></div>
+<p>Etichetele care s-ar suprapune nu sunt desenate. Toate etichetele pot fi ascunse din <span class="ui">Vizualizare → Afișează etichetele</span>.</p>
+
+<div class="keep"><h3 id="c6-4"><span class="n">6.4</span>Afișarea rasterelor</h3>
+<div class="cols">
+  <figure><img src="img/raster_style.png" alt=""><figcaption><b>Figura 6.3.</b> Afișarea unui model digital al terenului.</figcaption></figure>
+  <div>
+    <p>Pentru un strat raster, secțiunea <span class="ui">Afișare raster</span> oferă:</p>
+    <ul>
+      <li><b>min / max</b>: intervalul de valori întins pe scala de culori;</li>
+      <li><b>Rampă de culori</b> pentru o singură bandă: Relief, Gri, Spectral, Viridis;</li>
+      <li><b>Compunere RGB</b> din benzi la alegere, pentru imagini multispectrale;</li>
+      <li><b>Umbrire relief (hillshade)</b> pentru modelele terenului;</li>
+      <li><b>Alb transparent</b>, pentru hărțile scanate;</li>
+      <li><b>Întindere automată</b>: recalculează min/max din datele rasterului.</li>
+    </ul>
+    <p>Valorile NoData sunt transparente. <span class="ui">Informații raster</span> arată tipul datelor, mărimea pixelului și extinderea.</p>
+  </div>
+</div></div>
+
+<!-- ===================================================================== -->
+<h2 id="c7"><span class="n">7</span>Instrumente</h2>
+
+<h3 id="c7-1"><span class="n">7.1</span>Identificare</h3>
+<p>Cu instrumentul <span class="ui">Identificare</span> (<kbd>I</kbd>), click pe hartă. Fereastra <b>Identificare</b> arată atributele entității de sub cursor, evidențiată cu albastru pe hartă, și valorile pixelilor din toate rasterele din acel punct. Pentru poligoane se afișează și <b>aria</b> și <b>perimetrul</b>, iar pentru linii <b>lungimea</b>. Pentru un strat în grade (de exemplu WGS84) valorile sunt calculate în sistemul proiectat al hărții, iar sistemul este menționat în paranteză. Butonul <span class="ui">Zoom la entitate</span> centrează harta pe ea.</p>
+<figure><img src="img/identificare.png" alt=""><figcaption><b>Figura 7.1.</b> Identificarea UAT-ului Pitești: atributele, aria și perimetrul în Stereo 70.</figcaption></figure>
+
+<h3 id="c7-2"><span class="n">7.2</span>Măsurare</h3>
+<p>Cu instrumentul <span class="ui">Măsurare</span> (<kbd>M</kbd>), dați click în punctele traseului. Dublu-click încheie măsurarea, iar <kbd>Esc</kbd> o șterge. În colțul hărții apar:</p>
+<ul>
+  <li><b>distanța în plan</b> (în sistemul hărții) și <b>distanța pe elipsoid</b> (formula Vincenty, WGS84);</li>
+  <li>lungimea ultimului segment;</li>
+  <li><b>aria în plan</b> (în km² și hectare) și <b>perimetrul</b> poligonului închis de puncte.</li>
+</ul>
+<figure class="half"><img src="img/masurare.png" alt=""><figcaption><b>Figura 7.2.</b> Măsurarea unei suprafețe.</figcaption></figure>
+
+<h3 id="c7-3"><span class="n">7.3</span>Tabelul de atribute</h3>
+<p>Butonul <span class="ui">Tabel</span> (<kbd>T</kbd>) deschide tabelul de atribute. Stratul se alege din lista <span class="ui">Strat</span>. Caseta <span class="ui">Filtru</span> păstrează doar rândurile care conțin textul căutat, în orice câmp. Click pe antetul unei coloane sortează după acea coloană. Click pe un rând selectează entitatea și o evidențiază pe hartă, iar dublu-click face zoom la ea. Selectarea unei entități pe hartă cu Identificare derulează tabelul la rândul ei. Tabelul lucrează împreună cu selecția (secțiunea 7.7): <kbd>Ctrl</kbd>+click adaugă sau scoate un rând, <kbd>Shift</kbd>+click selectează un interval, iar bifa <span class="ui">Doar selecția</span> arată numai entitățile selectate.</p>
+<figure><img src="img/tabel.png" alt=""><figcaption><b>Figura 7.3.</b> Tabelul de atribute, cu UAT-ul selectat.</figcaption></figure>
+
+<h3 id="c7-4"><span class="n">7.4</span>Meniul contextual al hărții</h3>
+<p>Click dreapta pe hartă deschide un meniu cu: copierea coordonatelor punctului (în sistemul hărții), copierea latitudinii și longitudinii WGS84, centrarea hărții, identificarea în acel punct și extinderea completă.</p>
+<figure class="half"><img src="img/meniu_harta.png" alt=""><figcaption><b>Figura 7.4.</b> Meniul contextual al hărții.</figcaption></figure>
+
+<h3 id="c7-5"><span class="n">7.5</span>Convertorul de coordonate</h3>
+<p>Butonul <span class="ui">Convertor</span> transformă coordonate între oricare două sisteme. Alegeți sistemele <span class="ui">Din</span> și <span class="ui">În</span> (<span class="ui">Inversează</span> le schimbă între ele) și introduceți coordonatele. Rezultatul apare imediat, cu metoda folosită. Bifa <span class="ui">Preia punctul printr-un click pe hartă</span> completează coordonatele din hartă. Pentru Stereo 70 se poate transforma și altitudinea: H Marea Neagră 1975 ↔ h elipsoidal ETRS89.</p>
+<figure class="half"><img src="img/converter.png" alt=""><figcaption><b>Figura 7.5.</b> Conversia unui punct Stereo 70 în WGS84, cu altitudine.</figcaption></figure>
+<p>Secțiunea <span class="ui">Conversie listă de puncte</span> transformă o listă lipită din Excel sau dintr-un fișier text, cu rânduri „X Y” sau „ID X Y”. Rezultatul poate fi copiat înapoi.</p>
+
+<h3 id="c7-6"><span class="n">7.6</span>TransDatRO</h3>
+<p><span class="ui">Instrumente → TransDatRO</span> deschide transformările oficiale ANCPI, cu aceleași rezultate ca programul TransDatRO:</p>
+<ul>
+  <li>ETRS89 (B, L, h) ↔ Stereo 70 (x, y) cu altitudini normale Marea Neagră 1975;</li>
+  <li>ETRS89 ↔ Stereo 1930 București;</li>
+  <li>Stereo 30 ↔ Stereo 70.</li>
+</ul>
+<p>Partea de sus transformă un punct. Coordonatele geografice se pot scrie în grade-minute-secunde (<code>44 38 43.52664</code>) sau în grade zecimale. Partea de jos transformă o listă sau un fișier în formatul programului TransDatRO: un rând de titlu, apoi „cod, coordonata 1, coordonata 2[, altitudine]” pe fiecare rând, opțional <code>ENDF</code> la final. Rezultatul se poate salva, copia sau adăuga pe hartă ca strat de puncte.</p>
+<figure><img src="img/tdr.png" alt=""><figcaption><b>Figura 7.6.</b> Transformarea unor puncte ETRS89 în Stereo 70 cu altitudini Marea Neagră 1975.</figcaption></figure>
+<div class="note"><b>Convenții.</b> În Stereo 70, x este Nordul și y este Estul; în Stereo 30, x este Estul și y este Nordul, ca în programul oficial. Secțiunea <span class="ui">Setări și griduri</span> arată gridurile folosite (incluse sau din dosarul <code>grile</code>), alege metoda pentru reproiecția datelor Stereo 70 și permite folosirea doar a cvasigeoidului național EGG97 pentru altitudini (fără gridul București-Ilfov).</div>
+
+<h3 id="c7-7"><span class="n">7.7</span>Selecția și exportul selecției</h3>
+<p>Instrumentul <span class="ui">Selectare</span> (<kbd>S</kbd>) alege una sau mai multe entități din straturile vectoriale. Entitățile selectate sunt desenate cu <b>galben</b>, iar în lista straturilor numărul lor apare lângă numele stratului, de exemplu <i>UAT Argeș [7]</i>.</p>
+<table>
+  <tr><th style="width:34%">Acțiune</th><th>Efect</th></tr>
+  <tr><td>Click pe o entitate</td><td>Selectează doar acea entitate (selecția anterioară se golește).</td></tr>
+  <tr><td>Click în afara entităților</td><td>Golește selecția.</td></tr>
+  <tr><td><kbd>Ctrl</kbd>+click</td><td>Adaugă entitatea la selecție sau o scoate, dacă era selectată.</td></tr>
+  <tr><td>Trageți un dreptunghi</td><td>Selectează toate entitățile atinse de dreptunghi.</td></tr>
+  <tr><td><kbd>Shift</kbd> (sau <kbd>Ctrl</kbd>) + dreptunghi / click</td><td>Adaugă la selecția existentă.</td></tr>
+  <tr><td><kbd>Alt</kbd> + dreptunghi / click</td><td>Scoate din selecție.</td></tr>
+  <tr><td><kbd>Esc</kbd> (cu instrumentul Selectare) sau <kbd>Ctrl+Shift+A</kbd></td><td>Golește selecția din toate straturile.</td></tr>
+</table>
+<p>Implicit se selectează din toate straturile vectoriale vizibile; la click, câștigă stratul de deasupra (întâi punctele, apoi liniile, apoi poligoanele). Bifa <span class="ui">Instrumente → Selectare doar în stratul activ</span> limitează selecția la stratul ales în listă. Dreptunghiul selectează și poligoanele care îl cuprind, și liniile care îl traversează, nu doar entitățile cu vârfuri în interior.</p>
+<div class="cols">
+  <figure><img src="img/selectie.png" alt=""><figcaption><b>Figura 7.7.</b> Șapte UAT-uri selectate prin click, <kbd>Ctrl</kbd>+click și dreptunghi.</figcaption></figure>
+  <div>
+    <p>Din meniul contextual al stratului, submeniul <span class="ui">Selecție</span> oferă: <b>Selectează tot</b>, <b>Inversează selecția</b>, <b>Deselectează</b>, <b>Zoom la selecție</b> și <b>Exportă selecția…</b>. Aceleași operații sunt și în bara tabelului de atribute, alături de <b>Selectează rândurile afișate</b> (de exemplu după un filtru).</p>
+    <p><b>Exportul selecției.</b> Când stratul are entități selectate, fereastra <span class="ui">Export</span> are opțiunea <span class="ui">Entități: numai cele selectate (N) / toate</span>, cu „numai cele selectate” aleasă implicit. Numele propus pentru fișier primește sufixul <code>_selectie</code>. Toate formatele vectoriale și reproiecția la export funcționează la fel ca pentru întregul strat.</p>
+  </div>
+</div>
+<figure><img src="img/tabel_selectie.png" alt=""><figcaption><b>Figura 7.8.</b> Tabelul de atribute cu bifa „Doar selecția” și operațiile pe selecție.</figcaption></figure>
+<div class="note"><b>De reținut.</b> Selecția nu se salvează în spațiul de lucru și nu apare pe planșa tipărită; ea servește la vizualizare, la interogări și la export.</div>
+
+<h3 id="c7-8"><span class="n">7.8</span>Căutarea</h3>
+<p>Butonul <span class="ui">Căutare</span> (<kbd>Ctrl+F</kbd>) deschide fereastra de căutare, cu două pagini.</p>
+<p><b>Loc / adresă.</b> Scrieți un nume de localitate, o adresă sau un obiectiv (de exemplu <i>Pitești</i>, <i>Str. Victoriei 10 Brașov</i>) și apăsați <kbd>Enter</kbd>. Aplicația caută în același timp:</p>
+<ul>
+  <li><b>în straturile încărcate</b>: entitățile care conțin textul în orice câmp, fără să țină cont de majuscule și diacritice („pitesti” găsește „PITEȘTI”). Rezultatele pot fi selectate, adăugate la selecție sau încadrate pe hartă; click pe un rezultat face zoom la entitate;</li>
+  <li><b>în OpenStreetMap</b> (serviciul Nominatim, necesită internet): localități, străzi, adrese, obiective. Click pe un loc mută harta acolo și pune un <b>marcaj roșu</b> cu numele lui. Bifa <span class="ui">Doar în România</span> (implicită) limitează căutarea la România; butonul <span class="ui">Șterge marcajul</span> îl elimină.</li>
+</ul>
+<p>Caseta acceptă și <b>coordonate</b>: <code>44.8565, 24.8692</code> (latitudine, longitudine WGS84, în ordinea folosită de Google Maps) sau <code>486375 339707</code> (X Y în sistemul hărții). Harta se centrează pe punct, cu marcaj.</p>
+<figure><img src="img/cautare_loc.png" alt=""><figcaption><b>Figura 7.9.</b> Căutarea unor coordonate WGS84: harta este centrată pe punct, cu marcaj.</figcaption></figure>
+<p><b>După câmpuri.</b> Construiește o interogare pe atribute, ca un filtru SQL simplu:</p>
+<ol>
+  <li>Alegeți <span class="ui">Stratul</span> sau <span class="ui">Toate straturile vectoriale</span>.</li>
+  <li>Pentru fiecare condiție alegeți câmpul (sau <i>(orice câmp)</i>), operatorul și valoarea. Butonul <span class="ui">…</span> de lângă valoare arată valorile existente în câmp.</li>
+  <li>Cu <span class="ui">+ Condiție</span> adăugați alte condiții, legate prin <b>ȘI</b> sau <b>SAU</b>. <b>ȘI</b> are prioritate: <i>A ȘI B SAU C</i> înseamnă <i>(A ȘI B) SAU C</i>.</li>
+  <li>Apăsați <span class="ui">Caută</span> (sau <kbd>Enter</kbd> în caseta valorii). Sub condiții apare textul interogării, de exemplu <code>DENUMIRE începe cu "s" ȘI POP &gt; 1000</code>.</li>
+</ol>
+<table>
+  <tr><th style="width:34%">Operator</th><th>Înțeles</th></tr>
+  <tr><td>= &nbsp; ≠</td><td>egal / diferit (numerele se compară ca numere: <code>13</code> = <code>13.0</code>)</td></tr>
+  <tr><td>conține, nu conține, începe cu, se termină cu</td><td>comparații de text, fără majuscule și diacritice</td></tr>
+  <tr><td>&gt; &nbsp; ≥ &nbsp; &lt; &nbsp; ≤</td><td>numeric când ambele valori sunt numere, altfel alfabetic</td></tr>
+  <tr><td>este gol, nu este gol</td><td>câmpul nu are valoare / are valoare</td></tr>
+</table>
+<p>Rezultatele sunt listate pe strat și număr de entitate; click pe un rând face zoom la entitate. <span class="ui">Selectează</span> le transformă în selecție (de exemplu pentru export), <span class="ui">Adaugă la selecție</span> le adaugă, iar <span class="ui">Zoom la rezultate</span> încadrează toate rezultatele. Valorile zecimale pot fi scrise cu punct sau cu virgulă.</p>
+<figure><img src="img/cautare_campuri.png" alt=""><figcaption><b>Figura 7.10.</b> UAT-urile al căror nume începe cu „S”, selectate și încadrate pe hartă.</figcaption></figure>
+
+<h3 id="c7-9"><span class="n">7.9</span>Selectarea după atribute</h3>
+<p><span class="ui">Instrumente → Selectare după atribute…</span> (<kbd>Ctrl+Shift+F</kbd>, butonul cu tabel și rând galben din bara de instrumente, <span class="ui">Selecție → După atribute…</span> din meniul contextual al stratului sau din tabelul de atribute) selectează entitățile unui strat cu o <b>expresie</b>, ca în clauza <code>WHERE</code> din SQL sau ca în „Select by Attributes” din ArcGIS și QGIS:</p>
+<pre><code>admin_unit_id = 123
+status = 1 AND is_active = 1
+(judet = 'Argeș' OR judet = 'Olt') AND suprafata &gt;= 5000</code></pre>
+<figure><img src="img/selectie_atribute.png" alt=""><figcaption><b>Figura 7.11.</b> Selectarea după atribute: câmpurile, valorile câmpului ales, operatorii și expresia.</figcaption></figure>
+<ol>
+  <li>Alegeți <span class="ui">Stratul</span>. Fiecare strat își păstrează expresia scrisă.</li>
+  <li>Scrieți expresia sau construiți-o din liste: <b>dublu-click pe un câmp</b> îi inserează numele; <b>click pe un câmp</b> arată valorile lui distincte, cu numărul de apariții (cu o casetă de filtrare); <b>click pe o valoare</b> o inserează, iar <b>dublu-click</b> inserează direct <code>câmp = valoare</code>. Butoanele de operatori inserează <code>=</code>, <code>&lt;&gt;</code>, <code>LIKE</code>, <code>IN ()</code>, <code>AND</code> etc. în locul cursorului.</li>
+  <li>Expresia este verificată pe măsură ce scrieți: o greșeală apare cu roșu, cu poziția ei (de exemplu <i>Câmpul „statu” nu există în strat (la caracterul 1)</i>).</li>
+  <li>Alegeți modul: <b>Selecție nouă</b>, <b>Adaugă la selecție</b>, <b>Scoate din selecție</b> sau <b>Selectează din selecția curentă</b> (păstrează doar entitățile deja selectate care îndeplinesc expresia).</li>
+  <li>Apăsați <span class="ui">Selectează</span> (sau <kbd>Ctrl+Enter</kbd> în casetă). <span class="ui">Verifică</span> doar numără entitățile potrivite, fără să schimbe selecția. Cu <span class="ui">Zoom pe rezultat</span> bifat, harta se încadrează pe selecție.</li>
+</ol>
+<p>Rezultatul este o selecție obișnuită (secțiunea 7.7): apare cu galben, poate fi văzut în tabel (butonul <span class="ui">Tabel</span> deschide tabelul cu „Doar selecția”) și exportat. Expresiile folosite se regăsesc în meniul <span class="ui">Recente…</span>.</p>
+<table>
+  <tr><th style="width:36%">Scriere</th><th>Înțeles</th></tr>
+  <tr><td><code>=</code> <code>&lt;&gt;</code> (sau <code>!=</code>) <code>&lt;</code> <code>&lt;=</code> <code>&gt;</code> <code>&gt;=</code></td><td>Comparații. Numerele se compară ca numere (<code>13</code> = <code>13.0</code>, inclusiv în câmpurile text care conțin numere), textele alfabetic.</td></tr>
+  <tr><td><code>AND</code> <code>OR</code> <code>NOT</code>, paranteze</td><td>Combinarea condițiilor; <code>AND</code> are prioritate față de <code>OR</code>. Se acceptă și <code>ȘI</code>, <code>SAU</code>, <code>NU</code>.</td></tr>
+  <tr><td><code>nume LIKE 'Pit%'</code></td><td>Potrivire după model: <code>%</code> = orice șir, <code>_</code> = un caracter. <code>NOT LIKE</code> = negarea.</td></tr>
+  <tr><td><code>cod IN (13, 14, 15)</code></td><td>Una dintre valori (<code>NOT IN</code> = niciuna).</td></tr>
+  <tr><td><code>supr BETWEEN 100 AND 500</code></td><td>Între limite, inclusiv.</td></tr>
+  <tr><td><code>obs IS NULL</code>, <code>obs IS NOT NULL</code></td><td>Câmp fără valoare (sau text gol) / cu valoare.</td></tr>
+  <tr><td><code>is_active</code>, <code>NOT is_active</code></td><td>Câmpul folosit singur: adevărat dacă nu este 0, gol sau <i>false</i>.</td></tr>
+  <tr><td><code>'Argeș'</code>, <code>"nr cad"</code>, <code>[nr cad]</code></td><td>Textele se scriu între <b>apostrofuri</b>. Numele de câmpuri cu spații sau caractere speciale se scriu între ghilimele duble sau paranteze drepte.</td></tr>
+</table>
+<p>Textele se compară <b>fără să țină cont de majuscule și de diacritice</b>: <code>judet = 'arges'</code> găsește „Argeș” și „ARGES”. Bifa <span class="ui">Exact (majuscule și diacritice)</span> cere potrivire exactă. Ca în SQL, o valoare lipsă (NULL) nu îndeplinește nicio comparație: <code>supr &lt;&gt; 100</code> nu găsește entitățile fără suprafață; pentru ele folosiți <code>IS NULL</code>.</p>
+<div class="tip"><b>Sfat.</b> Pentru o interogare pe mai multe straturi deodată sau „în orice câmp” folosiți pagina <i>După câmpuri</i> a căutării (secțiunea 7.8). Aceeași sintaxă de expresie se folosește în linia de comandă, cu <code>--where</code>, pentru a converti doar entitățile potrivite.</div>
+
+<!-- ===================================================================== -->
+<h2 id="c8"><span class="n">8</span>Sisteme de coordonate</h2>
+
+<h3 id="c8-1"><span class="n">8.1</span>Sistemul hărții</h3>
+<p>Butonul cu globul din bara de instrumente (sau <span class="ui">Vizualizare → Sistemul de coordonate al hărții…</span>) schimbă sistemul în care este afișată harta. Toate straturile sunt reproiectate din mers.</p>
+<figure class="half"><img src="img/crs.png" alt=""><figcaption><b>Figura 8.1.</b> Alegerea sistemului hărții.</figcaption></figure>
+<ul>
+  <li>Sus sunt sistemele uzuale în România: Stereo 70, Stereo 30, WGS84, ETRS89, UTM 34N/35N, Web Mercator, LAEA Europa.</li>
+  <li>Caseta <span class="ui">Caută</span> găsește oricare dintre cele peste 6 000 de sisteme EPSG, după cod sau după nume (de exemplu „3844”, „stereo”, „utm 35”).</li>
+  <li>Se pot folosi și definiții personalizate, ca șir PROJ sau WKT.</li>
+</ul>
+
+<h3 id="c8-2"><span class="n">8.2</span>Stereo 70: TransDatRO sau Helmert</h3>
+<p>Orice transformare între Stereo 70 și ETRS89/WGS84 (afișare, export, conversie în lot, rastere, convertor) folosește implicit <b>TransDatRO</b>, cu precizie centimetrică. Din <span class="ui">Instrumente → Reproiecție Stereo 70 cu TransDatRO</span> se poate trece pe transformarea Helmert cu 7 parametri (EPSG:15994), cu precizie de 1–3 m, identică cu cea din alte programe GIS. În afara zonei acoperite de gridurile TransDatRO (în afara României), aplicația folosește automat Helmert.</p>
+<div class="tip"><b>De reținut.</b> WGS84 este tratat ca ETRS89. Diferența dintre ele este sub 1 m, iar alte programe GIS fac la fel.</div>
+
+<h3 id="c8-3"><span class="n">8.3</span>Stereo 1930 București</h3>
+<p>Stereo 1930 apare ca sistem separat (căutați „stereo 30”). Se transformă doar prin TransDatRO, în zona acoperită de grid. În fișierele <code>.prj</code> și GeoTIFF este scris ca sistem local, deoarece alte programe GIS nu au o definiție pentru el.</p>
+
+<h3 id="c8-4"><span class="n">8.4</span>Griduri TransDatRO actualizate</h3>
+<p>Gridurile oficiale sunt incluse în aplicație. Când ANCPI publică griduri noi (de exemplu <code>EGG97_QGRJ.GRD</code>), copiați-le într-un dosar numit <code>grile</code> lângă <code>cadastru.exe</code>. Aplicația le folosește pe acestea în locul celor incluse.</p>
+
+<!-- ===================================================================== -->
+<h2 id="c9"><span class="n">9</span>Export și conversie</h2>
+
+<h3 id="c9-1"><span class="n">9.1</span>Exportul unui strat</h3>
+<p>Selectați stratul, apoi <span class="ui">Fișier → Export strat selectat…</span> (sau click dreapta → <span class="ui">Export…</span>). Alegeți:</p>
+<ul>
+  <li><b>formatul</b> de ieșire;</li>
+  <li><b>sistemul de ieșire</b>: al stratului (fără transformare), al hărții sau altul;</li>
+  <li>pentru Shapefile, <b>codificarea DBF</b>: UTF-8 (implicit) sau Windows-1250, pentru programele vechi care nu citesc diacriticele în UTF-8;</li>
+  <li>pentru KML, GPX și DXF, câmpul folosit ca nume sau etichetă; pentru CSV, geometria scrisă ca WKT;</li>
+  <li>dacă stratul are entități selectate: <b>numai cele selectate</b> sau toate (secțiunea 7.7).</li>
+</ul>
+<figure class="half"><img src="img/export.png" alt=""><figcaption><b>Figura 9.1.</b> Exportul unui strat din WGS84 în Stereo 70.</figcaption></figure>
+<p>Rasterele se exportă în GeoTIFF, ASCII Grid, PNG sau JPEG. La reproiectare se pot alege rezoluția de ieșire și metoda de reeșantionare (cel mai apropiat vecin sau biliniară).</p>
+
+<h3 id="c9-2"><span class="n">9.2</span>Toate straturile într-un GeoPackage</h3>
+<p><span class="ui">Fișier → Export toate straturile vectoriale în GeoPackage…</span> scrie toate straturile vectoriale deschise într-un singur fișier <code>.gpkg</code>, câte un strat pentru fiecare.</p>
+
+<h3 id="c9-3"><span class="n">9.3</span>Export pe tipuri de geometrie (DXF → SHP)</h3>
+<p>Un desen DXF amestecă puncte, linii și poligoane, pe mai multe layere AutoCAD, în timp ce un shapefile poate conține un singur tip de geometrie. <span class="ui">Fișier → Export pe tipuri de geometrie (DXF » SHP puncte / linii / poligoane)…</span> (sau, din meniul contextual al unui strat DXF, <span class="ui">Export pe tipuri de geometrie (SHP)…</span>) scrie:</p>
+<ul>
+  <li><code>&lt;nume&gt;_puncte.shp</code>: toate punctele din toate layerele DXF: puncte, texte (cu textul în câmpul <code>Text</code>), punctele din blocuri;</li>
+  <li><code>&lt;nume&gt;_linii.shp</code>: toate liniile, poliliniile deschise, arcele, spline-urile;</li>
+  <li><code>&lt;nume&gt;_poligoane.shp</code>: poliliniile închise, cercurile, elipsele, hașurile și suprafețele pline.</li>
+</ul>
+<div class="cols">
+  <figure><img src="img/export_tipuri.png" alt=""><figcaption><b>Figura 9.2.</b> Exportul a două desene DXF pe tipuri de geometrie.</figcaption></figure>
+  <div>
+    <p>În fereastră se bifează straturile incluse. Implicit sunt bifate toate straturile DXF încărcate; mai multe desene sunt <b>unite</b> în aceleași trei fișiere. Layerul AutoCAD al fiecărei entități rămâne în câmpul <code>Layer</code>, iar câmpul <code>Fisier</code> arată desenul din care provine.</p>
+    <p>Opțiuni: tipurile scrise (puncte, linii, poligoane); <b>poliliniile închise</b> ca poligoane (implicit) sau ca linii, caz în care hașurile și suprafețele pline rămân poligoane; numai entitățile selectate (secțiunea 7.7); sistemul de ieșire (al hărții, fără reproiectare sau altul); codificarea DBF.</p>
+    <p>Numele ales în dialogul de salvare este numele de bază; sufixele se adaugă automat. Tipurile fără entități nu produc fișiere și sunt menționate în bara de stare.</p>
+  </div>
+</div>
+<div class="tip"><b>Sfat.</b> Și exportul obișnuit al unui strat DXF în Shapefile (secțiunea 9.1) împarte automat geometriile în fișiere <code>_puncte</code>, <code>_linii</code>, <code>_poligoane</code>; fereastra de mai sus adaugă unirea mai multor desene și opțiunile de mai sus. Pentru multe fișiere, din linia de comandă: <code>cadastru-cli split</code> (capitolul 12).</div>
+
+<h3 id="c9-4"><span class="n">9.4</span>Conversia în lot</h3>
+<p><span class="ui">Instrumente → Conversie fișiere în lot…</span> convertește toate fișierele dintr-un dosar.</p>
+<figure class="half"><img src="img/lot.png" alt=""><figcaption><b>Figura 9.3.</b> Conversia fișierelor în lot.</figcaption></figure>
+<ul>
+  <li><b>Dosar sursă</b> și <b>dosar destinație</b>; opțional, subdosarele (structura lor se păstrează).</li>
+  <li><b>Format de ieșire</b>; <b>Doar extensiile</b> limitează intrarea (de exemplu <code>shp,dxf</code>).</li>
+  <li><b>Sistem sursă</b>: din fișiere sau impus; <b>Reproiectare în</b>: alt sistem sau fără reproiectare.</li>
+  <li>Un File Geodatabase din dosar este convertit ca un întreg, cu toate straturile lui.</li>
+</ul>
+<p>La final, jurnalul arată fiecare fișier convertit și erorile.</p>
+
+<!-- ===================================================================== -->
+<h2 id="c10"><span class="n">10</span>Spațiul de lucru (.cgw)</h2>
+<p>Un spațiu de lucru salvează starea hărții: lista straturilor (cu căile fișierelor), ordinea, vizibilitatea, opacitatea, stilurile, sistemul fiecărui strat, sistemul hărții, vederea curentă și harta de fundal. Datele nu sunt copiate în spațiul de lucru.</p>
+<ul>
+  <li><span class="ui">Fișier → Salvează spațiu de lucru</span> (<kbd>Ctrl+S</kbd>) și <span class="ui">Salvează spațiu de lucru ca…</span>.</li>
+  <li><span class="ui">Fișier → Deschide spațiu de lucru…</span> sau dublu-click pe un fișier <code>.cgw</code> asociat cu aplicația.</li>
+  <li>Căile fișierelor aflate în același dosar cu spațiul de lucru (sau în subdosare) sunt salvate relativ, deci dosarul proiectului poate fi mutat sau copiat întreg.</li>
+</ul>
+<div class="tip"><b>Exemplu.</b> Deschideți <code>exemple\test.cgw</code>: un relief cu umbrire, parcele cu etichete și puncte dintr-un CSV.</div>
+<figure class="half"><img src="img/exemple.png" alt=""><figcaption><b>Figura 10.1.</b> Spațiul de lucru de exemplu.</figcaption></figure>
+
+<!-- ===================================================================== -->
+<h2 id="c11"><span class="n">11</span>Tipărire și salvare ca PDF</h2>
+<p><span class="ui">Fișier → Tipărire…</span> (<kbd>Ctrl+P</kbd>) și <span class="ui">Fișier → Salvează ca PDF…</span> compun o planșă din vederea curentă a hărții.</p>
+<div class="cols">
+  <figure><img src="img/print.png" alt=""><figcaption><b>Figura 11.1.</b> Dialogul de salvare ca PDF, cu previzualizare.</figcaption></figure>
+  <figure><img src="img/plansa.png" alt=""><figcaption><b>Figura 11.2.</b> PDF-ul rezultat (A4 portret, 1:650.000).</figcaption></figure>
+</div>
+<table>
+  <tr><th style="width:24%">Setare</th><th>Descriere</th></tr>
+  <tr><td>Titlu</td><td>Textul de deasupra hărții.</td></tr>
+  <tr><td>Notă (în colț)</td><td>Un rând în zona de informații, de exemplu „Întocmit: …”.</td></tr>
+  <tr><td>Hârtie</td><td>A4, A3, A2, A1 sau A0, peisaj sau portret.</td></tr>
+  <tr><td>Scara</td><td>Scara vederii curente, una din listă (1:200 … 1:1.000.000) sau oricare alta, scrisă în caseta <span class="ui">1:</span>. Harta este centrată pe vederea curentă.</td></tr>
+  <tr><td>Rezoluție</td><td>150, 200 sau 300 DPI. Pentru hârtie foarte mare la rezoluție mare, aplicația reduce automat rezoluția ca să nu depășească memoria.</td></tr>
+  <tr><td>Elemente</td><td>Legendă, scară grafică, săgeata nordului, caroiaj de coordonate și harta de fundal; fiecare se poate dezactiva.</td></tr>
+</table>
+<ul>
+  <li><span class="ui">Previzualizare</span> arată planșa înainte de tipărire sau salvare.</li>
+  <li>Pe planșă apar: titlul, harta în chenar, caroiajul cu coordonate pe margini, nordul (orientat după nordul geografic), legenda straturilor vizibile, scara numerică și grafică, sistemul de coordonate, data, nota și atribuirea hărții de fundal.</li>
+  <li>Harta de fundal este descărcată din nou, la detaliul potrivit rezoluției de tipar. Dacă nu poate fi descărcată, planșa se face fără ea, iar bara de stare explică de ce.</li>
+  <li><b>La tipărire</b> se deschide dialogul Windows de alegere a imprimantei. Mărimea hârtiei, orientarea și rezoluția sunt cele alese acolo, iar planșa se adaptează zonei tipăribile. Funcționează și cu „Microsoft Print to PDF”.</li>
+  <li><b>PDF-ul</b> are mărimea exactă a hârtiei. Planșa este o imagine de înaltă calitate: se deschide oriunde și se tipărește identic, dar textul din ea nu poate fi selectat.</li>
+</ul>
+
+<!-- ===================================================================== -->
+<h2 id="c12"><span class="n">12</span>Linia de comandă (cadastru-cli)</h2>
+<p><code>cadastru-cli.exe</code> face aceleași conversii și transformări fără interfață grafică, pentru scripturi <code>.bat</code>, PowerShell sau Task Scheduler. Deschideți un Command Prompt în dosarul aplicației.</p>
+<table>
+  <tr><th style="width:20%">Comandă</th><th>Rol</th></tr>
+  <tr><td><code>info</code></td><td>Straturi, câmpuri, sistem, extindere; <code>--features N</code> arată și primele N entități.</td></tr>
+  <tr><td><code>convert</code></td><td>Conversie de format și/sau reproiecție a unui fișier.</td></tr>
+  <tr><td><code>batch</code></td><td>Conversia tuturor fișierelor dintr-un dosar.</td></tr>
+  <tr><td><code>transform</code></td><td>Transformarea unor coordonate (argumente sau intrare standard).</td></tr>
+  <tr><td><code>transdatro</code></td><td>Fișiere în formatul programului TransDatRO.</td></tr>
+  <tr><td><code>crs</code></td><td>Definiția unui sistem sau căutare după nume.</td></tr>
+  <tr><td><code>split</code></td><td>Unește fișiere DXF (sau alte fișiere vectoriale) și scrie câte un shapefile pe tip de geometrie: <code>_puncte</code>, <code>_linii</code>, <code>_poligoane</code>.</td></tr>
+  <tr><td><code>formats</code></td><td>Lista formatelor.</td></tr>
+</table>
+<pre><code>cadastru-cli info parcele.shp --features 3
+cadastru-cli convert parcele.shp parcele.gpkg
+cadastru-cli convert parcele.shp parcele_wgs.kml --t-srs EPSG:4326
+cadastru-cli convert puncte.csv puncte.shp --x-field Y --y-field X --s-srs EPSG:3844
+cadastru-cli convert lucrare.zip D:\iesire\cadastru.shp
+cadastru-cli convert arges.gdb arges.gpkg
+cadastru-cli batch D:\date D:\date_gpkg --to gpkg --t-srs EPSG:25835 -r -o
+cadastru-cli transform --s-srs EPSG:3844 --t-srs EPSG:4326 --dms 588000 328000
+cadastru-cli transdatro -d etrs89-st70 puncte_gnss.txt -o puncte_st70.txt
+cadastru-cli split D:\iesire\plan.shp desen1.dxf desen2.dxf --s-srs EPSG:3844
+cadastru-cli split D:\iesire\toate.shp D:\desene -r --inchise-ca-linii -o
+cadastru-cli convert adrese.gpkg adrese_ro.shp --doar-romania
+cadastru-cli convert uat.shp uat_active.gpkg --where "status = 1 AND is_active = 1"
+cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></pre>
+<p><b>Filtre la citire</b> (pentru <code>info</code>, <code>convert</code>, <code>batch</code> și <code>split</code>): <code>--doar-romania</code> păstrează doar entitățile aflate în întregime în interiorul României (aceeași zonă ca în aplicație, secțiunea 3.8); <code>--zona-3844 "minX,minY,maxX,maxY"</code> folosește alt dreptunghi; <code>--partial</code> păstrează și entitățile care doar ating zona; <code>--where "EXPRESIE"</code> păstrează doar entitățile care îndeplinesc expresia (sintaxa din secțiunea 7.9). Filtrele se pot combina.</p>
+<p>La <code>split</code>, intrările pot fi fișiere sau dosare (din dosare se iau toate fișierele <code>.dxf</code>, cu <code>-r</code> și din subdosare). Opțiuni: <code>--fara-puncte</code>, <code>--fara-linii</code>, <code>--fara-poligoane</code>, <code>--inchise-ca-linii</code>, <code>--fara-camp-fisier</code>, plus <code>--s-srs</code>, <code>--t-srs</code>, <code>--out-encoding</code> și <code>-o</code>.</p>
+<p>Opțiuni frecvente: <code>--s-srs</code> (sistemul sursă), <code>--t-srs</code> (reproiecție), <code>-o</code> (suprascrie), <code>--out-encoding cp1250</code> (DBF pentru programe vechi), <code>--layer</code> (un singur strat), <code>--fara-transdatro</code> (Stereo 70 cu Helmert). Lista completă: <code>cadastru-cli &lt;comandă&gt; --help</code> și documentația tehnică. Codul de ieșire este 0 la succes, 1 la eroare și 2 dacă o conversie în lot a avut erori.</p>
+
+<!-- ===================================================================== -->
+<h2 id="c13"><span class="n">13</span>Scurtături de tastatură</h2>
+<table>
+  <tr><th style="width:32%">Tastă</th><th>Acțiune</th></tr>
+  <tr><td><kbd>F1</kbd></td><td>Manualul de utilizare</td></tr>
+  <tr><td><kbd>Ctrl+O</kbd></td><td>Deschide fișiere</td></tr>
+  <tr><td><kbd>Ctrl+S</kbd></td><td>Salvează spațiul de lucru</td></tr>
+  <tr><td><kbd>Ctrl+P</kbd></td><td>Tipărire</td></tr>
+  <tr><td><kbd>Home</kbd></td><td>Extindere completă</td></tr>
+  <tr><td><kbd>+</kbd> / <kbd>−</kbd></td><td>Mărire / micșorare</td></tr>
+  <tr><td><kbd>P</kbd> <kbd>Z</kbd> <kbd>X</kbd> <kbd>I</kbd> <kbd>S</kbd> <kbd>M</kbd></td><td>Deplasare / Zoom + / Zoom − / Identificare / Selectare / Măsurare</td></tr>
+  <tr><td><kbd>Ctrl+F</kbd></td><td>Căutare</td></tr>
+  <tr><td><kbd>Ctrl+Shift+F</kbd></td><td>Selectare după atribute</td></tr>
+  <tr><td><kbd>Ctrl+Shift+A</kbd></td><td>Deselectează tot</td></tr>
+  <tr><td>Săgeți</td><td>Deplasare cu un sfert de ecran</td></tr>
+  <tr><td><kbd>Backspace</kbd> / <kbd>Alt+→</kbd></td><td>Vederea anterioară / următoare</td></tr>
+  <tr><td><kbd>T</kbd></td><td>Tabelul de atribute</td></tr>
+  <tr><td><kbd>Esc</kbd></td><td>Anulează măsurarea și evidențierea; cu instrumentul Selectare golește selecția</td></tr>
+  <tr><td>Dublu-click</td><td>Zoom ×2 (Deplasare) sau încheierea măsurării</td></tr>
+  <tr><td>Click dreapta</td><td>Meniul contextual al hărții sau al stratului</td></tr>
+</table>
+<p>Lista este disponibilă și în aplicație, la <span class="ui">Ajutor → Scurtături și utilizare</span>.</p>
+
+<!-- ===================================================================== -->
+<h2 id="c14"><span class="n">14</span>Setări și fișiere ale aplicației</h2>
+<table>
+  <tr><th style="width:44%">Locație</th><th>Conținut</th></tr>
+  <tr><td><code>%APPDATA%\Cadastru\setari.json</code></td><td>Limba interfeței, tema, etichetele, controlul de navigație, metoda pentru Stereo 70, opțiunile CGXML, opacitatea hărții de fundal, ultimul șablon XYZ.</td></tr>
+  <tr><td><code>%LOCALAPPDATA%\Cadastru\tile-cache\</code></td><td>Cache-ul hărților de fundal.</td></tr>
+  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.9.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
+  <tr><td><code>grile\</code> lângă <code>cadastru.exe</code></td><td>Opțional: griduri TransDatRO mai noi (secțiunea 8.4).</td></tr>
+</table>
+<p>Ștergerea fișierului <code>setari.json</code> readuce setările implicite. Aplicația nu scrie nimic în registrul Windows și nu are nevoie de drepturi de administrator.</p>
+
+<!-- ===================================================================== -->
+<h2 id="c15"><span class="n">15</span>Probleme frecvente</h2>
+<dl>
+  <dt>Harta de fundal nu apare („Basemap indisponibil” în colțul hărții)</dt>
+  <dd>Nu există conexiune la internet, iar furnizorul sau proxy-ul blochează accesul. Verificați accesul la internet și setările de proxy din Windows. Mesajul din colț arată cauza exactă. Încercați alt furnizor.</dd>
+  <dt>Stratul apare în alt loc decât ar trebui</dt>
+  <dd>Sistemul de coordonate al fișierului lipsește sau este greșit. Setați sistemul corect din meniul contextual al stratului (secțiunea 3.6). Pentru CSV-uri topografice în Stereo 70, inversați X și Y la import.</dd>
+  <dt>Diacriticele apar greșit într-un shapefile</dt>
+  <dd>Fișierul DBF are altă codificare decât cea detectată. Fișierele scrise de Cadastru sunt în UTF-8, cu fișier <code>.cpg</code>. Pentru programele vechi, exportați cu codificarea Windows-1250.</dd>
+  <dt>Aplicația nu pornește într-o sesiune Remote Desktop</dt>
+  <dd>Pe versiunile mai vechi de Windows, sesiunea remote nu are OpenGL. Linia de comandă <code>cadastru-cli.exe</code> funcționează oricând.</dd>
+  <dt>Un ortofotoplan foarte mare nu se deschide</dt>
+  <dd>Rasterele se încarcă integral în memorie. Decupați rasterul sau convertiți-l la o rezoluție mai mică (<code>cadastru-cli convert … --res 1</code>).</dd>
+  <dt>Un File Geodatabase nu se deschide</dt>
+  <dd>Probabil este comprimat. În ArcGIS: <i>Uncompress File Geodatabase</i>, apoi deschideți-l din nou.</dd>
+  <dt>Manualul nu se deschide cu <kbd>F1</kbd></dt>
+  <dd>Nu există un program asociat fișierelor PDF. Instalați un cititor PDF sau deschideți fișierul indicat în mesajul de eroare.</dd>
+</dl>
+
+<!-- ===================================================================== -->
+<h2 id="c16"><span class="n">16</span>Despre</h2>
+<div class="cols">
+  <figure><img src="img/despre.png" alt=""><figcaption><b>Figura 16.1.</b> <span class="ui">Ajutor → Despre Cadastru</span>.</figcaption></figure>
+  <div>
+    <p><b>Cadastru 1.9.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
+    <p>Aplicația este scrisă în Rust și distribuită cu codul sursă, sub licența MIT.</p>
+    <p class="small">TransDatRO: algoritm și griduri © ANCPI (Agenția Națională de Cadastru și Publicitate Imobiliară).<br>
+    Hărțile de fundal aparțin furnizorilor lor (OpenStreetMap, Esri, Google, Microsoft, CARTO, BKG, EOX) și se folosesc conform condițiilor fiecăruia.<br>
+    Datele din figurile acestui manual: limitele unităților administrativ-teritoriale ale județului Argeș și datele de test din dosarul <code>exemple</code>.</p>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,9 @@
+{"app": "Cadastru","version":1,"map_crs":"EPSG:3844","view":[587400.0,325600.0,3.0],
+ "layers":[
+  {"path":"dem.tif","source_layer":"dem","name":"Relief","visible":true,"opacity":0.8,"crs":"EPSG:3844","vector_style":null,
+   "raster_style":{"rgb":false,"bands":[0,0,0],"min":[60.0,0,0],"max":[112.0,255,255],"ramp":"Spectral","hillshade":true,"transparent_color":null},"order":0},
+  {"path":"multi.gpkg","source_layer":"parcele","name":"Parcele GPKG","visible":true,"opacity":1.0,"crs":"EPSG:3844",
+   "vector_style":{"stroke":[0,0,0,255],"width":2.0,"fill":[255,255,0,90],"point_size":4.0,"label_field":"proprietar","label_size":13.0,"label_color":[0,0,120,255]},"raster_style":null,"order":1},
+  {"path":"puncte.csv","source_layer":"puncte","name":"Puncte CSV","visible":true,"opacity":1.0,"crs":"EPSG:3844",
+   "vector_style":{"stroke":[200,0,0,255],"width":1.5,"fill":[255,0,0,220],"point_size":6.0,"label_field":"nr","label_size":12.0,"label_color":[150,0,0,255]},"raster_style":null,"order":2,"csv_fields":["X","Y","Z"]}
+ ]}

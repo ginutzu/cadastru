@@ -1,0 +1,9 @@
+[package]
+name = "cadastru-i18n-macros"
+version = "1.0.0"
+edition = "2024"
+description = "Traducerea textelor Cadastru la compilare, din pachetele de limbă lang/*.tsv"
+license = "MIT"
+
+[lib]
+proc-macro = true

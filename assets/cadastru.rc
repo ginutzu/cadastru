@@ -1,0 +1,26 @@
+#include <winver.h>
+1 ICON "cadastru.ico"
+1 VERSIONINFO
+FILEVERSION 1,9,0,0
+PRODUCTVERSION 1,9,0,0
+FILEOS VOS_NT_WINDOWS32
+FILETYPE VFT_APP
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "041804B0"
+    BEGIN
+      VALUE "CompanyName", "Ginu Popescu"
+      VALUE "LegalCopyright", "Ginu Popescu"
+      VALUE "FileDescription", "Cadastru - aplicatie GIS"
+      VALUE "FileVersion", "1.9.0"
+      VALUE "ProductName", "Cadastru"
+      VALUE "ProductVersion", "1.9.0"
+      VALUE "OriginalFilename", "cadastru.exe"
+    END
+  END
+  BLOCK "VarFileInfo"
+  BEGIN
+    VALUE "Translation", 0x0418, 1200
+  END
+END

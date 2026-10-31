@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document id="root_doc">
+<Schema name="parcele" id="parcele">
+	<SimpleField name="nr_cad" type="string"></SimpleField>
+	<SimpleField name="proprietar" type="string"></SimpleField>
+	<SimpleField name="suprafata" type="float"></SimpleField>
+	<SimpleField name="siruta" type="string"></SimpleField>
+	<SimpleField name="intravilan" type="int"></SimpleField>
+</Schema>
+<Folder><name>parcele</name>
+  <Placemark id="parcele.1">
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#parcele">
+		<SimpleData name="nr_cad">12345</SimpleData>
+		<SimpleData name="proprietar">Ștefan Țăranu</SimpleData>
+		<SimpleData name="suprafata">110000</SimpleData>
+		<SimpleData name="siruta">179132</SimpleData>
+		<SimpleData name="intravilan">1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>26.0910042167865,44.4194922477931 26.0960264990021,44.4194434893951 26.0960776436476,44.4221430541971 26.0910551271501,44.4221918160009 26.0910042167865,44.4194922477931</coordinates></LinearRing></outerBoundaryIs><innerBoundaryIs><LinearRing><coordinates>26.0922767773153,44.4203799349233 26.0935323677221,44.4203677520372 26.0935493768903,44.4212676075395 26.09229376696,44.4212797907093 26.0922767773153,44.4203799349233</coordinates></LinearRing></innerBoundaryIs></Polygon>
+  </Placemark>
+  <Placemark id="parcele.2">
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#parcele">
+		<SimpleData name="nr_cad">067890</SimpleData>
+		<SimpleData name="proprietar">Ioana Mărgărit</SimpleData>
+		<SimpleData name="suprafata">55000</SimpleData>
+		<SimpleData name="siruta">179141</SimpleData>
+		<SimpleData name="intravilan">0</SimpleData>
+	</SchemaData></ExtendedData>
+      <MultiGeometry><Polygon><outerBoundaryIs><LinearRing><coordinates>26.1037315793301,44.4283684658339 26.1062430990215,44.4283438290079 26.1062689148829,44.4296936086278 26.1037315793301,44.4283684658339</coordinates></LinearRing></outerBoundaryIs></Polygon><Polygon><outerBoundaryIs><LinearRing><coordinates>26.1074988578664,44.4283314895992 26.1100103735505,44.4283067687904 26.1100449122143,44.4301064732475 26.1075333184092,44.4301311952075 26.1074988578664,44.4283314895992</coordinates></LinearRing></outerBoundaryIs></Polygon></MultiGeometry>
+  </Placemark>
+  <Placemark id="parcele.3">
+	<Style><LineStyle><color>ff0000ff</color></LineStyle><PolyStyle><fill>0</fill></PolyStyle></Style>
+	<ExtendedData><SchemaData schemaUrl="#parcele">
+		<SimpleData name="nr_cad">11111</SimpleData>
+		<SimpleData name="proprietar">Âncuța Îndrăzneață</SimpleData>
+		<SimpleData name="suprafata">100000</SimpleData>
+		<SimpleData name="siruta">179150</SimpleData>
+		<SimpleData name="intravilan">1</SimpleData>
+	</SchemaData></ExtendedData>
+      <Polygon><outerBoundaryIs><LinearRing><coordinates>26.0846419997866,44.415053594471 26.0884253566225,44.4159171171537 26.087220587974,44.4186288128315 26.0834370710463,44.4177652502802 26.0846419997866,44.415053594471</coordinates></LinearRing></outerBoundaryIs></Polygon>
+  </Placemark>
+</Folder>
+</Document></kml>

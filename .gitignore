@@ -1,0 +1,4 @@
+target/
+
+# fișiere temporare la construirea documentației
+docs/src/_tmp_*

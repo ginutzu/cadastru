@@ -1,0 +1,808 @@
+# Cadastru – pachetul pentru limba engleză
+# Format: text românesc din sursă<TAB>traducere engleză (cu aceleași secvențe \n, \" și aceleași locuri {…}).
+# Textele care lipsesc rămân în română.
+{} entități, {}	{} features, {}
+{} x {} px, {} benzi	{} x {} px, {} bands
+nu găsesc un dosar pentru manual	cannot find a folder for the manual
+nu există un program asociat fișierelor PDF (cod {}). Manualul este în {}	no program is associated with PDF files (code {}). The manual is in {}
+Gata. Deschideți fișiere din meniul Fișier sau trageți-le în fereastră.	Ready. Open files from the File menu or drag them onto the window.
+Se deschide {}	Opening {}
+Deschide date	Open data
+Toate formatele suportate	All supported formats
+Spațiu de lucru Cadastru	Cadastru workspace
+Toate fișierele	All files
+„{}” nu are proiecție – presupus {}. Verificați din meniul contextual al stratului.	“{}” has no projection – assumed {}. Check it from the layer context menu.
+Încărcat: {} ({})	Loaded: {} ({})
+{}: {} entități nu au putut fi transformate în sistemul hărții	{}: {} features could not be transformed to the map CRS
+Export reușit: {}	Export completed: {}
+Export eșuat: {e:#}	Export failed: {e:#}
+Dosar pentru teren.shp / constructii.shp	Folder for teren.shp / constructii.shp
+Salvare shapefile CGXML	Saving CGXML shapefiles
+Manualul de utilizare: {}	User manual: {}
+Manualul de utilizare nu s-a putut deschide: {e:#}	The user manual could not be opened: {e:#}
+Fișier	File
+Deschide date…   Ctrl+O	Open data…   Ctrl+O
+Deschide File Geodatabase (.gdb)…	Open File Geodatabase (.gdb)…
+Dosarul File Geodatabase (.gdb)	File Geodatabase folder (.gdb)
+{} nu este un File Geodatabase (alegeți dosarul cu extensia .gdb)	{} is not a File Geodatabase (choose the folder with the .gdb extension)
+Deschide dosar cu fișiere CGXML…	Open folder with CGXML files…
+Dosar cu fișiere CGXML (inclusiv arhive ZIP)	Folder with CGXML files (including ZIP archives)
+Deschide spațiu de lucru…	Open workspace…
+Salvează spațiu de lucru   Ctrl+S	Save workspace   Ctrl+S
+Salvează spațiu de lucru ca…	Save workspace as…
+Export strat selectat…	Export selected layer…
+Export toate straturile vectoriale în GeoPackage…	Export all vector layers to GeoPackage…
+Închide toate straturile	Close all layers
+Tipărire…   Ctrl+P	Print…   Ctrl+P
+Salvează ca PDF…	Save as PDF…
+Ieșire	Exit
+Vizualizare	View
+Extindere completă   Home	Full extent   Home
+Zoom la stratul selectat	Zoom to selected layer
+Sistemul de coordonate al hărții…	Map coordinate system…
+Tabel de atribute   T	Attribute table   T
+Vederea anterioară   Backspace	Previous view   Backspace
+Vederea următoare   Alt+Dreapta	Next view   Alt+Right
+Afișează etichetele	Show labels
+Controale de navigație pe hartă	Navigation controls on the map
+Fereastra de identificare	Identify window
+Temă:	Theme:
+Instrumente	Tools
+Deplasare   P	Pan   P
+Zoom + (click sau dreptunghi)   Z	Zoom in (click or rectangle)   Z
+Zoom − (click sau dreptunghi)   X	Zoom out (click or rectangle)   X
+Identificare   I	Identify   I
+Măsurare distanță / arie   M	Measure distance / area   M
+Convertor de coordonate…	Coordinate converter…
+TransDatRO (ETRS89 – Stereo 70 / Stereo 30, altitudini MN75)…	TransDatRO (ETRS89 – Stereo 70 / Stereo 30, MN75 heights)…
+Reproiecție Stereo 70 cu TransDatRO	Stereo 70 reprojection with TransDatRO
+Debifat: Helmert 7 parametri (EPSG:15994)	Unchecked: 7-parameter Helmert (EPSG:15994)
+Conversie fișiere în lot…	Batch file conversion…
+Opțiuni import CGXML…	CGXML import options…
+Ajutor	Help
+Manual de utilizare (PDF)   F1	User manual (PDF, Romanian)   F1
+Scurtături și utilizare	Shortcuts and usage
+Deschide	Open
+Deschide fișiere: SHP, GPKG, DXF, CGXML, GeoTIFF … (Ctrl+O)	Open files: SHP, GPKG, DXF, CGXML, GeoTIFF … (Ctrl+O)
+Deplasare	Pan
+Trage harta (P). Rotița mouse-ului = zoom, săgețile = deplasare.	Drag the map (P). Mouse wheel = zoom, arrow keys = pan.
+Zoom +	Zoom in
+Click = mărire ×2, dreptunghi = zoom pe zonă (Z)	Click = zoom in ×2, rectangle = zoom to area (Z)
+Zoom −	Zoom out
+Click = micșorare ×2, dreptunghi = vederea curentă intră în zonă (X)	Click = zoom out ×2, rectangle = current view fits into the area (X)
+Identificare	Identify
+Click pe o entitate pentru atribute (I)	Click a feature to see its attributes (I)
+Măsurare	Measure
+Click pentru puncte, dublu-click pentru final, Esc pentru ștergere (M)	Click to add points, double-click to finish, Esc to clear (M)
+Extindere completă (Home)	Full extent (Home)
+Vederea anterioară (Backspace)	Previous view (Backspace)
+Vederea următoare (Alt+Dreapta)	Next view (Alt+Right)
+Tabel	Table
+Tabel de atribute (T)	Attribute table (T)
+Convertor	Converter
+Sistemul de coordonate al hărții – click pentru schimbare	Map coordinate system – click to change
+Straturi	Layers
+Elimină	Remove
+Elimină stratul selectat	Remove the selected layer
+Jos	Down
+Coboară stratul	Move the layer down
+Sus	Up
+Urcă stratul	Move the layer up
+Niciun strat. Folosiți Fișier > Deschide sau trageți fișiere peste hartă.	No layers. Use File > Open or drag files onto the map.
+{}\n{}\nSistem: {}{}	{}\n{}\nCRS: {}{}
+ (presupus)	 (assumed)
+Zoom la strat	Zoom to layer
+Setează sistemul de coordonate…	Set coordinate system…
+Folosește sistemul stratului pentru hartă	Use the layer CRS for the map
+CGXML: salvează ca teren.shp / constructii.shp…	CGXML: save as teren.shp / constructii.shp…
+CGXML: reîncarcă cu X și Y inversate	CGXML: reload with X and Y swapped
+Fișier:	File:
+Conținut:	Content:
+Sistem:	CRS:
+{c} (presupus)	{c} (assumed)
+schimbă	change
+Opacitate	Opacity
+Stil	Style
+Contur:	Outline:
+Grosime:	Width:
+Umplere:	Fill:
+Mărime punct:	Point size:
+Etichete:	Labels:
+(fără)	(none)
+Text etichetă:	Label text:
+Câmpuri	Fields
+Afișare raster	Raster display
+Compunere RGB	RGB composite
+Roșu	Red
+Verde	Green
+Albastru	Blue
+Rampă de culori	Color ramp
+Umbrire relief (hillshade)	Hillshade
+Alb transparent (hărți scanate)	Transparent white (scanned maps)
+Întindere automată	Auto stretch
+Informații raster	Raster information
+Tip date: {}	Data type: {}
+NoData: {}	NoData: {}
+Extindere: {}	Extent: {}
+Scara 1:{}	Scale 1:{}
+Erori	Errors
+Închide	Close
+Opțiuni import CGXML	CGXML import options
+Fișierele .cgxml (și arhivele ZIP / dosarele cu CGXML) sunt convertite automat la deschidere în straturile „teren” și „constructii”, ca în CGXML2SHP.	.cgxml files (and ZIP archives / folders with CGXML) are converted automatically on opening into the “teren” (land) and “constructii” (buildings) layers, as in CGXML2SHP.
+Închide inelul poligon	Close the polygon ring
+Repetă primul punct la final dacă lipsește	Repeat the first point at the end if missing
+Atribute extinse	Extended attributes
+Include construcții (strat separat)	Include buildings (separate layer)
+Forțează inversare X / Y	Force X / Y swap
+Când poligoanele apar rotite/oglindite (X = Nord, Y = Est în fișier)	When polygons appear rotated/mirrored (X = North, Y = East in the file)
+Include CNP/CUI în PROPRIETAR	Include CNP/CUI in PROPRIETAR
+Date cu caracter personal (GDPR)	Personal data (GDPR)
+Opțiunile se aplică fișierelor deschise de acum înainte.	The options apply to files opened from now on.
+Gri închis	Dark grey
+Luminoasă	Light
+Salvează spațiul de lucru	Save workspace
+Spațiu de lucru salvat: {}	Workspace saved: {}
+Nu pot salva spațiul de lucru: {e:#}	Cannot save the workspace: {e:#}
+Spațiu de lucru invalid {}: {e:#}	Invalid workspace {}: {e:#}
+Spațiu de lucru: {}	Workspace: {}
+Spațiu de lucru încărcat: 1 strat	Workspace loaded: 1 layer
+Spațiu de lucru încărcat: {n} de straturi	Workspace loaded: {n} layers
+Spațiu de lucru încărcat: {n} straturi	Workspace loaded: {n} layers
+Alegeți sistemele sursă și destinație	Choose the source and target systems
+\nMetoda: {}	\nMethod: {}
+Transformarea a eșuat	The transformation failed
+Altitudine: {h:.3} m (nemodificată)	Height: {h:.3} m (unchanged)
+h elipsoidal ETRS89: {v:.3} m	ETRS89 ellipsoidal h: {v:.3} m
+Altitudine: {e}	Height: {e}
+H Marea Neagră 1975: {v:.3} m	H Black Sea 1975: {v:.3} m
+{id}EROARE\n	{id}ERROR\n
+Export în GeoPackage	Export to GeoPackage
+Export GeoPackage	GeoPackage export
+Sistemul stratului a fost actualizat.	The layer CRS was updated.
+Sistemul de coordonate al hărții	Map coordinate system
+Sistemul de coordonate al stratului	Layer coordinate system
+Alegeți sistemul de coordonate	Choose the coordinate system
+Atenție: se schimbă doar interpretarea coordonatelor stratului (nu se transformă datele). Pentru transformare folosiți Export.	Note: only the interpretation of the layer coordinates changes (the data are not transformed). To transform, use Export.
+Caută:	Search:
+cod EPSG sau nume (ex. 3844, stereo, utm 35)	EPSG code or name (e.g. 3844, stereo, utm 35)
+Sisteme uzuale:	Common systems:
+Niciun rezultat.	No results.
+Sau definiție personalizată (șir PROJ sau WKT):	Or a custom definition (PROJ string or WKT):
+Folosește definiția	Use the definition
+Anulează	Cancel
+Format:	Format:
+Sistem de ieșire:	Output CRS:
+Al stratului ({})	Layer CRS ({})
+Al hărții ({})	Map CRS ({})
+Altul:	Other:
+alege…	choose…
+Codificare DBF:	DBF encoding:
+Geometrie:	Geometry:
+scrie ca WKT	write as WKT
+Câmp text:	Text field:
+Câmp nume:	Name field:
+(automat)	(automatic)
+Rezoluție:	Resolution:
+automată	automatic
+Reeșantionare:	Resampling:
+Cel mai apropiat	Nearest neighbour
+Biliniară	Bilinear
+KML și GPX sunt întotdeauna în WGS84 (transformare automată).	KML and GPX are always in WGS84 (automatic transformation).
+Export…	Export…
+Salvează ca	Save as
+Export {layer_name}	Export {layer_name}
+Convertor de coordonate	Coordinate converter
+Din:	From:
+În:	To:
+Inversează	Swap
+Longitudine (X):	Longitude (X):
+X (Est):	X (East):
+Latitudine (Y):	Latitude (Y):
+Y (Nord):	Y (North):
+Altitudine H MN75:	Height H MN75:
+Altitudine h:	Height h:
+Opțional. Între Stereo 70/30 (H Marea Neagră 1975) și celelalte sisteme (h elipsoidal ETRS89) se aplică cvasigeoidul TransDatRO.	Optional. Between Stereo 70/30 (H Black Sea 1975) and the other systems (ETRS89 ellipsoidal h) the TransDatRO quasigeoid is applied.
+opțional	optional
+Preia punctul printr-un click pe hartă	Pick the point with a click on the map
+Copiază	Copy
+Conversie listă de puncte	Point list conversion
+O linie pe punct: „X Y” sau „ID X Y” (separator spațiu, tab, ; sau ,)	One line per point: “X Y” or “ID X Y” (separator space, tab, ; or ,)
+Transformă lista	Transform the list
+Copiază rezultatul	Copy the result
+Tabel de atribute	Attribute table
+Strat:	Layer:
+Filtru:	Filter:
+text căutat în orice câmp	text searched in any field
+Niciun strat vectorial.	No vector layer.
+{} din {} entități	{} of {} features
+ (cresc.)	 (asc.)
+ (descr.)	 (desc.)
+Click = selectare, dublu-click = zoom la entitate. Click pe antet = sortare.	Click = select, double-click = zoom to feature. Click a header = sort.
+Folosiți instrumentul Identificare (I) și faceți click pe hartă.	Use the Identify tool (I) and click on the map.
+Zoom la entitate	Zoom to feature
+Import text: {}	Text import: {}
+(niciuna)	(none)
+Geometria este în coloana WKT	The geometry is in a WKT column
+Coloana WKT:	WKT column:
+X (Est / longitudine):	X (East / longitude):
+Y (Nord / latitudine):	Y (North / latitude):
+Z (cotă):	Z (elevation):
+Sistem de coordonate:	Coordinate system:
+alege… (implicit: detecție automată)	choose… (default: automatic detection)
+Inversează X și Y	Swap X and Y
+Topografic, în Stereo 70 X = Nord și Y = Est	Surveying convention: in Stereo 70 X = North and Y = East
+Previzualizare	Preview
+Încarcă	Load
+Import CSV	CSV import
+Conversie fișiere în lot	Batch file conversion
+Dosar sursă:	Source folder:
+Alege…	Choose…
+Dosar destinație:	Target folder:
+Format de ieșire:	Output format:
+Doar extensiile:	Only extensions:
+ex. shp,dxf (gol = toate)	e.g. shp,dxf (empty = all)
+Sistem sursă:	Source CRS:
+din fișiere	from the files
+Șterge	Clear
+Reproiectare în:	Reproject to:
+fără reproiectare	no reprojection
+Opțiuni:	Options:
+include subdosarele	include subfolders
+DBF în Windows-1250	DBF in Windows-1250
+Pornește conversia	Start the conversion
+Se lucrează…	Working…
+Conversie în lot terminată: {ok} reușite, {err} erori	Batch conversion finished: {ok} succeeded, {err} errors
+EROARE: {e:#}	ERROR: {e:#}
+Conversie în lot	Batch conversion
+Despre Cadastru	About Cadastru
+Aplicație GIS desktop scrisă în Rust.	Desktop GIS application written in Rust.
+Autor:	Author:
+Vizualizare hărți vectoriale și raster, conversie între formate, reproiecție.	Vector and raster map viewing, format conversion, reprojection.
+Biblioteci: egui/eframe, proj4rs (transformări), crs-definitions (EPSG), tiff, image, rusqlite, earcutr.	Libraries: egui/eframe, proj4rs (transformations), crs-definitions (EPSG), tiff, image, rusqlite, earcutr.
+TransDatRO: algoritm și griduri © ANCPI (Agenția Națională de Cadastru și Publicitate Imobiliară).	TransDatRO: algorithm and grids © ANCPI (Romanian National Agency for Cadastre and Land Registration).
+Transformarea Stereo 70 <-> ETRS89/WGS84 folosește implicit TransDatRO (precizie centimetrică); opțional Helmert 7 parametri (EPSG:15994).	The Stereo 70 <-> ETRS89/WGS84 transformation uses TransDatRO by default (centimetre accuracy); optionally the 7-parameter Helmert (EPSG:15994).
+Hărțile de fundal aparțin furnizorilor lor (OpenStreetMap, Esri, Google, Microsoft, CARTO, BKG, EOX) și se folosesc conform condițiilor fiecăruia; atribuirea apare în colțul hărții.	Basemaps belong to their providers (OpenStreetMap, Esri, Google, Microsoft, CARTO, BKG, EOX) and are used under each provider’s terms; the attribution is shown in the map corner.
+Utilizare și scurtături	Usage and shortcuts
+Manualul de utilizare (PDF)	User manual (PDF, Romanian)
+Deschide fișiere (sau trageți-le peste fereastră)	Open files (or drag them onto the window)
+Salvează spațiul de lucru (.cgw)	Save the workspace (.cgw)
+Tipărire (și Fișier > Salvează ca PDF)	Print (and File > Save as PDF)
+Rotița mouse	Mouse wheel
+Zoom la cursor	Zoom at the cursor
+Trage / buton mijloc	Drag / middle button
+Deplasare hartă	Pan the map
+Dublu-click	Double-click
+Zoom ×2 (instrumentul Deplasare)	Zoom ×2 (Pan tool)
+Extindere completă	Full extent
+Mărire / micșorare	Zoom in / out
+Deplasare / Zoom + / Zoom − / Identificare / Măsurare	Pan / Zoom in / Zoom out / Identify / Measure
+Săgeți	Arrow keys
+Deplasare cu un sfert de ecran	Pan by a quarter of the screen
+Backspace / Alt+Dreapta	Backspace / Alt+Right
+Vederea anterioară / următoare	Previous / next view
+Control pe hartă	On-map control
+Săgeți = deplasare (ține apăsat pentru continuu), centru = extindere completă, +/− = zoom	Arrows = pan (hold for continuous), centre = full extent, +/− = zoom
+Harta de fundal (OSM, Esri, Google, Bing, CARTO…), opacitate, șablon XYZ propriu	Basemap (OSM, Esri, Google, Bing, CARTO…), opacity, custom XYZ template
+Anulează măsurarea și selecția	Cancel the measurement and the selection
+Click dreapta	Right-click
+Meniu: copiere coordonate, centrare, identificare	Menu: copy coordinates, centre, identify
+Straturile fără fișier .prj primesc un sistem presupus (WGS84 sau Stereo 70 după extindere), afișat cu portocaliu. Corectați-l din meniul contextual al stratului > „Setează sistemul de coordonate”.	Layers without a .prj file get an assumed CRS (WGS84 or Stereo 70, based on the extent), shown in orange. Correct it from the layer context menu > “Set coordinate system”.
+Distanță (plan): {}\n	Distance (plane): {}\n
+Distanță (elipsoid): {}\n	Distance (ellipsoid): {}\n
+Ultimul segment: {}\n	Last segment: {}\n
+Arie (aprox.): {}\n	Area (approx.): {}\n
+Arie (plan): {}\n	Area (plane): {}\n
+Perimetru: {}\n	Perimeter: {}\n
+‹geometrie›	‹geometry›
+‹vârfuri›	‹vertices›
+ (în {})	 (in {})
+‹lungime›	‹length›
+‹arie›	‹area›
+‹perimetru›	‹perimeter›
+coloana {}, rândul {}	column {}, row {}
+Banda {}	Band {}
+Nicio entitate la poziția indicată.	No feature at the indicated position.
+Deplasare (click sau ține apăsat) · centru = extindere completă	Pan (click or hold) · centre = full extent
+Mărire (+)	Zoom in (+)
+Micșorare (-)	Zoom out (-)
+Copiază coordonatele ({txt})	Copy coordinates ({txt})
+Copiază lat, lon WGS84 ({w})	Copy WGS84 lat, lon ({w})
+Centrează aici	Centre here
+Identifică aici	Identify here
+Trageți aici fișiere GIS sau folosiți Fișier > Deschide (Ctrl+O)	Drop GIS files here or use File > Open (Ctrl+O)
+Harta de fundal: {n} / {total} tile-uri	Basemap: {n} / {total} tiles
+tile-urile hărții de fundal nu au putut fi descărcate (verificați conexiunea)	the basemap tiles could not be downloaded (check the connection)
+pagină prea mare	page too large
+cadru prea mare	frame too large
+Se descarcă harta de fundal…	Downloading the basemap…
+Se desenează straturile…	Drawing the layers…
+Legendă	Legend
+Sistem de coordonate: {}	Coordinate system: {}
+Data: {}	Date: {}
+Fundal: {}	Basemap: {}
+Realizat cu Cadastru	Made with Cadastru
+codare JPEG	JPEG encoding
+Hartă	Map
+imprimanta a refuzat documentul	the printer rejected the document
+imprimanta a refuzat pagina	the printer rejected the page
+eroare la finalizarea tipăririi	error while finishing the print job
+Salvează ca PDF	Save as PDF
+Tipărirea directă este disponibilă doar pe Windows. Folosiți „Salvează ca PDF”.	Direct printing is only available on Windows. Use “Save as PDF”.
+ (rezoluție redusă la {nd} DPI pentru formatul ales)	 (resolution reduced to {nd} DPI for the chosen paper)
+ — atenție: {}	 — warning: {}
+Previzualizare: scara 1:{}{w_note}	Preview: scale 1:{}{w_note}
+Se scrie PDF-ul…	Writing the PDF…
+PDF salvat: {} (scara 1:{}){note}{w_note}	PDF saved: {} (scale 1:{}){note}{w_note}
+Se trimite la imprimantă…	Sending to the printer…
+Pagina a fost trimisă la imprimantă (scara 1:{}){note}{w_note}	The page was sent to the printer (scale 1:{}){note}{w_note}
+nicio destinație	no destination
+Se pregătește previzualizarea…	Preparing the preview…
+Se pregătește pagina…	Preparing the page…
+Eroare: {e}	Error: {e}
+Salvează harta ca PDF	Save map as PDF
+Tipărire hartă	Print map
+Titlu:	Title:
+ex. Plan de încadrare în zonă	e.g. Location plan
+Notă (în colț):	Note (corner):
+ex. Întocmit: …	e.g. Prepared by: …
+Hârtie:	Paper:
+Peisaj	Landscape
+Portret	Portrait
+Scara:	Scale:
+Vederea curentă (≈1:{})	Current view (≈1:{})
+altă	other
+Elemente:	Elements:
+Scară grafică	Scale bar
+Nord	North arrow
+Caroiaj de coordonate	Coordinate grid
+Harta de fundal	Basemap
+Harta este centrată pe vederea curentă; elementele vizibile sunt cele din hartă (straturi, stiluri, etichete).	The map is centred on the current view; the visible elements are those of the map (layers, styles, labels).
+Salvează PDF…	Save PDF…
+Tipărește…	Print…
+Latitudine B (φ):	Latitude B (φ):
+Longitudine L (λ):	Longitude L (λ):
+Altitudine elipsoidală h [m]:	Ellipsoidal height h [m]:
+x (Nord) [m]:	x (North) [m]:
+y (Est) [m]:	y (East) [m]:
+Altitudine H MN75 [m]:	Height H MN75 [m]:
+x (Est) [m]:	x (East) [m]:
+y (Nord) [m]:	y (North) [m]:
+Coordonate invalide	Invalid coordinates
+Altitudine invalidă	Invalid height
+x (Nord)	x (North)
+y (Est) 	y (East) 
+x (Est) 	x (East) 
+y (Nord)	y (North)
+H Marea Neagră 1975 = {h:.3} m\n	H Black Sea 1975 = {h:.3} m\n
+{} puncte transformate, {} erori	{} points transformed, {} errors
+TransDatRO — transformări oficiale ANCPI	TransDatRO — official ANCPI transformations
+44 38 43.52664  sau  44.645424	44 38 43.52664  or  44.645424
+Transformare listă / fișier (format TransDatRO)	List / file transformation (TransDatRO format)
+Primul rând: titlu (opțional). Apoi „cod, coord1, coord2[, h]” pe rând; ENDF la final (opțional).	First line: title (optional). Then “code, coord1, coord2[, h]” per line; ENDF at the end (optional).
+Deschide fișier…	Open file…
+Toate	All
+Eroare la citire: {e}	Read error: {e}
+Transformă	Transform
+Salvează rezultatul…	Save the result…
+Salvat: {}	Saved: {}
+Eroare la salvare: {e}	Save error: {e}
+Adaugă pe hartă	Add to map
+Creează un strat de puncte cu rezultatele	Create a point layer with the results
+Setări și griduri	Settings and grids
+Folosește TransDatRO la reproiecția datelor din/în Stereo 70	Use TransDatRO when reprojecting data from/to Stereo 70
+Altfel se folosesc parametrii Helmert cu 7 parametri (EPSG:15994), diferențe de ordinul 1 m	Otherwise the 7-parameter Helmert transformation (EPSG:15994) is used; differences of about 1 m
+Altitudini doar cu cvasigeoidul EGG97 (fără gridul București-Ilfov)	Heights with the EGG97 quasigeoid only (without the Bucharest-Ilfov grid)
+Griduri mai noi publicate de ANCPI se pun în dosarul „grile” de lângă Cadastru.exe.	Newer grids published by ANCPI go into the “grile” folder next to Cadastru.exe.
+Strat TransDatRO adăugat ({n} puncte)	TransDatRO layer added ({n} points)
+CyclOSM (biciclete, relief)	CyclOSM (cycling, relief)
+OpenTopoMap (topografică)	OpenTopoMap (topographic)
+Esri World Imagery (satelit)	Esri World Imagery (satellite)
+Esri Imagery Hybrid (satelit + etichete)	Esri Imagery Hybrid (satellite + labels)
+Esri World Topo Map (topografică)	Esri World Topo Map (topographic)
+Esri World Physical Map (fizică)	Esri World Physical Map (physical)
+Google Hărți	Google Maps
+Google Satelit	Google Satellite
+Google Hibrid (satelit + etichete)	Google Hybrid (satellite + labels)
+Google Teren (relief)	Google Terrain (relief)
+Bing Aerial (satelit)	Bing Aerial (satellite)
+Bing Hibrid (satelit + etichete)	Bing Hybrid (satellite + labels)
+CARTO Positron (deschisă)	CARTO Positron (light)
+CARTO Dark Matter (închisă)	CARTO Dark Matter (dark)
+Altele	Others
+TopPlusOpen (BKG, topografică)	TopPlusOpen (BKG, topographic)
+Sentinel-2 cloudless (EOX, satelit 10 m)	Sentinel-2 cloudless (EOX, 10 m satellite)
+Personalizat	Custom
+imagine invalidă: {e}	invalid image: {e}
+   ·   se încarcă {} tile-uri	   ·   loading {} tiles
+Basemap indisponibil: {e}	Basemap unavailable: {e}
+fără	none
+Fără basemap	No basemap
+Șablon XYZ personalizat…	Custom XYZ template…
+Orice serviciu de tile-uri: https://server/{z}/{x}/{y}.png	Any tile service: https://server/{z}/{x}/{y}.png
+Opacitate:	Opacity:
+Golește cache-ul de tile-uri	Clear the tile cache
+Harta de fundal: {current}	Basemap: {current}
+Cache-ul de tile-uri a fost golit	The tile cache was cleared
+Cache-ul nu a putut fi golit complet: {e}	The cache could not be cleared completely: {e}
+Basemap personalizat	Custom basemap
+Șablon URL pentru tile-uri XYZ în Web Mercator (EPSG:3857):	URL template for XYZ tiles in Web Mercator (EPSG:3857):
+{z} {x} {y} = nivel și coloană/rând; {-y} = rând TMS; {s} = subdomeniu a/b/c; {q} = quadkey Bing	{z} {x} {y} = level and column/row; {-y} = TMS row; {s} = subdomain a/b/c; {q} = Bing quadkey
+Zoom maxim:	Maximum zoom:
+Șablonul trebuie să înceapă cu http(s):// și să conțină {z}, {x}, {y} (sau {q}).	The template must start with http(s):// and contain {z}, {x}, {y} (or {q}).
+Folosește	Use
+Basemap personalizat activ	Custom basemap active
+Format de ieșire necunoscut: {}	Unknown output format: {}
+Nu pot scrie date vectoriale în formatul raster {}	Cannot write vector data in the raster format {}
+Stratul „{}” nu are sistem de coordonate definit (indicați sistemul sursă)	Layer “{}” has no coordinate system defined (specify the source system)
+{failed} entități din „{}” nu au putut fi transformate complet	{failed} features of “{}” could not be transformed completely
+Nu pot scrie un raster în formatul vectorial {}	Cannot write a raster in the vector format {}
+Rasterul nu are sistem de coordonate definit (indicați sistemul sursă)	The raster has no coordinate system defined (specify the source system)
+Nu s-a găsit niciun strat de convertit{}	No layer to convert was found{}
+ (stratul „{l}”)	 (layer “{l}”)
+Nu pot citi dosarul {}	Cannot read folder {}
+{} fișiere găsite	{} files found
+     atenție: {w}	     warning: {w}
+EROARE {}: {e:#}	ERROR {}: {e:#}
+Stereo 70 (Pulkovo 1942(58) / Stereo70)	Stereo 70 (Pulkovo 1942(58) / Stereo70)
+WGS 84 - geografic (lat/lon)	WGS 84 - geographic (lat/lon)
+ETRS89 - geografic	ETRS89 - geographic
+ETRS89 / UTM zona 34N	ETRS89 / UTM zone 34N
+ETRS89 / UTM zona 35N	ETRS89 / UTM zone 35N
+WGS 84 / UTM zona 34N	WGS 84 / UTM zone 34N
+WGS 84 / UTM zona 35N	WGS 84 / UTM zone 35N
+ETRS89 / LAEA Europa	ETRS89 / LAEA Europe
+Dealul Piscului 1970 / Stereo 70 (vechi)	Dealul Piscului 1970 / Stereo 70 (old)
+Pulkovo 1942(58) - geografic	Pulkovo 1942(58) - geographic
+Stereo 1930 București (TransDatRO)	Stereo 1930 Bucharest (TransDatRO)
+Cod EPSG necunoscut: {code}	Unknown EPSG code: {code}
+EPSG:{code} nu poate fi folosit: {e:?}	EPSG:{code} cannot be used: {e:?}
+Sistem de coordonate gol	Empty coordinate system
+Cod EPSG invalid: {t}	Invalid EPSG code: {t}
+Șir PROJ invalid: {e:?}	Invalid PROJ string: {e:?}
+Proiecție personalizată	Custom projection
+Nu recunosc sistemul de coordonate „{t}”. Folosiți EPSG:cod, un șir PROJ (+proj=...) sau WKT.	Unrecognised coordinate system “{t}”. Use EPSG:code, a PROJ string (+proj=...) or WKT.
+Sistem din WKT	System from WKT
+WKT nerecunoscut: {e:?}	Unrecognised WKT: {e:?}
+Proiecție nesuportată ({proj}): {e:?}	Unsupported projection ({proj}): {e:?}
+Proiecție invalidă {}: {e:?}	Invalid projection {}: {e:?}
+fără transformare	no transformation
+PROJ (parametri de datum)	PROJ (datum parameters)
+TransDatRO (grid oficial ANCPI)	TransDatRO (official ANCPI grid)
+Helmert 7 parametri — punct în afara gridului TransDatRO	7-parameter Helmert — point outside the TransDatRO grid
+Stratul „{}” nu are sistem de coordonate definit	Layer “{}” has no coordinate system defined
+XML invalid: {e}	Invalid XML: {e}
+Nu pot citi {}	Cannot read {}
+Arhivă ZIP invalidă: {} ({e})	Invalid ZIP archive: {} ({e})
+Nu există fișiere .cgxml în {}	There are no .cgxml files in {}
+Niciun poligon Land valid{}	No valid Land polygon{}
+CGXML: {} fișier(e), {} terenuri, {} puncte	CGXML: {} file(s), {} land parcels, {} points
+, {} cu enclave	, {} with enclaves
+, {} multipart	, {} multipart
+, {} ignorate (< 3 puncte)	, {} ignored (< 3 points)
+, {} puncte în afara unui inel valid	, {} points outside a valid ring
+, {} fișiere cu erori	, {} files with errors
+Coloana „{n}” nu există în CSV	Column “{n}” does not exist in the CSV
+Nu am găsit coloanele de coordonate în CSV (X/Y, lon/lat sau WKT). Coloane: {}	Coordinate columns not found in the CSV (X/Y, lon/lat or WKT). Columns: {}
+Nu pot scrie {}	Cannot write {}
+DXF binar nu este suportat – salvați fișierul ca DXF ASCII	Binary DXF is not supported – save the file as ASCII DXF
+date trunchiate	truncated data
+varuint invalid	invalid varuint
+varint invalid	invalid varint
+Nu pot deschide {}	Cannot open {}
+antet .gdbtable invalid	invalid .gdbtable header
+versiune .gdbtable nesuportată ({version})	unsupported .gdbtable version ({version})
+secțiune de câmpuri invalidă	invalid field section
+tip de câmp necunoscut ({ftype}) la „{name}”	unknown field type ({ftype}) for “{name}”
+index spațial invalid în descrierea geometriei	invalid spatial index in the geometry definition
+scară XY nulă	zero XY scale
+Lipsește {}	Missing {}
+.gdbtablx trunchiat	truncated .gdbtablx
+.gdbtablx are altă versiune decât .gdbtable	.gdbtablx has a different version than .gdbtable
+dimensiune de offset invalidă în .gdbtablx	invalid offset size in .gdbtablx
+număr de puncte invalid	invalid number of points
+părți invalide	invalid parts
+{} nu este un File Geodatabase (.gdb)	{} is not a File Geodatabase (.gdb)
+Catalogul geodatabase-ului (a00000001.gdbtable) nu poate fi citit	The geodatabase catalog (a00000001.gdbtable) cannot be read
+Catalog fără coloana Name	Catalog without a Name column
+„{name}”: format comprimat (CDF) – nesuportat, decomprimați-l în ArcGIS	“{name}”: compressed format (CDF) – not supported, uncompress it in ArcGIS
+Tabele fără geometrie (neîncărcate): {}	Tables without geometry (not loaded): {}
+{} nu conține clase de entități cu geometrie{}	{} contains no feature classes with geometry{}
+tip de câmp necunoscut	unknown field type
+„{name}”: {} entități cu curbe (arce/Bézier) aproximate prin segmente	“{name}”: {} features with curves (arcs/Bézier) approximated by segments
+„{name}”: {} entități multipatch (3D) ignorate	“{name}”: {} multipatch (3D) features ignored
+„{name}”: {} înregistrări nu au putut fi citite complet	“{name}”: {} records could not be read completely
+JSON invalid: {e}	Invalid JSON: {e}
+FeatureCollection fără „features”	FeatureCollection without “features”
+Geometrie GeoJSON nerecunoscută	Unrecognised GeoJSON geometry
+Nu este un document GeoJSON	Not a GeoJSON document
+GPX invalid: {e}	Invalid GPX: {e}
+KML invalid: {e}	Invalid KML: {e}
+KMZ invalid: {e}	Invalid KMZ: {e}
+KMZ fără fișier .kml	KMZ without a .kml file
+KML / KMZ (Google Earth)	KML / KMZ (Google Earth)
+CSV (X/Y sau WKT)	CSV (X/Y or WKT)
+CGXML (cadastru ANCPI)	CGXML (ANCPI cadastre)
+Esri File Geodatabase (dosar .gdb)	Esri File Geodatabase (.gdb folder)
+Arhivă ZIP cu fișiere CGXML	ZIP archive with CGXML files
+Fișierul nu există: {}	The file does not exist: {}
+Arhiva {} nu conține fișiere .cgxml	Archive {} contains no .cgxml files
+Format necunoscut: .{e}	Unknown format: .{e}
+Fișierul există deja: {} (folosiți opțiunea de suprascriere)	The file already exists: {} (use the overwrite option)
+Nu pot crea dosarul {}	Cannot create folder {}
+Nimic de scris	Nothing to write
+Formatul .{e} nu poate fi folosit pentru date vectoriale	The .{e} format cannot be used for vector data
+Format raster necunoscut: .{e}	Unknown raster format: .{e}
+Nu pot scrie raster în formatul .{e}	Cannot write a raster in the .{e} format
+TIFF invalid: {e}	Invalid TIFF: {e}
+Nu pot decoda imaginea TIFF: {e}	Cannot decode the TIFF image: {e}
+Antet ASC incomplet	Incomplete ASC header
+Valoare invalidă în antet: {key} {val}	Invalid header value: {key} {val}
+Antet ASC invalid	Invalid ASC header
+ASCII Grid nu suportă rastere rotite – reproiectați întâi	ASCII Grid does not support rotated rasters – reproject first
+Nu pot deschide imaginea {}	Cannot open image {}
+Dimensiuni invalide	Invalid dimensions
+înregistrare SHP trunchiată	truncated SHP record
+Tip de formă SHP nesuportat: {other}	Unsupported SHP shape type: {other}
+DBF invalid	Invalid DBF
+{} nu este un fișier shapefile valid	{} is not a valid shapefile
+WKB trunchiat	Truncated WKB
+WKB invalid	Invalid WKB
+Tip WKB nesuportat: {t}	Unsupported WKB type: {t}
+WKT: se aștepta '{}' la poziția {}	WKT: expected '{}' at position {}
+WKT: număr invalid la poziția {st}	WKT: invalid number at position {st}
+WKT: tip de geometrie necunoscut „{other}”	WKT: unknown geometry type “{other}”
+(gol)	(empty)
+întreg	integer
+real	real
+text	text
+boolean	boolean
+dată	date
+Geotransformare invalidă	Invalid geotransform
+Rasterul „{}” nu are sistem de coordonate definit	Raster “{}” has no coordinate system defined
+Rasterul nu poate fi transformat în sistemul destinație	The raster cannot be transformed to the target system
+Rasterul rezultat ar fi prea mare ({w} x {h}); alegeți o rezoluție mai mare	The resulting raster would be too large ({w} x {h}); choose a coarser resolution
+Tonuri de gri	Greyscale
+Relief	Terrain
+punct în afara gridului {g}	point outside grid {g}
+punct în afara zonei de transformare (grid {g})	point outside the transformation area (grid {g})
+grid {name} invalid	invalid grid {name}
+antet invalid în gridul {name}	invalid header in grid {name}
+grid {name} incomplet	incomplete grid {name}
+inclus în program	built into the program
+(B,L,h) ETRS89 » (x,y,H) Stereo 70, Marea Neagră 75	(B,L,h) ETRS89 » (x,y,H) Stereo 70, Black Sea 75
+(x,y,H) Stereo 70, Marea Neagră 75 » (B,L,h) ETRS89	(x,y,H) Stereo 70, Black Sea 75 » (B,L,h) ETRS89
+(B,L,h) ETRS89 » (x,y,H) Stereo 30 București, Marea Neagră 75	(B,L,h) ETRS89 » (x,y,H) Stereo 30 Bucharest, Black Sea 75
+(x,y,H) Stereo 30 București, Marea Neagră 75 » (B,L,h) ETRS89	(x,y,H) Stereo 30 Bucharest, Black Sea 75 » (B,L,h) ETRS89
+(x,y) Stereo 30 București » (x,y) Stereo 70	(x,y) Stereo 30 Bucharest » (x,y) Stereo 70
+(x,y) Stereo 70 » (x,y) Stereo 30 București	(x,y) Stereo 70 » (x,y) Stereo 30 Bucharest
+{t}  ← EROARE: linie nerecunoscută\n	{t}  ← ERROR: unrecognised line\n
+{id}, EROARE: {e}\n	{id}, ERROR: {e}\n
+X (Est): {a:.4}\nY (Nord): {b:.4}	X (East): {a:.4}\nY (North): {b:.4}
+REZULTAT.txt	RESULT.txt
+PROIECT: exemplu\nP1, 47 42 56.40000, 22 28 32.00000, 162.000\nENDF	PROJECT: example\nP1, 47 42 56.40000, 22 28 32.00000, 162.000\nENDF
+Limba: română — click pentru English	Language: English — click for Română
+Limbă / Language	Language / Limbă
+Limba interfeței: română	Interface language: English
+nedefinit	undefined
+punct	point
+linie	line
+poligon	polygon
+mixt	mixed
+# 1.6.0 – selecție și căutare
+Entități:	Features:
+numai cele selectate ({})	selected only ({})
+toate	all
+_selectie	_selection
+Selectate: {n}	Selected: {n}
+Doar selecția	Selection only
+Selectează rândurile afișate	Select displayed rows
+Deselectează	Deselect
+Zoom la selecție	Zoom to selection
+Exportă selecția…	Export selection…
+Click = selectare, Ctrl+click = adaugă / scoate, Shift+click = interval, dublu-click = zoom la entitate. Click pe antet = sortare.	Click = select, Ctrl+click = add / remove, Shift+click = range, double-click = zoom to feature. Click a header = sort.
+Selectare   S	Select   S
+Deselectează tot   Ctrl+Shift+A	Clear selection   Ctrl+Shift+A
+Selectare doar în stratul activ	Select only in the active layer
+Altfel, în toate straturile vectoriale vizibile	Otherwise, in all visible vector layers
+Căutare…   Ctrl+F	Search…   Ctrl+F
+Selectare	Select
+Click = selectează entitatea, Ctrl+click = adaugă / scoate, Shift = adaugă, Alt = scoate, dreptunghi = selectează în zonă (S)	Click = select a feature, Ctrl+click = add / remove, Shift = add, Alt = remove, rectangle = select in an area (S)
+Căutare	Search
+Caută un loc sau o adresă, ori entități după valorile câmpurilor (Ctrl+F)	Search for a place or an address, or for features by field values (Ctrl+F)
+Selecție	Selection
+Selectează tot	Select all
+Inversează selecția	Invert selection
+Exportă selecția ({n})…	Export selection ({n})…
+răspuns neașteptat	unexpected response
+Loc: {}	Place: {}
+Coordonate: {a} {b}	Coordinates: {a} {b}
+Se caută…	Searching…
+Niciun loc găsit în OpenStreetMap.	No place found in OpenStreetMap.
+Căutarea online nu a reușit: {e}	The online search failed: {e}
+Loc / adresă	Place / address
+După câmpuri	By fields
+… încă {} (folosiți Selectează pentru toate)	… {} more (use Select for all of them)
+Selectează	Select
+Adaugă la selecție	Add to selection
+Zoom la rezultate	Zoom to results
+ex. Pitești, Str. Victoriei 10 Brașov, 44.85 24.87	e.g. Pitești, Str. Victoriei 10 Brașov, 44.85 24.87
+Caută	Search
+Doar în România	Romania only
+Șterge marcajul	Clear the marker
+Caută în straturile încărcate (orice câmp) și în OpenStreetMap. Coordonatele se scriu „lat, lon” (WGS84) sau „X Y” în sistemul hărții.	Searches the loaded layers (any field) and OpenStreetMap. Write coordinates as “lat, lon” (WGS84) or “X Y” in the map coordinate system.
+În straturile încărcate ({})	In the loaded layers ({})
+Locuri (OpenStreetMap)	Places (OpenStreetMap)
+Niciun strat vectorial încărcat.	No vector layer loaded.
+Toate straturile vectoriale	All vector layers
+Unde	Where
+(orice câmp)	(any field)
+Valorile din câmp	Values in the field
+Elimină condiția	Remove the condition
++ Condiție	+ Condition
+Golește	Clear
+Interogare: {}	Query: {}
+ȘI are prioritate față de SAU. Textele se compară fără majuscule și fără diacritice; numerele, ca numere.	AND takes precedence over OR. Text is compared ignoring case and diacritics; numbers are compared as numbers.
+Nicio entitate nu îndeplinește condițiile.	No feature meets the conditions.
+{n} {de}entități găsite	{n} features found
+O entitate găsită	1 feature found
+{n} {de}entități găsite în {k} straturi	{n} features found in {k} layers
+Selecția a fost golită.	The selection was cleared.
+Nicio entitate selectată.	No feature selected.
+Selecție: {n} {de}entități	Selection: {n} features
+Selecție: o entitate	Selection: 1 feature
+Selecție: {n} {de}entități în {k} straturi	Selection: {n} features in {k} layers
+conține	contains
+nu conține	does not contain
+începe cu	starts with
+se termină cu	ends with
+este gol	is empty
+nu este gol	is not empty
+ȘI	AND
+SAU	OR
+orice câmp	any field
+Selectare: click, Ctrl+click = adaugă / scoate, dreptunghi = zonă	Select: click, Ctrl+click = add / remove, rectangle = area
+Deselectează tot	Clear selection
+Căutare: loc, adresă, coordonate sau după câmpuri	Search: place, address, coordinates or by fields
+# 1.7.0 – export pe tipuri de geometrie
+Straturile au sisteme de coordonate diferite – alegeți un sistem de ieșire comun	The layers have different coordinate systems – choose a common output system
+{no_geom} entități fără geometrie au fost omise	{no_geom} features without geometry were skipped
+Nu există entități de tip {}	There are no {} features
+Nicio entitate de exportat pentru tipurile alese	No features to export for the chosen types
+Export pe tipuri de geometrie (DXF » SHP puncte / linii / poligoane)…	Export by geometry type (DXF » SHP points / lines / polygons)…
+Export pe tipuri de geometrie (SHP)…	Export by geometry type (SHP)…
+Export pe tipuri de geometrie (Shapefile)	Export by geometry type (Shapefile)
+Entitățile din straturile bifate sunt unite și scrise în câte un shapefile pentru fiecare tip de geometrie.	The features of the checked layers are merged and written to one shapefile per geometry type.
+Straturi:	Layers:
+Doar DXF	DXF only
+Niciunul	None
+Fișiere:	Files:
+puncte » …_puncte.shp (puncte, texte, blocuri)	points » …_puncte.shp (points, texts, blocks)
+linii » …_linii.shp (linii, polilinii, arce)	lines » …_linii.shp (lines, polylines, arcs)
+poligoane » …_poligoane.shp	polygons » …_poligoane.shp
+Poliliniile închise:	Closed polylines:
+ca poligoane	as polygons
+ca linii (hașurile rămân poligoane)	as lines (hatches stay polygons)
+Fără reproiectare (al straturilor)	No reprojection (the layers’ own)
+Câmp suplimentar:	Extra field:
+Fisier – stratul (fișierul) de origine	Fisier – the source layer (file)
+Straturi alese: {}	Layers chosen: {}
+Numele de bază al shapefile-urilor (se adaugă _puncte, _linii, _poligoane)	Base name of the shapefiles (_puncte, _linii, _poligoane are appended)
+Alegeți sistemul de ieșire.	Choose the output coordinate system.
+Export pe tipuri reușit: {files}	Export by type completed: {files}
+Export pe tipuri de geometrie	Export by geometry type
+# 1.8.0 – deschidere în masă
+Dosarul din care se deschid fișierele	Folder to open the files from
+Deschide toate fișierele de un tip	Open all files of one type
+Dosar:	Folder:
+Se caută fișierele…	Looking for files…
+Inclusiv subdosarele (recursiv)	Including subfolders (recursive)
+Nu am găsit fișiere GIS în acest dosar.	No GIS files found in this folder.
+Tipul de fișiere:	File type:
+vector	vector
+raster	raster
+în dosar	in the folder
+în subdosare	in subfolders
+Numele straturilor cu calea din subdosare (ex. Comuna/teren)	Layer names with the subfolder path (e.g. Comuna/teren)
+Fișierele care se deschid:	Files to open:
+… încă {}	… {} more
+Atenție: {} – încărcarea poate dura și poate ocupa multă memorie.	Warning: {} – loading may take a while and use a lot of memory.
+Deschide {}	Open {}
+Se deschid: {}	Opening: {}
+Citite {} din {}…	Read {} of {}…
+Oprit după {} din {}: {} deschise	Stopped after {} of {}: {} opened
+Deschise: {} din {}	Opened: {} from {}
+Un fișier nu a putut fi deschis:	One file could not be opened:
+{} nu au putut fi deschise:	{} could not be opened:
+Oprește ({}/{})	Stop ({}/{})
+Oprește deschiderea fișierelor; straturile deja încărcate rămân	Stop opening files; the layers already loaded stay
+Deschide toate fișierele de un tip dintr-un dosar…	Open all files of one type from a folder…
+Total: {}, {}	Total: {}, {}
+# 1.9.0
+{} în afara zonei	{} outside the area
+{} fără geometrie	{} without geometry
+sistem presupus	assumed CRS
+{}: păstrate {} din {}	{}: kept {} of {}
+{} (la caracterul {})	{} (at character {})
+Lipsește {} de închidere	Missing closing {}
+Număr greșit	Invalid number
+Caracter neașteptat: {}	Unexpected character: {}
+Se aștepta „{}”	Expected “{}”
+NULL se poate compara doar cu = sau <>	NULL can only be compared with = or <>
+Se aștepta NULL după IS	Expected NULL after IS
+Se aștepta AND în BETWEEN … AND …	Expected AND in BETWEEN … AND …
+Se aștepta LIKE, IN sau BETWEEN după NOT	Expected LIKE, IN or BETWEEN after NOT
+Expresia s-a terminat neașteptat	The expression ended unexpectedly
+Câmpul „{}” nu există în strat	Field “{}” does not exist in the layer
+Se aștepta un câmp sau o valoare în locul lui {}	Expected a field or a value instead of {}
+Câmpul „{}” nu există în strat (un text se scrie între apostrofuri: '{}')	Field “{}” does not exist in the layer (text values go between single quotes: '{}')
+Expresia este goală	The expression is empty
+{}: expresia de filtrare: {}	{}: filter expression: {}
+{}: nicio entitate nu trece de filtru ({})	{}: no feature passes the filter ({})
+Filtru România: {}	Romania filter: {}
+Filtru zonă: {}	Area filter: {}
+Filtru: {}	Filter: {}
+Selecție nouă	New selection
+Scoate din selecție	Remove from selection
+Selectează din selecția curentă	Select from current selection
+Selectare după atribute	Select by attributes
+(niciun strat vectorial)	(no vector layer)
+{} · selectate {}	{} · selected {}
+Deschideți un strat vectorial.	Open a vector layer.
+Câmpuri (dublu-click = inserează)	Fields (double-click = insert)
+Click = valorile câmpului, dublu-click = inserează numele în expresie	Click = the field's values, double-click = insert the name into the expression
+Valori	Values
+Alegeți un câmp din listă pentru a-i vedea valorile.	Pick a field from the list to see its values.
+Valori „{}”: {}	Values of “{}”: {}
+(primele {})	(first {})
+filtrează valorile	filter the values
+… (restrângeți cu filtrul)	… (narrow down with the filter)
+Click = inserează valoarea; dublu-click = inserează „câmp = valoare”	Click = insert the value; double-click = insert “field = value”
+Expresie corectă. Ctrl+Enter = selectează.	Valid expression. Ctrl+Enter = select.
+Exemple: admin_unit_id = 123 · status = 1 AND is_active = 1 · nume LIKE 'Pit%' · cod IN (1, 2, 3) · supr BETWEEN 100 AND 500 · obs IS NULL	Examples: admin_unit_id = 123 · status = 1 AND is_active = 1 · name LIKE 'Pit%' · code IN (1, 2, 3) · area BETWEEN 100 AND 500 · notes IS NULL
+Exact (majuscule și diacritice)	Exact (case and diacritics)
+Implicit „Argeș” = „ARGES”; bifat, textele trebuie să fie identice	By default “Argeș” = “ARGES”; when checked, texts must be identical
+Zoom pe rezultat	Zoom to result
+Verifică	Check
+Numără entitățile potrivite, fără să schimbe selecția	Count the matching features without changing the selection
+Golește expresia	Clear expression
+Tabelul de atribute al stratului, doar cu entitățile selectate	The layer's attribute table, showing only the selected features
+Recente…	Recent…
+Expresia este îndeplinită de {} din {}.	The expression matches {} of {}.
+{} potrivite din {}; în „{}”: {}.	{} matching of {}; in “{}”: {}.
+Doar entitățile din interiorul României (EPSG:3844)	Only features inside Romania (EPSG:3844)
+Filtrul de încărcare (aceeași bifă ca în meniul Fișier); zona: {}	Load filter (same checkbox as in the File menu); area: {}
+După atribute…	By attributes…
+Selectare după atribute (Ctrl+Shift+F)	Select by attributes (Ctrl+Shift+F)
+Filtrul de încărcare (aceeași bifă ca în meniul Fișier)	Load filter (same checkbox as in the File menu)
+Selectare după atribute (expresie: status = 1 AND is_active = 1)	Select by attributes (expression: status = 1 AND is_active = 1)
+România	Romania
+zonă proprie	custom area
+Filtrul de încărcare este activ: fișierele deschise de acum se încarcă doar cu entitățile din {} ({}).	The load filter is on: files opened from now on load only the features inside {} ({}).
+Filtrul de încărcare este oprit: fișierele se încarcă întregi.	The load filter is off: files load in full.
+La deschidere: doar entitățile din interiorul României (EPSG:3844)	On open: only features inside Romania (EPSG:3844)
+Bifat, la deschiderea fișierelor vectoriale (inclusiv deschiderea în masă și fișierele trase în fereastră) se încarcă doar entitățile aflate în interiorul încadrării României în Stereo 70: {}. Rasterele nu sunt afectate.	When checked, opening vector files (including bulk open and files dropped on the window) loads only the features inside Romania's extent in Stereo 70: {}. Rasters are not affected.
+Filtru la încărcare: {}	Load filter: {}
+Fișierele vectoriale deschise se încarcă doar cu entitățile din zona {} (EPSG:3844). Click pentru opțiuni.	Opened vector files load only the features inside the area {} (EPSG:3844). Click for options.
+Filtrul de încărcare	Load filter
+La deschidere: doar entitățile din interiorul zonei	On open: only features inside the area
+Se aplică fișierelor vectoriale deschise de acum (Deschide date, deschiderea în masă, fișiere trase în fereastră). Coordonatele se transformă în Stereo 70 doar pentru test; straturile își păstrează sistemul. Rasterele nu sunt afectate.	Applies to vector files opened from now on (Open data, bulk open, files dropped on the window). Coordinates are transformed to Stereo 70 only for the test; layers keep their own CRS. Rasters are not affected.
+Entitățile păstrate:	Features kept:
+aflate în întregime în interior	entirely inside
+și cele care doar ating zona	also those that only touch the area
+Zona (EPSG:3844):	Area (EPSG:3844):
+Scrieți patru numere: minX, minY, maxX, maxY (metri, Stereo 70).	Enter four numbers: minX, minY, maxX, maxY (metres, Stereo 70).
+Încadrarea României (implicit)	Romania's extent (default)
+Zonă proprie: {:.1} × {:.1} km	Custom area: {:.1} × {:.1} km
+România (implicit)	Romania (default)
+Pentru un strat deja încărcat	For a layer already loaded
+Scoate entitățile din afara zonei	Remove features outside the area
+Șterge din strat (doar din memorie, nu din fișier) entitățile aflate în afara zonei	Deletes from the layer (in memory only, not from the file) the features outside the area
+„{}”: toate entitățile sunt în interiorul zonei.	“{}”: all features are inside the area.
+Opțiunile filtrului de încărcare…	Load filter options…
+Selectare după atribute…   Ctrl+Shift+F	Select by attributes…   Ctrl+Shift+F
+Selectare după atribute: expresie de tipul status = 1 AND is_active = 1 (Ctrl+Shift+F)	Select by attributes: an expression like status = 1 AND is_active = 1 (Ctrl+Shift+F)
+Scoate entitățile din afara României…	Remove features outside Romania…
+Fereastra filtrului de zonă, cu acest strat ales	The area filter window, with this layer chosen
+Paranteză „)” în plus	Extra closing parenthesis “)”
+Se aștepta un operator (=, <>, LIKE, IN …) sau AND / OR înainte de {}	Expected an operator (=, <>, LIKE, IN …) or AND / OR before {}
+{} prin expresie	{} by the expression
