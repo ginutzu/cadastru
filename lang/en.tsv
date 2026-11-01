@@ -820,3 +820,38 @@ Harta se centrează și se încadrează pe entitățile selectate	The map is cen
 Zoom pe selecție	Zoom to selection
 Centrează harta pe încadrarea entităților selectate din strat	Centre the map on the extent of the layer's selected features
 Redraw: curăță grafica temporară și redesenează harta	Redraw: clear temporary graphics and redraw the map
+# 1.11.0
+lipsește cheia API Google (Căutare > Loc / adresă > Cheie API)	the Google API key is missing (Search > Place / address > API key)
+linkul Google Maps nu conține coordonate	the Google Maps link contains no coordinates
+Windows nu a putut deschide browserul implicit (cod {})	Windows could not open the default browser (code {})
+Panoul Straturi   Ctrl+L	Layers panel   Ctrl+L
+Ascuns, harta ocupă toată lățimea; panoul revine cu un click pe banda din stânga	When hidden, the map takes the full width; click the strip on the left to bring the panel back
+Click = mărire ×2, dreptunghi = zoom pe zonă (Z). Tasta + mărește în centrul hărții.	Click = zoom in ×2, rectangle = zoom to area (Z). The + key zooms in at the map centre.
+Click = micșorare ×2, dreptunghi = vederea curentă intră în zonă (X). Tasta − micșorează în centrul hărții.	Click = zoom out ×2, rectangle = the current view fits into the area (X). The − key zooms out at the map centre.
+Interogare	Query
+Caută un loc sau o adresă (OpenStreetMap, Google), ori entități după valorile câmpurilor (Ctrl+F)	Search for a place or address (OpenStreetMap, Google), or for features by field values (Ctrl+F)
+Ascunde panoul Straturi (Ctrl+L): harta ocupă toată lățimea	Hide the Layers panel (Ctrl+L): the map takes the full width
+{}\n{}\n{}\nSistem: {}{}	{}\n{}\n{}\nCRS: {}{}
+Arată panoul Straturi (Ctrl+L)	Show the Layers panel (Ctrl+L)
+Straturi ({n})	Layers ({n})
+Linkul Google Maps nu conține coordonate. Deschideți locul în Google Maps și copiați linkul din bara de adrese sau din Distribuie.	The Google Maps link contains no coordinates. Open the place in Google Maps and copy the link from the address bar or from Share.
+Codul Plus nu a putut fi decodat.	The Plus Code could not be decoded.
+localitatea „{locality}” nu a fost găsită	the locality “{locality}” was not found
+Pentru căutarea Google este nevoie de o cheie API (mai jos). Fără cheie: butonul „Deschide în Google Maps” trimite căutarea în browser, iar linkul locului copiat de acolo se poate lipi aici.	Google search needs an API key (below). Without a key: the “Open in Google Maps” button sends the search to the browser, and the place link copied from there can be pasted here.
+Google Maps deschis în browser: {url}	Google Maps opened in the browser: {url}
+Browserul nu s-a putut deschide: {e:#}	The browser could not be opened: {e:#}
+Niciun loc găsit.	No place found.
+Atenție – {n}	Warning – {n}
+ex. Pitești, Str. Victoriei 10 Brașov, 44.85 24.87, link Google Maps	e.g. Pitești, Str. Victoriei 10 Brașov, 44.85 24.87, Google Maps link
+Sursă:	Source:
+Ambele	Both
+Deschide în Google Maps	Open in Google Maps
+Deschide în browser căutarea în Google Maps (sau vederea curentă, dacă nu e scris nimic). Linkul unui loc copiat din Google Maps se poate lipi apoi în căutare.	Opens the search in Google Maps in the browser (or the current view, if nothing is typed). A place link copied from Google Maps can then be pasted into the search.
+Cheie API Google:	Google API key:
+Obține o cheie…	Get a key…
+Google Cloud Console: creați o cheie și activați Places API (New) sau Geocoding API	Google Cloud Console: create a key and enable Places API (New) or Geocoding API
+din GOOGLE_MAPS_API_KEY	from GOOGLE_MAPS_API_KEY
+Caută în straturile încărcate (orice câmp) și online. Se pot scrie și: coordonate „lat, lon” (WGS84) sau „X Y” în sistemul hărții, un link Google Maps (inclusiv maps.app.goo.gl) ori un cod Plus (ex. 8GP8PV9C+2W sau PV9C+2W Pitești).	Searches the loaded layers (any field) and online. You can also type: coordinates “lat, lon” (WGS84) or “X Y” in the map CRS, a Google Maps link (including maps.app.goo.gl) or a Plus Code (e.g. 8GP8PV9C+2W or PV9C+2W Pitești).
+Locuri (Google)	Places (Google)
+Locuri (Google și OpenStreetMap)	Places (Google and OpenStreetMap)
+Ascunde / arată panoul Straturi	Hide / show the Layers panel

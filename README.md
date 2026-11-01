@@ -1,4 +1,4 @@
-# Cadastru 1.10.0
+# Cadastru 1.11.0
 
 Autor: **Ginu Popescu** (scriemiaici@proton.me)
 
@@ -23,8 +23,11 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 
 ### Interfață
 - **bilingvă: română (implicit) și engleză**. Comutatorul **RO | EN** din dreapta barei de instrumente (sau *Vizualizare → Limbă / Language*) schimbă limba imediat, fără repornire; alegerea se păstrează în setări. Se traduc meniurile, dialogurile, mesajele, erorile și textele planșei tipărite; datele (nume de straturi, câmpuri, valori) rămân neschimbate. Manualul și linia de comandă sunt în română.
+- fereastra se deschide **maximizată** (pe tot ecranul, cu bara de titlu și bara de activități Windows vizibile)
 - temă **gri închis** (implicită) sau luminoasă, din *Vizualizare → Temă*; alegerea se păstrează în `%APPDATA%\Cadastru\setari.json`
-- bară de instrumente cu pictograme și **control de navigație pe hartă**: săgeți de deplasare (click = un sfert de ecran, ținut apăsat = deplasare continuă), centru = extindere completă, butoane + / − pentru zoom
+- bara de instrumente e **grupată pe funcționalități**, cu numele grupului sub butoane: *Fișier* (Deschide), *Vizualizare* (Deplasare, Zoom +, Zoom −, Extindere completă, Vederea anterioară / următoare, Redraw), *Interogare* (Identificare, Căutare, Tabel), *Selecție* (Selectare, Selectare după atribute), *Instrumente* (Măsurare, Convertor) și *Hartă* (Basemap, sistemul hărții); butoanele care dublau alte comenzi (mărire / micșorare în centrul hărții) au fost scoase – rămân tastele + / − și butoanele de pe hartă. Pe ecrane înguste butoanele rămân doar cu pictograme, cu numele în indiciu
+- **panoul Straturi** se poate îngusta trăgând marginea spre stânga (numele lungi se taie și apar întregi în indiciu, la trecerea cu mouse-ul) sau se poate **ascunde complet** cu « din colțul lui, cu *Vizualizare → Panoul Straturi* sau Ctrl+L (ori trăgând marginea până la capăt): harta ocupă toată lățimea și rămâne doar o bandă îngustă, pe care un click readuce panoul; starea se păstrează între porniri
+- **control de navigație pe hartă**: săgeți de deplasare (click = un sfert de ecran, ținut apăsat = deplasare continuă), centru = extindere completă, butoane + / − pentru zoom
 - instrumentele **Zoom +** (click = ×2, dreptunghi = zoom pe zonă) și **Zoom −** (click = ×0,5, dreptunghi = vederea curentă intră în zonă), **Deplasare**, **Identificare**, **Măsurare**
 - istoric de vederi: **vederea anterioară / următoare**
 
@@ -70,7 +73,7 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 - **Selectare (S)**: click = o entitate, Ctrl+click = adaugă / scoate, dreptunghi = toate entitățile atinse (Shift adaugă, Alt scoate); selecția apare cu galben pe hartă și ca număr lângă numele stratului, e sincronizată cu tabelul de atribute (Ctrl/Shift+click, bifa „Doar selecția”) și are operații în meniul stratului: selectează tot, inversează, deselectează, zoom la selecție, **exportă selecția** (în orice format vectorial, cu reproiecție). Ctrl+Shift+A golește selecția
 - **Selectare după atribute (Ctrl+Shift+F)**: expresie în stilul SQL `WHERE` pe un strat – `admin_unit_id = 123`, `status = 1 AND is_active = 1`, `judet LIKE 'Arg%'`, `cod IN (13, 14)`, `supr BETWEEN 100 AND 500`, `obs IS NULL`, paranteze, `NOT`; lista câmpurilor și a valorilor distincte (cu numărul de apariții) se inserează cu click, expresia e verificată pe loc (eroarea cu poziția ei); selecție nouă, adaugă, scoate sau doar din selecția curentă; textele fără deosebire de majuscule și diacritice (sau exact); după selectare harta se **centrează și se încadrează pe selecție** (bifa „Zoom pe rezultat”, activă implicit, și butonul „Zoom pe selecție”)
 - **Filtrul de încărcare** (*Fișier → La deschidere: doar entitățile din interiorul României*): la deschiderea fișierelor vectoriale se încarcă doar entitățile aflate în interiorul încadrării României în Stereo 70 (EPSG:3844: 114000, 235000 – 885000, 764000) – în întregime sau, opțional, și cele care doar ating zona; zona poate fi înlocuită cu alt dreptunghi; se aplică și la deschiderea în masă, la fișierele trase în fereastră și la importul CSV, iar pentru un strat deja încărcat există comanda „Scoate entitățile din afara României”
-- **Căutare (Ctrl+F)**: locuri, adrese și obiective prin **OpenStreetMap Nominatim** (ca în Google Maps; implicit doar în România), cu zoom și marcaj pe hartă; coordonate „lat, lon” WGS84 sau „X Y” în sistemul hărții; căutare rapidă a textului în toate straturile încărcate; **interogări după câmpuri** cu operatori (=, ≠, conține, începe cu, >, ≤, este gol …) legați prin **ȘI / SAU**, fără deosebire de majuscule și diacritice, cu lista valorilor existente; rezultatele se pot selecta, adăuga la selecție sau încadra pe hartă
+- **Căutare (Ctrl+F)**: locuri, adrese și obiective prin **OpenStreetMap Nominatim**, **Google** sau ambele (implicit doar în România), cu zoom și marcaj pe hartă. Căutarea Google folosește Places API (New) / Geocoding API cu o cheie Google Maps Platform a utilizatorului (introdusă în fereastra de căutare sau în variabila de mediu `GOOGLE_MAPS_API_KEY`); fără cheie, butonul **Deschide în Google Maps** trimite căutarea (sau vederea curentă) în browser, iar **linkul unui loc din Google Maps** – complet sau scurt (`maps.app.goo.gl/…`) – lipit în căutare duce harta exact acolo. Se recunosc și **codurile Plus** (`8GP8PV9C+2W` sau `PV9C+2W Pitești`), coordonatele „lat, lon” WGS84 și „X Y” în sistemul hărții; căutare rapidă a textului în toate straturile încărcate; **interogări după câmpuri** cu operatori (=, ≠, conține, începe cu, >, ≤, este gol …) legați prin **ȘI / SAU**, fără deosebire de majuscule și diacritice, cu lista valorilor existente; rezultatele se pot selecta, adăuga la selecție sau încadra pe hartă
 - **Măsurare (M)**: distanță plană și pe elipsoid (Vincenty, WGS84), ultimul segment, arie și perimetru
 - **Tabel de atribute (T)**: filtrare, sortare pe coloane, selectare cu evidențiere pe hartă, dublu-click pentru zoom la entitate
 - **Convertor de coordonate**: un punct (introdus manual sau prin click pe hartă) sau o listă de puncte lipită din Excel („X Y” ori „ID X Y”)
@@ -209,6 +212,7 @@ Opțiuni: `--fara-puncte`, `--fara-linii`, `--fara-poligoane`, `--inchise-ca-lin
 |---|---|
 | F1 | manualul de utilizare (PDF) |
 | F5 | Redraw: curăță grafica temporară și redesenează harta |
+| Ctrl+L | ascunde / arată panoul Straturi |
 | Ctrl+O | deschide fișiere |
 | Ctrl+S | salvează spațiul de lucru |
 | Ctrl+P | tipărire |
@@ -307,8 +311,8 @@ Sursele documentației sunt în `docs/src` (HTML + CSS, capturile în `docs/src/
 
 ```bash
 cd docs/src
-python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.10.0 · Manual de utilizare"
-python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.10.0 · Documentație tehnică"
+python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.11.0 · Manual de utilizare"
+python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.11.0 · Documentație tehnică"
 ```
 
 `docs/Manual_Cadastru.pdf` este inclus în `cadastru.exe` (tasta F1), deci după reconstruirea lui trebuie recompilată aplicația.

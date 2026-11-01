@@ -14,6 +14,7 @@ mod select;
 mod split;
 mod tdr;
 pub mod theme;
+mod google;
 mod workspace;
 
 use cadastru::crs::{Crs, Transformer};
@@ -24,7 +25,7 @@ use eframe::egui::{self, Color32, Key, RichText};
 use layers::*;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{Receiver, channel};
-use theme::{Icon, Settings, Theme, icon_button};
+use theme::{Icon, Settings, Theme, icon_button, small_icon_button, tool_group};
 use cadastru::i18n::tr;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -79,6 +80,9 @@ pub struct Job {
     pub rx: Receiver<JobResult>,
 }
 
+/// Lățimea benzii rămase când panoul Straturi e ascuns.
+const LAYERS_STRIP: f32 = 26.0;
+
 pub struct App {
     pub layers: Vec<LayerEntry>,
     pub next_id: u64,
@@ -92,6 +96,8 @@ pub struct App {
     pub selection: Option<(u64, usize)>,
     pub identify: Vec<IdentifyResult>,
     pub show_identify: bool,
+    /// cerere de afișare / ascundere a panoului Straturi, aplicată după desenarea panoului
+    pub layers_toggle: Option<bool>,
     pub measure: Vec<(f64, f64)>,
     pub measure_done: bool,
     pub zoom_box_start: Option<egui::Pos2>,
@@ -159,6 +165,7 @@ impl App {
             selection: None,
             identify: vec![],
             show_identify: false,
+            layers_toggle: None,
             measure: vec![],
             measure_done: false,
             zoom_box_start: None,
@@ -631,6 +638,7 @@ impl App {
             s: bool,
             ctrl_f: bool,
             f5: bool,
+            ctrl_l: bool,
             deselect: bool,
             attr_sel: bool,
             back: bool,
@@ -661,6 +669,7 @@ impl App {
                 ctrl_p: cmd && i.key_pressed(Key::P),
                 f1: i.key_pressed(Key::F1),
                 f5: i.key_pressed(Key::F5),
+                ctrl_l: cmd && i.key_pressed(Key::L),
                 home: i.key_pressed(Key::Home),
                 esc: i.key_pressed(Key::Escape),
                 i: !cmd && i.key_pressed(Key::I),
@@ -694,6 +703,9 @@ impl App {
         }
         if k.f5 {
             self.redraw_all(ctx);
+        }
+        if k.ctrl_l {
+            self.layers_toggle = Some(!self.settings.layers_panel);
         }
         if k.home {
             self.zoom_full();
@@ -1098,6 +1110,14 @@ impl App {
                     self.settings.save();
                 }
                 ui.checkbox(&mut self.show_identify, tr!("Fereastra de identificare"));
+                let mut lp = self.settings.layers_panel;
+                if ui
+                    .checkbox(&mut lp, tr!("Panoul Straturi   Ctrl+L"))
+                    .on_hover_text(tr!("Ascuns, harta ocupă toată lățimea; panoul revine cu un click pe banda din stânga"))
+                    .changed()
+                {
+                    self.layers_toggle = Some(lp);
+                }
                 ui.separator();
                 ui.label(tr!("Temă:"));
                 let ctx = ui.ctx().clone();
@@ -1239,178 +1259,209 @@ impl App {
 
     fn toolbar(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
-            ui.spacing_mut().item_spacing.x = 2.0;
-            // fereastră îngustă: instrumentele hărții doar cu pictograme (textul rămâne în indicii)
-            let compact = ui.available_width() < 1360.0;
-            if icon_button(
-                ui,
-                Icon::Open,
-                tr!("Deschide"),
-                false,
-                tr!("Deschide fișiere: SHP, GPKG, DXF, CGXML, GeoTIFF … (Ctrl+O)"),
-            )
-            .clicked()
-            {
-                self.open_dialog();
-            }
-            ui.separator();
-            for (t, icon, label, tip) in [
-                (
-                    Tool::Pan,
-                    Icon::Pan,
-                    tr!("Deplasare"),
-                    tr!("Trage harta (P). Rotița mouse-ului = zoom, săgețile = deplasare."),
-                ),
-                (
-                    Tool::ZoomIn,
-                    Icon::ZoomIn,
-                    tr!("Zoom +"),
-                    tr!("Click = mărire ×2, dreptunghi = zoom pe zonă (Z)"),
-                ),
-                (
-                    Tool::ZoomOut,
-                    Icon::ZoomOut,
-                    tr!("Zoom −"),
-                    tr!("Click = micșorare ×2, dreptunghi = vederea curentă intră în zonă (X)"),
-                ),
-                (
-                    Tool::Identify,
-                    Icon::Identify,
-                    tr!("Identificare"),
-                    tr!("Click pe o entitate pentru atribute (I)"),
-                ),
-                (
-                    Tool::Select,
-                    Icon::Select,
-                    tr!("Selectare"),
-                    tr!("Click = selectează entitatea, Ctrl+click = adaugă / scoate, Shift = adaugă, Alt = scoate, dreptunghi = selectează în zonă (S)"),
-                ),
-                (
-                    Tool::Measure,
-                    Icon::Measure,
-                    tr!("Măsurare"),
-                    tr!("Click pentru puncte, dublu-click pentru final, Esc pentru ștergere (M)"),
-                ),
-            ] {
-                let tip = if compact { format!("{label} – {tip}") } else { tip.to_string() };
-                let label = if compact { "" } else { label };
-                if icon_button(ui, icon, label, self.tool == t, &tip).clicked() {
-                    self.tool = t;
+            ui.spacing_mut().item_spacing.x = 4.0;
+            // fereastră îngustă: butoanele doar cu pictograme (numele rămâne în indicii);
+            // la lățime medie păstrează numele doar instrumentele principale
+            let w = ui.available_width();
+            let compact = w < 1520.0;
+            let medium = w >= 1330.0;
+            let lbl = |s: &'static str| if compact { "" } else { s };
+            // instrumentele principale: cu nume și la lățime medie
+            let lbl1 = |s: &'static str| if compact && !medium { "" } else { s };
+            let tipc = |label: &str, tip: &str| {
+                if compact { format!("{label} – {tip}") } else { tip.to_string() }
+            };
+
+            tool_group(ui, tr!("Fișier"), |ui| {
+                if icon_button(
+                    ui,
+                    Icon::Open,
+                    lbl(tr!("Deschide")),
+                    false,
+                    &tipc(tr!("Deschide"), tr!("Deschide fișiere: SHP, GPKG, DXF, CGXML, GeoTIFF … (Ctrl+O)")),
+                )
+                .clicked()
+                {
+                    self.open_dialog();
                 }
-            }
-            if icon_button(
-                ui,
-                Icon::SelectAttr,
-                "",
-                self.dlg.attrsel.open,
-                tr!("Selectare după atribute: expresie de tipul status = 1 AND is_active = 1 (Ctrl+Shift+F)"),
-            )
-            .clicked()
-            {
-                if self.dlg.attrsel.open {
-                    self.dlg.attrsel.open = false;
-                } else {
-                    self.open_attr_select(None);
-                }
-            }
-            ui.separator();
-            if icon_button(ui, Icon::FullExtent, "", false, tr!("Extindere completă (Home)")).clicked()
-            {
-                self.zoom_full();
-            }
-            if icon_button(ui, Icon::Plus, "", false, tr!("Mărire (+)")).clicked() {
-                self.zoom_step(2.0);
-            }
-            if icon_button(ui, Icon::Minus, "", false, tr!("Micșorare (-)")).clicked() {
-                self.zoom_step(0.5);
-            }
-            if icon_button(ui, Icon::Back, "", false, tr!("Vederea anterioară (Backspace)")).clicked() {
-                self.history_back();
-            }
-            if icon_button(
-                ui,
-                Icon::Forward,
-                "",
-                false,
-                tr!("Vederea următoare (Alt+Dreapta)"),
-            )
-            .clicked()
-            {
-                self.history_forward();
-            }
-            if icon_button(
-                ui,
-                Icon::Redraw,
-                if compact { "" } else { tr!("Redraw") },
-                false,
-                tr!("Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD: șterge măsurătoarea, marcajele și evidențierile temporare, regenerează straturile și reîncarcă tile-urile de fundal eșuate (F5)"),
-            )
-            .clicked()
-            {
-                self.redraw_all(ui.ctx());
-            }
-            ui.separator();
-            if icon_button(ui, Icon::Table, tr!("Tabel"), false, tr!("Tabel de atribute (T)")).clicked() {
-                self.open_table();
-            }
-            if icon_button(
-                ui,
-                Icon::Search,
-                tr!("Căutare"),
-                self.dlg.search.open,
-                tr!("Caută un loc sau o adresă, ori entități după valorile câmpurilor (Ctrl+F)"),
-            )
-            .clicked()
-            {
-                self.dlg.search.open = !self.dlg.search.open;
-                self.dlg.search.focus = self.dlg.search.open;
-            }
-            if icon_button(
-                ui,
-                Icon::Convert,
-                tr!("Convertor"),
-                false,
-                tr!("Convertor de coordonate"),
-            )
-            .clicked()
-            {
-                self.open_converter();
-            }
-            ui.separator();
-            self.basemap_menu(ui);
-            ui.separator();
-            // numele complet al sistemului doar dacă încape lângă comutatorul de limbă
-            let label = match self.map_crs.as_ref() {
-                Some(c) => {
-                    let full = c.to_string();
-                    let short = c.short();
-                    let room = ui.available_width();
-                    if room > full.chars().count() as f32 * 7.2 + 150.0 {
-                        full
-                    } else if room > short.chars().count() as f32 * 7.2 + 130.0 {
-                        short
-                    } else {
-                        // bara e prea îngustă: doar globul (sistemul e în indiciul butonului)
-                        String::new()
+            });
+
+            // Vizualizare: tot ce schimbă doar vederea hărții
+            tool_group(ui, tr!("Vizualizare"), |ui| {
+                for (t, icon, label, tip) in [
+                    (
+                        Tool::Pan,
+                        Icon::Pan,
+                        tr!("Deplasare"),
+                        tr!("Trage harta (P). Rotița mouse-ului = zoom, săgețile = deplasare."),
+                    ),
+                    (
+                        Tool::ZoomIn,
+                        Icon::ZoomIn,
+                        tr!("Zoom +"),
+                        tr!("Click = mărire ×2, dreptunghi = zoom pe zonă (Z). Tasta + mărește în centrul hărții."),
+                    ),
+                    (
+                        Tool::ZoomOut,
+                        Icon::ZoomOut,
+                        tr!("Zoom −"),
+                        tr!("Click = micșorare ×2, dreptunghi = vederea curentă intră în zonă (X). Tasta − micșorează în centrul hărții."),
+                    ),
+                ] {
+                    let l = if t == Tool::Pan { lbl1(label) } else { lbl(label) };
+                    if icon_button(ui, icon, l, self.tool == t, &tipc(label, tip)).clicked() {
+                        self.tool = t;
                     }
                 }
-                None => tr!("nedefinit").into(),
-            };
-            if icon_button(
-                ui,
-                Icon::Globe,
-                &label,
-                false,
-                &format!(
-                    "{}\n{}",
-                    self.map_crs.as_ref().map(|c| c.to_string()).unwrap_or_default(),
-                    tr!("Sistemul de coordonate al hărții – click pentru schimbare")
-                ),
-            )
-            .clicked()
-            {
-                self.dlg.crs_picker = Some(CrsPicker::new(CrsPurpose::Map, self.map_crs.clone()));
-            }
+                if icon_button(ui, Icon::FullExtent, "", false, tr!("Extindere completă (Home)")).clicked() {
+                    self.zoom_full();
+                }
+                if icon_button(ui, Icon::Back, "", false, tr!("Vederea anterioară (Backspace)")).clicked() {
+                    self.history_back();
+                }
+                if icon_button(ui, Icon::Forward, "", false, tr!("Vederea următoare (Alt+Dreapta)")).clicked() {
+                    self.history_forward();
+                }
+                if icon_button(
+                    ui,
+                    Icon::Redraw,
+                    lbl(tr!("Redraw")),
+                    false,
+                    &tipc(tr!("Redraw"), tr!("Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD: șterge măsurătoarea, marcajele și evidențierile temporare, regenerează straturile și reîncarcă tile-urile de fundal eșuate (F5)")),
+                )
+                .clicked()
+                {
+                    self.redraw_all(ui.ctx());
+                }
+            });
+
+            // Interogare: informații despre entități și locuri
+            tool_group(ui, tr!("Interogare"), |ui| {
+                if icon_button(
+                    ui,
+                    Icon::Identify,
+                    lbl1(tr!("Identificare")),
+                    self.tool == Tool::Identify,
+                    &tipc(tr!("Identificare"), tr!("Click pe o entitate pentru atribute (I)")),
+                )
+                .clicked()
+                {
+                    self.tool = Tool::Identify;
+                }
+                if icon_button(
+                    ui,
+                    Icon::Search,
+                    lbl1(tr!("Căutare")),
+                    self.dlg.search.open,
+                    &tipc(tr!("Căutare"), tr!("Caută un loc sau o adresă (OpenStreetMap, Google), ori entități după valorile câmpurilor (Ctrl+F)")),
+                )
+                .clicked()
+                {
+                    self.dlg.search.open = !self.dlg.search.open;
+                    self.dlg.search.focus = self.dlg.search.open;
+                }
+                if icon_button(
+                    ui,
+                    Icon::Table,
+                    lbl(tr!("Tabel")),
+                    self.dlg.table.open,
+                    &tipc(tr!("Tabel"), tr!("Tabel de atribute (T)")),
+                )
+                .clicked()
+                {
+                    self.open_table();
+                }
+            });
+
+            tool_group(ui, tr!("Selecție"), |ui| {
+                if icon_button(
+                    ui,
+                    Icon::Select,
+                    lbl1(tr!("Selectare")),
+                    self.tool == Tool::Select,
+                    &tipc(tr!("Selectare"), tr!("Click = selectează entitatea, Ctrl+click = adaugă / scoate, Shift = adaugă, Alt = scoate, dreptunghi = selectează în zonă (S)")),
+                )
+                .clicked()
+                {
+                    self.tool = Tool::Select;
+                }
+                if icon_button(
+                    ui,
+                    Icon::SelectAttr,
+                    "",
+                    self.dlg.attrsel.open,
+                    tr!("Selectare după atribute: expresie de tipul status = 1 AND is_active = 1 (Ctrl+Shift+F)"),
+                )
+                .clicked()
+                {
+                    if self.dlg.attrsel.open {
+                        self.dlg.attrsel.open = false;
+                    } else {
+                        self.open_attr_select(None);
+                    }
+                }
+            });
+
+            tool_group(ui, tr!("Instrumente"), |ui| {
+                if icon_button(
+                    ui,
+                    Icon::Measure,
+                    lbl1(tr!("Măsurare")),
+                    self.tool == Tool::Measure,
+                    &tipc(tr!("Măsurare"), tr!("Click pentru puncte, dublu-click pentru final, Esc pentru ștergere (M)")),
+                )
+                .clicked()
+                {
+                    self.tool = Tool::Measure;
+                }
+                if icon_button(
+                    ui,
+                    Icon::Convert,
+                    lbl(tr!("Convertor")),
+                    self.dlg.converter.open,
+                    &tipc(tr!("Convertor"), tr!("Convertor de coordonate")),
+                )
+                .clicked()
+                {
+                    self.open_converter();
+                }
+            });
+
+            tool_group(ui, tr!("Hartă"), |ui| {
+                self.basemap_menu(ui);
+                // numele complet al sistemului doar dacă încape lângă comutatorul de limbă
+                let label = match self.map_crs.as_ref() {
+                    Some(c) => {
+                        let full = c.to_string();
+                        let short = c.short();
+                        let room = ui.available_width();
+                        if room > full.chars().count() as f32 * 7.2 + 120.0 {
+                            full
+                        } else if room > short.chars().count() as f32 * 7.2 + 100.0 {
+                            short
+                        } else {
+                            // bara e prea îngustă: doar globul (sistemul e în indiciul butonului)
+                            String::new()
+                        }
+                    }
+                    None => tr!("nedefinit").into(),
+                };
+                if icon_button(
+                    ui,
+                    Icon::Globe,
+                    &label,
+                    false,
+                    &format!(
+                        "{}\n{}",
+                        self.map_crs.as_ref().map(|c| c.to_string()).unwrap_or_default(),
+                        tr!("Sistemul de coordonate al hărții – click pentru schimbare")
+                    ),
+                )
+                .clicked()
+                {
+                    self.dlg.crs_picker = Some(CrsPicker::new(CrsPurpose::Map, self.map_crs.clone()));
+                }
+            });
             // comutatorul de limbă, aliniat la dreapta
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_space(4.0);
@@ -1455,35 +1506,33 @@ impl App {
 
     fn layers_panel(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
-            ui.heading(tr!("Straturi"));
+            ui.spacing_mut().item_spacing.x = 2.0;
+            if small_icon_button(ui, Icon::Collapse, true, tr!("Ascunde panoul Straturi (Ctrl+L): harta ocupă toată lățimea")).clicked() {
+                self.layers_toggle = Some(false);
+            }
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                ui.spacing_mut().item_spacing.x = 2.0;
                 let sel = self.selected_layer;
-                if ui
-                    .add_enabled(sel.is_some(), egui::Button::new(tr!("Elimină")))
-                    .on_hover_text(tr!("Elimină stratul selectat"))
-                    .clicked()
+                if small_icon_button(ui, Icon::Remove, sel.is_some(), tr!("Elimină stratul selectat")).clicked()
                     && let Some(id) = sel
                 {
                     self.remove_layer(id);
                 }
-                if ui
-                    .add_enabled(sel.is_some(), egui::Button::new(tr!("Jos")))
-                    .on_hover_text(tr!("Coboară stratul"))
-                    .clicked()
+                if small_icon_button(ui, Icon::Down, sel.is_some(), tr!("Coboară stratul")).clicked()
                     && let Some(i) = sel.and_then(|id| self.layers.iter().position(|l| l.id == id))
                     && i > 0
                 {
                     self.layers.swap(i, i - 1);
                 }
-                if ui
-                    .add_enabled(sel.is_some(), egui::Button::new(tr!("Sus")))
-                    .on_hover_text(tr!("Urcă stratul"))
-                    .clicked()
+                if small_icon_button(ui, Icon::Up, sel.is_some(), tr!("Urcă stratul")).clicked()
                     && let Some(i) = sel.and_then(|id| self.layers.iter().position(|l| l.id == id))
                     && i + 1 < self.layers.len()
                 {
                     self.layers.swap(i, i + 1);
                 }
+                ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
+                    ui.add(egui::Label::new(RichText::new(tr!("Straturi")).heading()).truncate());
+                });
             });
         });
         ui.separator();
@@ -1517,10 +1566,12 @@ impl App {
                         if l.crs_assumed {
                             text = text.color(Color32::from_rgb(200, 120, 0));
                         }
+                        // numele lung se taie la marginea panoului; întreg apare în indiciu
                         let r = ui
-                            .selectable_label(self.selected_layer == Some(l.id), text)
+                            .add(egui::Button::selectable(self.selected_layer == Some(l.id), text).truncate())
                             .on_hover_text(tr!(
-                                "{}\n{}\nSistem: {}{}",
+                                "{}\n{}\n{}\nSistem: {}{}",
+                                l.name,
                                 l.source()
                                     .map(|p| p.display().to_string())
                                     .unwrap_or_default(),
@@ -1704,11 +1755,38 @@ impl App {
         }
         ui.separator();
         if let Some(id) = self.selected_layer {
-            egui::ScrollArea::vertical()
+            egui::ScrollArea::both()
                 .id_salt("props_scroll")
                 .show(ui, |ui| {
                     self.layer_properties(ui, id);
                 });
+        }
+    }
+
+    /// Panoul Straturi ascuns: bandă îngustă; click oriunde pe ea îl readuce.
+    fn layers_strip(&mut self, ui: &mut egui::Ui) {
+        let rect = ui.max_rect();
+        let resp = ui
+            .allocate_rect(rect, egui::Sense::click())
+            .on_hover_text(tr!("Arată panoul Straturi (Ctrl+L)"));
+        let v = ui.visuals();
+        let fg = if resp.hovered() { v.strong_text_color() } else { v.text_color() };
+        let p = ui.painter();
+        if resp.hovered() {
+            p.rect_filled(rect, 0.0, v.widgets.hovered.weak_bg_fill);
+        }
+        let cx = rect.center().x;
+        let ic = |y: f32| egui::Rect::from_center_size(egui::pos2(cx, y), egui::vec2(18.0, 18.0));
+        theme::paint_icon(p, ic(rect.top() + 14.0), Icon::Expand, fg);
+        theme::paint_icon(p, ic(rect.top() + 38.0), Icon::Layers, fg);
+        let n = self.layers.len();
+        let title = if n > 0 { tr!("Straturi ({n})") } else { tr!("Straturi").to_string() };
+        let galley = p.layout_no_wrap(title, egui::FontId::proportional(13.0), fg);
+        // text vertical, de sus în jos
+        let pos = egui::pos2(cx + galley.size().y / 2.0, rect.top() + 56.0);
+        p.add(egui::epaint::TextShape::new(pos, galley, fg).with_angle(std::f32::consts::FRAC_PI_2));
+        if resp.clicked() {
+            self.layers_toggle = Some(true);
         }
     }
 
@@ -1718,7 +1796,8 @@ impl App {
         let Some(l) = self.layers.iter_mut().find(|l| l.id == id) else {
             return;
         };
-        ui.strong(&l.name);
+        ui.add(egui::Label::new(RichText::new(&l.name).strong()).truncate())
+            .on_hover_text(&l.name);
         egui::Grid::new("layer_info")
             .num_columns(2)
             .spacing([8.0, 2.0])
@@ -2217,13 +2296,34 @@ impl eframe::App for App {
         egui::Panel::bottom("status").show(ui, |ui| {
             self.status_bar(ui);
         });
-        egui::Panel::left("layers")
-            .resizable(true)
-            .default_size(290.0)
-            .min_size(200.0)
-            .show(ui, |ui| {
-                self.layers_panel(ui);
-            });
+        // Panoul Straturi: se ascunde cu « (sau Ctrl+L, sau trăgând marginea spre stânga);
+        // ascuns rămâne o bandă îngustă pe care un click îl readuce.
+        let mut open = self.settings.layers_panel;
+        egui::Panel::show_switched(
+            ui,
+            &mut open,
+            egui::Panel::left("layers_collapsed").resizable(true).exact_size(LAYERS_STRIP),
+            egui::Panel::left("layers")
+                .resizable(true)
+                .default_size(290.0)
+                .min_size(120.0)
+                .max_size(900.0),
+            |ui, expanded| {
+                if expanded {
+                    self.layers_panel(ui)
+                } else {
+                    self.layers_strip(ui)
+                }
+            },
+        );
+        let open = match self.layers_toggle.take() {
+            Some(v) => v,
+            None => open,
+        };
+        if open != self.settings.layers_panel {
+            self.settings.layers_panel = open;
+            self.settings.save();
+        }
         egui::CentralPanel::no_frame().show(ui, |ui| {
             self.map_ui(ui);
         });

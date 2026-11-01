@@ -148,6 +148,21 @@ pub struct Settings {
     pub load_area_partial: bool,
     /// Zona filtrului, în EPSG:3844: minX, minY, maxX, maxY
     pub load_area_bounds: [f64; 4],
+    /// Panoul Straturi afișat (false = ascuns, harta pe toată lățimea)
+    pub layers_panel: bool,
+    /// Sursa căutării de locuri / adrese
+    pub geocoder: Geocoder,
+    /// Cheia Google Maps Platform (Places API / Geocoding API)
+    pub google_api_key: String,
+}
+
+/// Unde caută instrumentul Căutare locurile și adresele.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, Default)]
+pub enum Geocoder {
+    #[default]
+    Osm,
+    Google,
+    Both,
 }
 
 impl Default for Settings {
@@ -168,6 +183,9 @@ impl Default for Settings {
             load_area_filter: false,
             load_area_partial: false,
             load_area_bounds: cadastru::area::ROMANIA_3844,
+            layers_panel: true,
+            geocoder: Geocoder::Osm,
+            google_api_key: String::new(),
         }
     }
 }
@@ -229,6 +247,14 @@ pub enum Icon {
     Search,
     SelectAttr,
     Redraw,
+    Up,
+    Down,
+    Remove,
+    /// panoul lateral: « (ascunde)
+    Collapse,
+    /// panoul lateral: » (arată)
+    Expand,
+    Layers,
 }
 
 fn arrow_head(p: &Painter, tip: Pos2, dir: egui::Vec2, size: f32, c: Color32) {
@@ -403,7 +429,60 @@ pub fn paint_icon(p: &Painter, r: Rect, icon: Icon, c: Color32) {
             p.circle_stroke(pt(-1.5, -1.5), 5.0 * u, Stroke::new(1.8, c));
             p.line_segment([pt(2.2, 2.2), pt(7.0, 7.0)], Stroke::new(2.6, c));
         }
+        Icon::Up | Icon::Down => {
+            let sgn = if icon == Icon::Up { -1.0 } else { 1.0 };
+            p.line_segment([pt(0.0, -4.5 * sgn), pt(0.0, 3.0 * sgn)], Stroke::new(2.0, c));
+            arrow_head(p, pt(0.0, 6.5 * sgn), vec2(0.0, sgn), 4.5 * u, c);
+        }
+        Icon::Remove => {
+            let w = Stroke::new(2.0, c);
+            p.line_segment([pt(-4.5, -4.5), pt(4.5, 4.5)], w);
+            p.line_segment([pt(4.5, -4.5), pt(-4.5, 4.5)], w);
+        }
+        Icon::Collapse | Icon::Expand => {
+            let sgn = if icon == Icon::Collapse { -1.0 } else { 1.0 };
+            let w = Stroke::new(1.8, c);
+            for dx in [-2.5f32, 2.5] {
+                let tip = pt(dx + 2.0 * sgn, 0.0);
+                p.line_segment([tip, pt(dx - 2.0 * sgn, -4.5)], w);
+                p.line_segment([tip, pt(dx - 2.0 * sgn, 4.5)], w);
+            }
+        }
+        Icon::Layers => {
+            // trei foi suprapuse
+            for (i, dy) in [3.5f32, 0.0, -3.5].iter().enumerate() {
+                let q = vec![pt(0.0, dy - 3.5), pt(7.0, *dy), pt(0.0, dy + 3.5), pt(-7.0, *dy)];
+                if i == 2 {
+                    p.add(Shape::convex_polygon(q, c.gamma_multiply(0.35), s));
+                } else {
+                    p.add(Shape::closed_line(q, Stroke::new(1.3, c)));
+                }
+            }
+        }
     }
+}
+
+/// Buton mic, doar cu pictogramă (antetul panoului Straturi).
+pub fn small_icon_button(ui: &mut egui::Ui, icon: Icon, enabled: bool, tip: &str) -> egui::Response {
+    let size = vec2(22.0, 22.0);
+    let sense = if enabled { egui::Sense::click() } else { egui::Sense::hover() };
+    let (rect, resp) = ui.allocate_exact_size(size, sense);
+    let resp = resp.on_hover_text(tip);
+    if ui.is_rect_visible(rect) {
+        let v = ui.visuals();
+        if enabled && resp.hovered() {
+            ui.painter().rect(
+                rect,
+                CornerRadius::same(4),
+                v.widgets.hovered.weak_bg_fill,
+                v.widgets.hovered.bg_stroke,
+                egui::StrokeKind::Inside,
+            );
+        }
+        let fg = if enabled { v.text_color() } else { v.weak_text_color().gamma_multiply(0.6) };
+        paint_icon(ui.painter(), rect.shrink(3.0), icon, fg);
+    }
+    resp
 }
 
 /// Buton de bară de instrumente cu pictogramă și text.
@@ -467,4 +546,37 @@ pub fn icon_button(
         }
     }
     resp
+}
+
+/// Grup de butoane în bara de instrumente: chenar discret și numele grupului dedesubt
+/// (ca grupurile din panglica programelor de birou).
+pub fn tool_group(ui: &mut egui::Ui, title: &str, add_contents: impl FnOnce(&mut egui::Ui)) {
+    let v = ui.visuals();
+    let frame = egui::Frame::new()
+        .stroke(Stroke::new(1.0, v.widgets.noninteractive.bg_stroke.color.gamma_multiply(0.9)))
+        .corner_radius(5.0)
+        .inner_margin(egui::Margin { left: 3, right: 3, top: 2, bottom: 0 });
+    frame.show(ui, |ui| {
+        ui.vertical(|ui| {
+            ui.spacing_mut().item_spacing.y = 0.0;
+            let row = ui
+                .horizontal(|ui| {
+                    ui.spacing_mut().item_spacing.x = 2.0;
+                    add_contents(ui)
+                })
+                .response
+                .rect;
+            let font = egui::FontId::proportional(10.0);
+            let color = ui.visuals().weak_text_color();
+            let galley = ui.painter().layout_no_wrap(title.to_string(), font, color);
+            let w = row.width().max(galley.size().x + 6.0);
+            let (r, resp) = ui.allocate_exact_size(vec2(w, galley.size().y + 1.0), egui::Sense::hover());
+            let _ = resp;
+            ui.painter().galley(
+                Pos2::new(r.center().x - galley.size().x / 2.0, r.top()),
+                galley,
+                color,
+            );
+        });
+    });
 }

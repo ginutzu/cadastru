@@ -57,6 +57,8 @@ fn main() -> eframe::Result {
             .with_title("Cadastru")
             .with_inner_size([1400.0, 880.0])
             .with_min_inner_size([800.0, 500.0])
+            // la pornire fereastra ocupă tot ecranul (maximizată, cu bara de titlu)
+            .with_maximized(true)
             .with_drag_and_drop(true)
             .with_icon(std::sync::Arc::new(make_icon())),
         ..Default::default()

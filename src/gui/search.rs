@@ -1,4 +1,5 @@
-//! Instrumentul Căutare: locuri și adrese (geocodare OpenStreetMap Nominatim, coordonate),
+//! Instrumentul Căutare: locuri și adrese (OpenStreetMap Nominatim și / sau Google,
+//! linkuri Google Maps, coduri Plus, coordonate),
 //! căutare rapidă în straturile încărcate și interogări pe atribute cu condiții ȘI / SAU.
 
 use super::App;
@@ -8,6 +9,8 @@ use cadastru::crs::{Crs, Transformer};
 use cadastru::i18n::tr;
 use cadastru::model::*;
 use cadastru::query::{self, Cond, Join, Op};
+use super::google;
+use super::theme::Geocoder;
 use eframe::egui::{self, Color32, FontId, RichText, Stroke, Vec2};
 use std::sync::mpsc::{Receiver, channel};
 
@@ -20,6 +23,24 @@ pub struct Place {
     pub lat: f64,
     /// încadrarea în WGS84: [vest, sud, est, nord]
     pub bbox: Option<[f64; 4]>,
+    pub src: PlaceSrc,
+}
+
+/// De unde provine un loc găsit.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum PlaceSrc {
+    Osm,
+    Google,
+    Coords,
+}
+
+/// Rezultatul unei căutări online (rulată în fundal).
+pub struct GeoResult {
+    pub places: Vec<Place>,
+    /// avertismente: de ex. una dintre surse nu a răspuns
+    pub notes: Vec<String>,
+    /// un singur loc precis (link, cod Plus): harta merge direct la el
+    pub auto: bool,
 }
 
 /// Marcajul locului ales, afișat pe hartă.
@@ -42,7 +63,7 @@ pub struct SearchDlg {
     /// 0 = loc / adresă, 1 = atribute
     pub tab: u8,
     pub place_q: String,
-    pub place_rx: Option<Receiver<Result<Vec<Place>, String>>>,
+    pub place_rx: Option<Receiver<Result<GeoResult, String>>>,
     pub places: Vec<Place>,
     pub place_msg: String,
     /// rezultatele căutării rapide în straturi
@@ -77,7 +98,7 @@ const NOMINATIM: &str = "https://nominatim.openstreetmap.org/search";
 const MAX_LIST: usize = 500;
 
 /// Codificare procentuală pentru parametrii URL.
-fn url_encode(s: &str) -> String {
+pub fn url_encode(s: &str) -> String {
     let mut o = String::new();
     for b in s.bytes() {
         match b {
@@ -118,12 +139,13 @@ pub fn parse_nominatim(body: &str) -> Result<Vec<Place>, String> {
                 lon,
                 lat,
                 bbox,
+                src: PlaceSrc::Osm,
             })
         })
         .collect())
 }
 
-fn geocode(q: &str, ro_only: bool, lang: &str) -> Result<Vec<Place>, String> {
+fn geocode_osm(q: &str, ro_only: bool, lang: &str) -> Result<Vec<Place>, String> {
     let mut url = format!(
         "{NOMINATIM}?format=jsonv2&limit=10&q={}&accept-language={lang}",
         url_encode(q)
@@ -140,6 +162,19 @@ fn geocode(q: &str, ro_only: bool, lang: &str) -> Result<Vec<Place>, String> {
         .read_to_string()
         .map_err(|e| e.to_string())?;
     parse_nominatim(&body)
+}
+
+/// Locul unui cod Plus decodat.
+fn plus_place(code: &str, locality: &str, lat: f64, lon: f64, size: f64) -> Place {
+    let h = size.max(0.0005) / 2.0;
+    Place {
+        name: if locality.is_empty() { code.to_string() } else { format!("{code} {locality}") },
+        kind: "Plus Code".into(),
+        lon,
+        lat,
+        bbox: Some([lon - h * 8.0, lat - h * 8.0, lon + h * 8.0, lat + h * 8.0]),
+        src: PlaceSrc::Google,
+    }
 }
 
 /// Două numere: „lat, lon” (ca în Google Maps) sau „x y” în sistemul hărții.
@@ -272,7 +307,7 @@ impl App {
         } else if let Some((x, y)) = t.xy(p.lon, p.lat) {
             self.zoom_point(x, y);
         }
-        let label = if p.kind == "WGS84" {
+        let label = if p.src == PlaceSrc::Coords || p.kind == "Google Maps" || p.kind == "Plus Code" {
             p.name.clone()
         } else {
             p.name.split(',').next().unwrap_or(&p.name).trim().to_string()
@@ -305,6 +340,7 @@ impl App {
                 lon: b,
                 lat: a,
                 bbox: None,
+                src: PlaceSrc::Coords,
             };
             self.go_to_place(&p);
             return true;
@@ -342,17 +378,147 @@ impl App {
             self.dlg.search.place_msg.clear();
             return;
         }
-        // în straturile încărcate: orice câmp conține textul
-        self.dlg.search.quick = self.run_query(None, &[Cond::new(None, Op::Contains, &q)]);
-        // în OpenStreetMap
-        let (tx, rx) = channel();
+        // link Google Maps complet: locul se citește direct din adresă
+        if google::is_maps_link(&q) && !google::is_short_link(&q) {
+            match google::parse_maps_url(&q) {
+                Some(p) => {
+                    self.dlg.search.place_msg.clear();
+                    self.dlg.search.places = vec![p.clone()];
+                    self.go_to_place(&p);
+                }
+                None => {
+                    self.dlg.search.place_msg =
+                        tr!("Linkul Google Maps nu conține coordonate. Deschideți locul în Google Maps și copiați linkul din bara de adrese sau din Distribuie.").into()
+                }
+            }
+            return;
+        }
         let ro = self.settings.geocode_ro_only;
         let lang = cadastru::i18n::lang().code().to_lowercase();
-        std::thread::spawn(move || {
-            let _ = tx.send(geocode(&q, ro, &lang));
-        });
+        let source = self.settings.geocoder;
+        let key = google::effective_key(&self.settings.google_api_key);
+        let (tx, rx) = channel();
+        if google::is_short_link(&q) {
+            // link scurt (maps.app.goo.gl): urmăm redirecționarea în fundal
+            std::thread::spawn(move || {
+                let r = google::resolve_short_link(&q).map(|p| GeoResult { places: vec![p], notes: vec![], auto: true });
+                let _ = tx.send(r);
+            });
+        } else if let Some((code, locality)) = google::find_plus_code(&q) {
+            if google::plus_is_full(&code) || locality.is_empty() {
+                // cod complet, sau cod scurt raportat la centrul hărții
+                let center = self.view_center_wgs();
+                let r = if google::plus_is_full(&code) {
+                    google::plus_decode(&code)
+                } else {
+                    center.and_then(|(lon, lat)| google::plus_recover(&code, lat, lon))
+                };
+                match r {
+                    Some((lat, lon, size)) => {
+                        let p = plus_place(&code, &locality, lat, lon, size);
+                        self.dlg.search.places = vec![p.clone()];
+                        self.dlg.search.place_msg.clear();
+                        self.go_to_place(&p);
+                    }
+                    None => self.dlg.search.place_msg = tr!("Codul Plus nu a putut fi decodat.").into(),
+                }
+                return;
+            }
+            // cod scurt + localitate: localitatea dă punctul de referință
+            std::thread::spawn(move || {
+                let refs = match source {
+                    Geocoder::Osm => geocode_osm(&locality, ro, &lang),
+                    _ if key.is_empty() => geocode_osm(&locality, ro, &lang),
+                    _ => google::search(&locality, ro, &lang, &key).or_else(|_| geocode_osm(&locality, ro, &lang)),
+                };
+                let r = refs.and_then(|v| {
+                    let p0 = v.first().ok_or_else(|| tr!("localitatea „{locality}” nu a fost găsită"))?;
+                    let (lat, lon, size) = google::plus_recover(&code, p0.lat, p0.lon)
+                        .ok_or_else(|| tr!("Codul Plus nu a putut fi decodat.").to_string())?;
+                    Ok(GeoResult { places: vec![plus_place(&code, &locality, lat, lon, size)], notes: vec![], auto: true })
+                });
+                let _ = tx.send(r);
+            });
+        } else {
+            // în straturile încărcate: orice câmp conține textul
+            self.dlg.search.quick = self.run_query(None, &[Cond::new(None, Op::Contains, &q)]);
+            if source != Geocoder::Osm && key.is_empty() {
+                self.dlg.search.place_msg = tr!("Pentru căutarea Google este nevoie de o cheie API (mai jos). Fără cheie: butonul „Deschide în Google Maps” trimite căutarea în browser, iar linkul locului copiat de acolo se poate lipi aici.").into();
+                if source == Geocoder::Google {
+                    return;
+                }
+            }
+            std::thread::spawn(move || {
+                let use_osm = source != Geocoder::Google || key.is_empty();
+                let use_google = source != Geocoder::Osm && !key.is_empty();
+                let mut places = vec![];
+                let mut notes = vec![];
+                let mut errs = vec![];
+                if use_google {
+                    match google::search(&q, ro, &lang, &key) {
+                        Ok(v) => places.extend(v),
+                        Err(e) => errs.push(format!("Google: {e}")),
+                    }
+                }
+                if use_osm {
+                    match geocode_osm(&q, ro, &lang) {
+                        Ok(v) => places.extend(v),
+                        Err(e) => errs.push(format!("OpenStreetMap: {e}")),
+                    }
+                }
+                let r = if places.is_empty() && !errs.is_empty() && errs.len() == use_google as usize + use_osm as usize {
+                    Err(errs.join("\n"))
+                } else {
+                    notes.extend(errs);
+                    Ok(GeoResult { places, notes, auto: false })
+                };
+                let _ = tx.send(r);
+            });
+        }
         self.dlg.search.place_rx = Some(rx);
         self.dlg.search.place_msg = tr!("Se caută…").into();
+    }
+
+    /// Centrul vederii, în WGS84 (lon, lat).
+    pub fn view_center_wgs(&self) -> Option<(f64, f64)> {
+        let (x, y) = (self.view.cx, self.view.cy);
+        match &self.map_crs {
+            Some(c) if !c.is_geographic() => self.to_wgs.as_ref().and_then(|t| t.xy(x, y)),
+            _ => (x.abs() <= 180.0 && y.abs() <= 90.0).then_some((x, y)),
+        }
+    }
+
+    /// Nivelul de zoom Google Maps echivalent vederii curente.
+    fn view_zoom_web(&self) -> u8 {
+        let Some((lon, lat)) = self.view_center_wgs() else { return 7 };
+        let s = self.view.scale;
+        let (x, y) = (self.view.cx, self.view.cy);
+        let other = match &self.map_crs {
+            Some(c) if !c.is_geographic() => self.to_wgs.as_ref().and_then(|t| t.xy(x + s * 100.0, y)),
+            _ => Some((x + s * 100.0, y)),
+        };
+        let Some((lon2, _)) = other else { return 7 };
+        let mpp = ((lon2 - lon).abs() * 111_320.0 * lat.to_radians().cos() / 100.0).max(1e-6);
+        let z = (156_543.03 * lat.to_radians().cos() / mpp).log2();
+        z.round().clamp(2.0, 21.0) as u8
+    }
+
+    /// „Deschide în Google Maps”: textul căutat, sau vederea curentă dacă nu e scris nimic.
+    fn open_google_maps(&mut self) {
+        let q = self.dlg.search.place_q.trim().to_string();
+        let url = if !q.is_empty() && !google::is_maps_link(&q) {
+            google::maps_search_url(&q)
+        } else if let Some(m) = &self.search_marker {
+            google::maps_view_url(m.lat, m.lon, self.view_zoom_web().max(15))
+        } else if let Some((lon, lat)) = self.view_center_wgs() {
+            google::maps_view_url(lat, lon, self.view_zoom_web())
+        } else {
+            "https://www.google.com/maps".to_string()
+        };
+        match super::manual::open_external(std::ffi::OsStr::new(&url)) {
+            Ok(()) => self.status = tr!("Google Maps deschis în browser: {url}"),
+            Err(e) => self.errors.push(tr!("Browserul nu s-a putut deschide: {e:#}")),
+        }
     }
 
     /// Recalculează poziția marcajului dacă s-a schimbat sistemul hărții și îl desenează.
@@ -402,13 +568,21 @@ impl App {
                 Ok(r) => {
                     self.dlg.search.place_rx = None;
                     match r {
-                        Ok(v) => {
-                            self.dlg.search.place_msg = if v.is_empty() {
-                                tr!("Niciun loc găsit în OpenStreetMap.").into()
-                            } else {
-                                String::new()
-                            };
-                            self.dlg.search.places = v;
+                        Ok(g) => {
+                            let mut msg = vec![];
+                            if g.places.is_empty() {
+                                msg.push(match self.settings.geocoder {
+                                    Geocoder::Osm => tr!("Niciun loc găsit în OpenStreetMap.").to_string(),
+                                    _ => tr!("Niciun loc găsit.").to_string(),
+                                });
+                            }
+                            msg.extend(g.notes.iter().map(|n| tr!("Atenție – {n}")));
+                            self.dlg.search.place_msg = msg.join("\n");
+                            if g.auto && g.places.len() == 1 {
+                                let p = g.places[0].clone();
+                                self.go_to_place(&p);
+                            }
+                            self.dlg.search.places = g.places;
                         }
                         Err(e) => {
                             self.dlg.search.place_msg =
@@ -488,35 +662,84 @@ impl App {
 
     fn place_tab(&mut self, ui: &mut egui::Ui, act: &mut Act) {
         ui.horizontal(|ui| {
-            let s = &mut self.dlg.search;
-            let te = ui.add(
-                egui::TextEdit::singleline(&mut s.place_q)
-                    .hint_text(tr!("ex. Pitești, Str. Victoriei 10 Brașov, 44.85 24.87"))
-                    .desired_width(ui.available_width() - 70.0),
-            );
-            if s.focus {
-                te.request_focus();
-                s.focus = false;
-            }
-            let enter = te.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
-            if ui.button(tr!("Caută")).clicked() || enter {
-                *act = Act::PlaceSearch;
-            }
+            ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                let go = ui.button(tr!("Caută")).clicked();
+                let s = &mut self.dlg.search;
+                let te = ui.add(
+                    egui::TextEdit::singleline(&mut s.place_q)
+                        .hint_text(tr!("ex. Pitești, Str. Victoriei 10 Brașov, 44.85 24.87, link Google Maps"))
+                        .desired_width(ui.available_width()),
+                );
+                if s.focus {
+                    te.request_focus();
+                    s.focus = false;
+                }
+                let enter = te.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter));
+                if go || enter {
+                    *act = Act::PlaceSearch;
+                }
+            });
         });
-        ui.horizontal(|ui| {
+        ui.horizontal_wrapped(|ui| {
+            ui.label(tr!("Sursă:"));
+            let mut changed = false;
+            for (g, name) in [
+                (Geocoder::Osm, "OpenStreetMap"),
+                (Geocoder::Google, "Google"),
+                (Geocoder::Both, tr!("Ambele")),
+            ] {
+                changed |= ui.radio_value(&mut self.settings.geocoder, g, name).changed();
+            }
+            if changed {
+                self.settings.save();
+            }
+            ui.separator();
             if ui
                 .checkbox(&mut self.settings.geocode_ro_only, tr!("Doar în România"))
                 .changed()
             {
                 self.settings.save();
             }
+            if ui
+                .button(tr!("Deschide în Google Maps"))
+                .on_hover_text(tr!("Deschide în browser căutarea în Google Maps (sau vederea curentă, dacă nu e scris nimic). Linkul unui loc copiat din Google Maps se poate lipi apoi în căutare."))
+                .clicked()
+            {
+                *act = Act::GoogleMaps;
+            }
             if self.search_marker.is_some() && ui.small_button(tr!("Șterge marcajul")).clicked() {
                 *act = Act::ClearMarker;
             }
         });
+        if self.settings.geocoder != Geocoder::Osm {
+            ui.horizontal(|ui| {
+                ui.label(tr!("Cheie API Google:"));
+                // butonul întâi (la dreapta), câmpul ocupă restul: fereastra nu se lățește singură
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
+                    if ui
+                        .small_button(tr!("Obține o cheie…"))
+                        .on_hover_text(tr!("Google Cloud Console: creați o cheie și activați Places API (New) sau Geocoding API"))
+                        .clicked()
+                    {
+                        *act = Act::OpenUrl("https://console.cloud.google.com/google/maps-apis/credentials".into());
+                    }
+                    let env = self.settings.google_api_key.trim().is_empty()
+                        && !google::effective_key("").is_empty();
+                    let r = ui.add(
+                        egui::TextEdit::singleline(&mut self.settings.google_api_key)
+                            .password(true)
+                            .hint_text(if env { tr!("din GOOGLE_MAPS_API_KEY") } else { "AIza…" })
+                            .desired_width(ui.available_width()),
+                    );
+                    if r.lost_focus() || (r.changed() && self.settings.google_api_key.len() > 30) {
+                        self.settings.save();
+                    }
+                });
+            });
+        }
         ui.label(
             RichText::new(tr!(
-                "Caută în straturile încărcate (orice câmp) și în OpenStreetMap. Coordonatele se scriu „lat, lon” (WGS84) sau „X Y” în sistemul hărții."
+                "Caută în straturile încărcate (orice câmp) și online. Se pot scrie și: coordonate „lat, lon” (WGS84) sau „X Y” în sistemul hărții, un link Google Maps (inclusiv maps.app.goo.gl) ori un cod Plus (ex. 8GP8PV9C+2W sau PV9C+2W Pitești)."
             ))
             .weak()
             .small(),
@@ -535,7 +758,11 @@ impl App {
         let msg = self.dlg.search.place_msg.clone();
         let places = self.dlg.search.places.clone();
         if !places.is_empty() || !msg.is_empty() {
-            ui.strong(tr!("Locuri (OpenStreetMap)"));
+            ui.strong(match self.settings.geocoder {
+                Geocoder::Osm => tr!("Locuri (OpenStreetMap)"),
+                Geocoder::Google => tr!("Locuri (Google)"),
+                Geocoder::Both => tr!("Locuri (Google și OpenStreetMap)"),
+            });
         }
         if !msg.is_empty() {
             ui.label(RichText::new(msg).weak());
@@ -544,11 +771,19 @@ impl App {
             .id_salt("places")
             .auto_shrink([false, true])
             .show(ui, |ui| {
+                let mixed = places.iter().any(|p| p.src == PlaceSrc::Osm)
+                    && places.iter().any(|p| p.src == PlaceSrc::Google);
                 for p in &places {
+                    let text = if mixed {
+                        let tag = if p.src == PlaceSrc::Google { "Google" } else { "OSM" };
+                        format!("[{tag}]  {}", p.name)
+                    } else {
+                        p.name.clone()
+                    };
                     let r = ui.add(
                         egui::Button::selectable(
                             false,
-                            RichText::new(&p.name),
+                            RichText::new(text),
                         )
                         .wrap(),
                     );
@@ -558,8 +793,15 @@ impl App {
                     }
                 }
             });
-        if !places.is_empty() {
-            ui.label(RichText::new("© OpenStreetMap contributors · Nominatim").weak().small());
+        let mut attr = vec![];
+        if places.iter().any(|p| p.src == PlaceSrc::Osm) {
+            attr.push("© OpenStreetMap contributors · Nominatim");
+        }
+        if places.iter().any(|p| p.src == PlaceSrc::Google) {
+            attr.push("Google Maps Platform");
+        }
+        if !attr.is_empty() {
+            ui.label(RichText::new(attr.join("   ·   ")).weak().small());
         }
     }
 
@@ -755,6 +997,12 @@ impl App {
             Act::PlaceSearch => self.start_place_search(),
             Act::Place(p) => self.go_to_place(&p),
             Act::ClearMarker => self.search_marker = None,
+            Act::GoogleMaps => self.open_google_maps(),
+            Act::OpenUrl(u) => {
+                if let Err(e) = super::manual::open_external(std::ffi::OsStr::new(&u)) {
+                    self.errors.push(tr!("Browserul nu s-a putut deschide: {e:#}"));
+                }
+            }
             Act::ZoomHit((lid, fi)) => {
                 self.zoom_to_feature(lid, fi);
                 self.dlg.table.layer_id = Some(lid);
@@ -795,6 +1043,8 @@ enum Act {
     PlaceSearch,
     Place(Place),
     ClearMarker,
+    GoogleMaps,
+    OpenUrl(String),
     ZoomHit(Hit),
     ZoomAll(Vec<Hit>),
     Select(Vec<Hit>, SelMode),

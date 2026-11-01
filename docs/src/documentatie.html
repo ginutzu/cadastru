@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.10.0 – Documentație tehnică</title>
+<title>Cadastru 1.11.0 – Documentație tehnică</title>
 <link rel="stylesheet" href="stil.css">
 <style>
   .arch { width: 100%; margin: 2mm 0 1mm; }
@@ -18,7 +18,7 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Documentație tehnică · versiunea 1.10.0</div>
+  <div class="sub">Documentație tehnică · versiunea 1.11.0</div>
   <div class="shot"><img src="img/plansa_lat.png" alt=""></div>
   <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Octombrie 2026</span></div>
 </section>
@@ -40,13 +40,13 @@
 <h3 id="t1-2"><span class="n">1.2</span>Date de identificare</h3>
 <table>
   <tr><th style="width:30%">Element</th><th>Valoare</th></tr>
-  <tr><td>Nume, versiune</td><td>Cadastru 1.10.0</td></tr>
+  <tr><td>Nume, versiune</td><td>Cadastru 1.11.0</td></tr>
   <tr><td>Autor</td><td>Ginu Popescu, scriemiaici@proton.me</td></tr>
   <tr><td>Licență</td><td>MIT</td></tr>
   <tr><td>Limbaj</td><td>Rust, ediția 2024 (compilator 1.97)</td></tr>
   <tr><td>Platformă țintă</td><td>Windows 10/11 x64 (<code>x86_64-pc-windows-msvc</code> sau <code>x86_64-pc-windows-gnu</code>)</td></tr>
   <tr><td>Interfață grafică</td><td>egui / eframe 0.37, randare OpenGL (glow)</td></tr>
-  <tr><td>Dimensiune cod</td><td>circa 21 400 de linii Rust, în 30 de module</td></tr>
+  <tr><td>Dimensiune cod</td><td>circa 22 200 de linii Rust, în 31 de module</td></tr>
   <tr><td>Executabile</td><td><code>cadastru.exe</code> (≈ 22 MB), <code>cadastru-cli.exe</code> (≈ 12 MB)</td></tr>
 </table>
 
@@ -89,7 +89,7 @@
   <tr><td><code>src/query.rs</code></td><td>374</td><td>Interogări pe atribute: condiții cu operatori, legate prin ȘI / SAU, comparații fără majuscule și diacritice (secțiunea 8.8).</td></tr>
   <tr><td><code>src/i18n.rs</code></td><td>144</td><td>Limba curentă (<code>Lang</code>), comutarea, traducerea la rulare (<code>trs</code>) a textelor din constante (secțiunea 8.6).</td></tr>
   <tr><td><code>i18n-macros/src/lib.rs</code></td><td>121</td><td>Crate <i>proc-macro</i> <code>cadastru-i18n-macros</code>: macrourile <code>tr!</code> și <code>tr_table!</code>.</td></tr>
-  <tr><td><code>lang/en.tsv</code></td><td>807</td><td>Pachetul pentru limba engleză: text românesc ↦ text englez.</td></tr>
+  <tr><td><code>lang/en.tsv</code></td><td>857</td><td>Pachetul pentru limba engleză: text românesc ↦ text englez.</td></tr>
   <tr><td><code>src/model.rs</code></td><td>1 131</td><td>Coordonate, dreptunghiuri, geometrii, câmpuri și valori, straturi vectoriale, rastere, statistici.</td></tr>
   <tr><td><code>src/crs.rs</code></td><td>1 028</td><td>Sisteme de coordonate (EPSG, PROJ, WKT, .prj ESRI), căutare, sisteme presupuse, <code>Transformer</code>.</td></tr>
   <tr><td><code>src/transdatro.rs</code></td><td>999</td><td>Portul algoritmului TransDatRO, gridurile, formatul de fișiere TransDatRO.</td></tr>
@@ -98,23 +98,24 @@
   <tr><td><code>src/rasterops.rs</code></td><td>535</td><td>Reproiecție raster, reeșantionare, randare RGBA, rampe de culori, hillshade.</td></tr>
   <tr><td><code>src/formats/mod.rs</code></td><td>531</td><td>Registrul formatelor, deschiderea după extensie, scriere, codificări, fișiere <code>.prj</code>.</td></tr>
   <tr><td><code>src/formats/*.rs</code></td><td>6 912</td><td>Câte un modul pe format (capitolul 6).</td></tr>
-  <tr><td><code>src/main.rs</code></td><td>70</td><td>Punctul de intrare al interfeței: fereastra, pictograma, argumentele.</td></tr>
-  <tr><td><code>src/gui/mod.rs</code></td><td>2 235</td><td>Starea aplicației (<code>App</code>), meniuri, bara de instrumente (cu comutatorul de limbă), panoul de straturi, sarcini în fundal, scurtături.</td></tr>
+  <tr><td><code>src/main.rs</code></td><td>72</td><td>Punctul de intrare al interfeței: fereastra (deschisă maximizată), pictograma, argumentele.</td></tr>
+  <tr><td><code>src/gui/mod.rs</code></td><td>2 335</td><td>Starea aplicației (<code>App</code>), meniuri, bara de instrumente grupată (cu comutatorul de limbă), panoul de straturi (ascundere, bandă îngustă), sarcini în fundal, scurtături.</td></tr>
   <tr><td><code>src/gui/map.rs</code></td><td>1 333</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
   <tr><td><code>src/gui/layers.rs</code></td><td>395</td><td>Straturile hărții, stiluri, geometria de afișare și triangularea.</td></tr>
-  <tr><td><code>src/gui/basemap.rs</code></td><td>1 476</td><td>Hărțile de fundal: furnizori, descărcare, cache, plase reproiectate.</td></tr>
+  <tr><td><code>src/gui/basemap.rs</code></td><td>1 484</td><td>Hărțile de fundal: furnizori, descărcare, cache, plase reproiectate.</td></tr>
   <tr><td><code>src/gui/print.rs</code></td><td>1 661</td><td>Planșa de tipărire, PDF, tipărirea prin Windows.</td></tr>
-  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 645</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
+  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 646</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
   <tr><td><code>src/gui/tdr.rs</code></td><td>516</td><td>Fereastra TransDatRO.</td></tr>
   <tr><td><code>src/gui/workspace.rs</code></td><td>261</td><td>Spațiul de lucru <code>.cgw</code>.</td></tr>
-  <tr><td><code>src/gui/theme.rs</code></td><td>470</td><td>Teme, pictograme desenate vectorial, setările persistente.</td></tr>
+  <tr><td><code>src/gui/theme.rs</code></td><td>582</td><td>Teme, pictograme desenate vectorial, butoanele și grupurile barei de instrumente, setările persistente.</td></tr>
   <tr><td><code>src/gui/select.rs</code></td><td>409</td><td>Selecția: instrumentul Selectare, operațiile pe selecție, desenarea entităților selectate (secțiunea 8.7).</td></tr>
-  <tr><td><code>src/gui/search.rs</code></td><td>839</td><td>Fereastra Căutare: geocodare Nominatim, coordonate, căutare rapidă în straturi, interogări pe câmpuri, marcajul locului (secțiunea 8.8).</td></tr>
+  <tr><td><code>src/gui/search.rs</code></td><td>1 089</td><td>Fereastra Căutare: sursa locurilor (OpenStreetMap, Google, ambele), geocodare Nominatim, coordonate, căutare rapidă în straturi, interogări pe câmpuri, marcajul locului (secțiunea 8.8).</td></tr>
+  <tr><td><code>src/gui/google.rs</code></td><td>568</td><td>Căutarea Google: Places API (New) și Geocoding API, linkuri Google Maps (complete și scurte), coduri Plus, adresele Google Maps pentru browser (secțiunea 8.8).</td></tr>
   <tr><td><code>src/gui/bulk.rs</code></td><td>572</td><td>Deschiderea în masă a fișierelor de un tip dintr-un dosar (secțiunea 8.9).</td></tr>
   <tr><td><code>src/gui/attrsel.rs</code></td><td>588</td><td>Fereastra „Selectare după atribute” (secțiunea 8.10).</td></tr>
   <tr><td><code>src/gui/loadfilter.rs</code></td><td>260</td><td>Bifa, fereastra și indicatorul filtrului de încărcare; filtrarea unui strat încărcat (secțiunea 6.6).</td></tr>
   <tr><td><code>src/gui/split.rs</code></td><td>285</td><td>Fereastra „Export pe tipuri de geometrie”.</td></tr>
-  <tr><td><code>src/gui/manual.rs</code></td><td>86</td><td>Manualul de utilizare inclus și deschiderea lui (<kbd>F1</kbd>).</td></tr>
+  <tr><td><code>src/gui/manual.rs</code></td><td>94</td><td>Manualul de utilizare inclus și deschiderea lui (<kbd>F1</kbd>); deschiderea adreselor web în browserul implicit.</td></tr>
   <tr><td><code>src/bin/cli.rs</code></td><td>681</td><td>Linia de comandă.</td></tr>
 </table>
 
@@ -276,6 +277,8 @@
 <h3 id="t8-1"><span class="n">8.1</span>Structură</h3>
 <p>Interfața folosește <b>egui</b> (mod imediat) prin <b>eframe</b>, cu randare OpenGL prin <code>glow</code>. Starea se află în <code>App</code>: straturile (<code>Vec&lt;LayerEntry&gt;</code>), sistemul hărții, vederea (<code>View { cx, cy, scale }</code>, unde scale este numărul de unități de hartă pe pixel), instrumentul activ, selecția, rezultatele identificării, punctele măsurării, istoricul vederilor, sarcinile în fundal, dialogurile, setările și harta de fundal. La fiecare cadru sunt desenate meniul, bara de instrumente, panoul de straturi, harta și dialogurile deschise.</p>
 <p><b>Sarcini în fundal</b>: deschiderea fișierelor, exportul, conversia în lot și tipărirea rulează pe fire separate și trimit rezultatul prin canale <code>mpsc</code> (<code>Job</code>, <code>JobResult</code>). Interfața verifică rezultatele la fiecare cadru și rămâne utilizabilă.</p>
+<p><b>Fereastra și panourile</b>. Fereastra se deschide maximizată (<code>ViewportBuilder::with_maximized</code>; dimensiunea 1400 × 880 rămâne pentru restaurare). Panoul Straturi este desenat cu <code>egui::Panel::show_switched</code>: două panouri stânga cu id-uri diferite – cel extins (redimensionabil, 120–900 px, lățimea ținută de egui) și banda de 26 px afișată când e ascuns. <code>show_switched</code> animă trecerea și schimbă singur starea când marginea este trasă dincolo de lățimea minimă (ascundere) sau a benzii (afișare). Starea se păstrează în setări (<code>layers_panel</code>); butonul «, banda (click oriunde pe ea), meniul și <kbd>Ctrl+L</kbd> pun o cerere în <code>App::layers_toggle</code>, aplicată după desenarea panoului, ca să nu se schimbe starea în timpul cadrului. În listă, numele straturilor sunt butoane <code>selectable</code> cu <code>truncate()</code>: se taie cu „…” la marginea panoului, iar indiciul arată numele întreg, fișierul, conținutul și sistemul.</p>
+<p><b>Bara de instrumente</b> este formată din grupuri (<code>theme::tool_group</code>): un chenar discret cu butoanele pe un rând și numele grupului dedesubt, centrat. Grupurile sunt Fișier, Vizualizare (Deplasare, Zoom +, Zoom −, Extindere completă, Înapoi, Înainte, Redraw), Interogare (Identificare, Căutare, Tabel), Selecție (Selectare, Selectare după atribute), Instrumente (Măsurare, Convertor) și Hartă (Basemap, sistemul hărții). Butoanele + / − (mărire și micșorare în centrul hărții), care dublau Zoom + / Zoom −, au fost scoase; operațiile rămân pe tastele + / − și pe controlul de navigație. Etichetele depind de lățimea disponibilă: toate sub 1 520 px, doar instrumentele principale între 1 330 și 1 520 px, niciuna sub 1 330 px (numele trece atunci în indiciu).</p>
 <p><b>Fonturi</b>: pe Windows sunt încărcate Segoe UI și fonturile de rezervă din <code>%WINDIR%\Fonts</code>; altfel, fonturile implicite egui.</p>
 
 <h3 id="t8-2"><span class="n">8.2</span>Straturi și geometria de afișare</h3>
@@ -329,6 +332,9 @@
 <h3 id="t8-8"><span class="n">8.8</span>Căutarea și interogările</h3>
 <p><b>Interogări</b> (<code>query.rs</code>, în bibliotecă). O condiție <code>Cond</code> are legătura cu condiția anterioară (<code>Join::And</code> / <code>Join::Or</code>), câmpul (<code>None</code> = orice câmp), operatorul <code>Op</code> și valoarea. <code>Query::new</code> rezolvă indicii câmpurilor o singură dată pe strat și normalizează valoarea; <code>matches</code> evaluează condițiile ca disjuncție de grupuri conjunctive (ȘI are prioritate față de SAU). Textele sunt comparate după <code>fold</code>: litere mici, fără spații la capete, cu ă/â/á→a, î→i, ș/ş→s, ț/ţ→t etc. Dacă atât valoarea câmpului cât și valoarea căutată sunt numere (cu punct sau virgulă zecimală, spațiile ignorate), comparațiile sunt numerice, altfel lexicografice. Un câmp care lipsește dintr-un strat face condiția falsă; pentru „orice câmp”, operatorii negativi (≠, nu conține) înseamnă „niciun câmp nu …”. <code>describe</code> produce textul afișat al interogării.</p>
 <p><b>Geocodare</b>. <code>search.rs</code> trimite cererea, într-un fir separat, la <code>https://nominatim.openstreetmap.org/search?format=jsonv2&amp;limit=10&amp;q=…&amp;accept-language=ro|en[&amp;countrycodes=ro]</code>, cu agentul HTTP al hărților de fundal (același proxy, aceleași certificate, identificarea <code>Cadastru/versiune</code> cerută de politica Nominatim). Răspunsul este citit de <code>parse_nominatim</code> (<code>display_name</code>, <code>lat</code>, <code>lon</code>, <code>category</code>/<code>type</code>, <code>boundingbox</code> = sud, nord, vest, est). La alegerea unui loc, colțurile și mijloacele laturilor încadrării sunt transformate din WGS84 în sistemul hărții pentru zoom. Cererile se fac doar la apăsarea butonului sau a tastei Enter, conform limitei de o cerere pe secundă a serviciului.</p>
+<p><b>Google</b> (<code>google.rs</code>). Sursa se alege în setări (<code>geocoder</code>: <code>Osm</code>, <code>Google</code>, <code>Both</code>). Google nu are un serviciu de căutare gratuit fără cheie, așa că se folosesc API-urile oficiale cu cheia utilizatorului (<code>google_api_key</code> în setări sau variabila <code>GOOGLE_MAPS_API_KEY</code>): întâi <b>Places API (New)</b> Text Search – <code>POST https://places.googleapis.com/v1/places:searchText</code>, antetele <code>X-Goog-Api-Key</code> și <code>X-Goog-FieldMask</code> (displayName, formattedAddress, location, viewport, primaryTypeDisplayName, types), <code>languageCode</code>, iar pentru „Doar în România” <code>regionCode = RO</code> și <code>locationRestriction</code> pe dreptunghiul 43,5–48,35° N, 20,2–29,8° E –; dacă Places nu este activat pentru cheie sau nu găsește nimic, <b>Geocoding API</b> (<code>/maps/api/geocode/json?address=…&amp;language=…[&amp;region=ro&amp;components=country:RO]</code>). API-ul care a mers este ținut minte pe durata sesiunii (<code>WORKING_API</code>), ca să nu se repete cererea eșuată. Răspunsurile sunt citite de <code>parse_places</code> și <code>parse_geocode</code> (mesajele de eroare Google – <code>REQUEST_DENIED</code>, <code>PERMISSION_DENIED</code> – sunt afișate). Cu sursa „Ambele”, cele două căutări rulează în același fir; rezultatele sunt unite (Google întâi), iar eroarea uneia devine avertisment. Agentul HTTP este cel al hărților de fundal, cu <code>http_status_as_error(false)</code> pentru a citi corpul răspunsurilor 4xx.</p>
+<p><b>Linkuri Google Maps</b>. <code>parse_maps_url</code> extrage locul dintr-un link complet, în ordinea: pinul <code>!3d&lt;lat&gt;!4d&lt;lon&gt;</code> (ultima pereche), parametrii <code>q</code>, <code>query</code>, <code>ll</code>, <code>center</code>, <code>destination</code>, calea <code>/maps/search/lat,lon</code> și, la final, centrul vederii <code>/@lat,lon,zoom</code>; numele vine din <code>/maps/place/&lt;nume&gt;/</code> (decodare procentuală). Pagina de consimțământ a Google din UE (<code>consent.google.*?continue=…</code>) este desfăcută. Linkurile scurte (<code>maps.app.goo.gl</code>, <code>goo.gl/maps</code>, <code>g.co/kgs</code>) sunt urmate într-un fir separat cu un agent fără redirecționări automate (<code>max_redirects(0)</code>): antetul <code>Location</code> este urmat pas cu pas (cel mult 8) până la o adresă cu coordonate. Butonul „Deschide în Google Maps” folosește URL-urile publice Google Maps (<code>/maps/search/?api=1&amp;query=…</code> sau <code>/maps/@?api=1&amp;map_action=map&amp;center=lat,lon&amp;zoom=z</code>, cu zoomul calculat din metrii pe pixel ai vederii: z = log₂(156 543,03 · cos φ / m/px)) și le deschide cu <code>ShellExecuteW</code>.</p>
+<p><b>Coduri Plus</b> (Open Location Code). <code>plus_decode</code> decodează codurile complete (perechi de cifre în baza 20 cu rezoluțiile 20°, 1°, 0,05°, 0,0025°, 0,000125°, apoi grila 5 × 4); <code>plus_recover</code> reface un cod scurt față de un punct de referință după algoritmul oficial <i>recoverNearest</i>. Referința este localitatea scrisă după cod (geocodată cu sursa aleasă) sau, fără localitate, centrul hărții.</p>
 <p><b>Coordonate</b>. <code>parse_coords</code> recunoaște două numere separate prin virgulă, punct și virgulă sau spațiu (cu virgulă zecimală când separatorul este spațiul). Valori în intervalul lat/lon sunt luate ca WGS84 (lat, lon); altfel, ca X Y în sistemul hărții.</p>
 <p><b>Marcajul</b> (<code>Marker</code>) este păstrat în WGS84 și reproiectat doar când se schimbă sistemul hărții; este desenat după straturi și selecție.</p>
 <p><b>Căutarea rapidă</b> din pagina „Loc / adresă” este interogarea <code>(orice câmp) conține &lt;text&gt;</code> pe toate straturile vectoriale.</p>
@@ -409,7 +415,7 @@ operand   := câmp | "câmp" | [câmp] | `câmp` | 'text' | număr | NULL | TRUE
 <p>Câmpul <code>basemap</code> lipsă (fișiere vechi) păstrează harta de fundal curentă. <code>raster_style</code> conține <code>rgb</code>, <code>bands</code>, <code>min</code>, <code>max</code>, <code>ramp</code>, <code>hillshade</code> și <code>transparent_color</code>.</p>
 
 <h3 id="t11-2"><span class="n">11.2</span>Setările</h3>
-<p><code>%APPDATA%\Cadastru\setari.json</code> (<code>theme::Settings</code>): <code>theme</code>, <code>cgxml</code> (opțiunile de import), <code>show_labels</code>, <code>show_nav</code>, <code>transdatro</code>, <code>height_egg97_only</code>, <code>basemap_opacity</code>, <code>basemap_custom</code>, <code>basemap_custom_zoom</code>, <code>lang</code> (limba interfeței: <code>"ro"</code> sau <code>"en"</code>), <code>select_active_only</code> (selectare doar în stratul activ), <code>geocode_ro_only</code> (căutarea locurilor doar în România), <code>load_area_filter</code>, <code>load_area_partial</code>, <code>load_area_bounds</code> (filtrul de încărcare, secțiunea 6.6). Câmpurile lipsă primesc valorile implicite (<code>#[serde(default)]</code>). La prima pornire sunt preluate setările versiunilor anterioare (dosarul <code>Cartograf</code>).</p>
+<p><code>%APPDATA%\Cadastru\setari.json</code> (<code>theme::Settings</code>): <code>theme</code>, <code>cgxml</code> (opțiunile de import), <code>show_labels</code>, <code>show_nav</code>, <code>transdatro</code>, <code>height_egg97_only</code>, <code>basemap_opacity</code>, <code>basemap_custom</code>, <code>basemap_custom_zoom</code>, <code>lang</code> (limba interfeței: <code>"ro"</code> sau <code>"en"</code>), <code>select_active_only</code> (selectare doar în stratul activ), <code>geocode_ro_only</code> (căutarea locurilor doar în România), <code>geocoder</code> (sursa: <code>"Osm"</code>, <code>"Google"</code>, <code>"Both"</code>), <code>google_api_key</code> (cheia Google Maps Platform, păstrată ca text simplu în fișier), <code>layers_panel</code> (panoul Straturi afișat sau ascuns), <code>load_area_filter</code>, <code>load_area_partial</code>, <code>load_area_bounds</code> (filtrul de încărcare, secțiunea 6.6). Câmpurile lipsă primesc valorile implicite (<code>#[serde(default)]</code>). La prima pornire sunt preluate setările versiunilor anterioare (dosarul <code>Cartograf</code>).</p>
 
 <h3 id="t11-3"><span class="n">11.3</span>Manualul inclus</h3>
 <p><code>gui/manual.rs</code> include <code>docs/Manual_Cadastru.pdf</code> în executabil. La <kbd>F1</kbd> sau <span class="ui">Ajutor → Manual de utilizare</span>, manualul este scris în <code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_&lt;versiune&gt;.pdf</code> (doar dacă lipsește sau diferă ca mărime) și este deschis cu programul implicit, prin <code>ShellExecuteW("open")</code>. Dacă fișierul este deja deschis și blocat, se folosește copia existentă.</p>
@@ -483,7 +489,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
 <!-- ===================================================================== -->
 <h2 id="t14"><span class="n">14</span>Testare și validare</h2>
 <h3 id="t14-1"><span class="n">14.1</span>Teste automate</h3>
-<p><code>cargo test</code> rulează 47 de teste, printre care:</p>
+<p><code>cargo test</code> rulează 51 de teste, printre care:</p>
 <table>
   <tr><th style="width:40%">Test</th><th>Verifică</th></tr>
   <tr><td><code>official_stereo70</code>, <code>official_stereo30</code></td><td>Punctele de test oficiale ANCPI, în ambele sensuri, în toleranța 3 mm / 0,00003″.</td></tr>
@@ -506,6 +512,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td><code>rtcm_points_dropped</code></td><td>Eliminarea punctelor RTCM din DXF: după etichetă, atribut de bloc (cu desenul blocului) și XDATA; păstrarea cu <code>dxf_keep_rtcm</code>.</td></tr>
   <tr><td><code>distinct_sorted</code></td><td>Lista valorilor distincte din fereastra de selectare.</td></tr>
   <tr><td><code>coords</code>, <code>encode</code>, <code>nominatim_json</code></td><td>Recunoașterea coordonatelor, codificarea URL și citirea răspunsului Nominatim.</td></tr>
+  <tr><td><code>google_json</code>, <code>maps_links</code>, <code>plus_codes</code>, <code>decode_url</code></td><td>Răspunsurile Places API (New) și Geocoding API (inclusiv erorile), linkurile Google Maps (pin, centru, parametri, pagina de consimțământ), codurile Plus (exemplul din specificație, refacerea codurilor scurte), decodarea procentuală.</td></tr>
 </table>
 <h3 id="t14-2"><span class="n">14.2</span>Validare față de implementări de referință</h3>
 <ul>
@@ -553,6 +560,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>1.8.0</td><td><b>Deschiderea în masă</b>: toate fișierele de un tip (vector sau raster) dintr-un dosar și din subdosarele lui, citite în paralel, cu geometria de afișare pregătită în firele de lucru, progres și oprire.</td></tr>
   <tr><td>1.9.0</td><td><b>Selectarea după atribute</b> cu expresii de tip SQL <code>WHERE</code> (<code>status = 1 AND is_active = 1</code>, LIKE, IN, BETWEEN, IS NULL), cu liste de câmpuri și valori; <b>filtrul de încărcare</b>: doar entitățile din interiorul României (EPSG:3844) sau dintr-o zonă proprie, și în linia de comandă (<code>--doar-romania</code>, <code>--where</code>).</td></tr>
   <tr><td>1.10.0</td><td>La citirea DXF se elimină <b>punctele cu „RTCM” în descriere</b> (stațiile de bază GNSS), cu etichetele lor și cu desenul blocurilor (<code>--dxf-pastreaza-rtcm</code> le păstrează); butonul <b>Redraw</b> (<kbd>F5</kbd>), ca REDRAWALL / REGEN în CAD; selectarea după atribute <b>centrează și încadrează harta pe selecție</b>, în partea liberă a hărții; opțiunea <b>Fără umplere (No fill)</b> pentru poligoane; bara de instrumente se compactează în ferestrele înguste.</td></tr>
+  <tr><td>1.11.0</td><td>Fereastra se deschide <b>maximizată</b>; <b>panoul Straturi</b> se poate îngusta (numele lungi întregi în indiciu) și <b>ascunde complet</b> (« , <kbd>Ctrl+L</kbd>, meniul Vizualizare sau trăgând marginea), cu o bandă îngustă care îl readuce la click; <b>căutarea Google</b> (Places API / Geocoding API cu cheia utilizatorului, sursa OpenStreetMap / Google / ambele), deschiderea căutării în Google Maps, <b>linkuri Google Maps</b> (inclusiv scurte) și <b>coduri Plus</b> în caseta de căutare; <b>bara de instrumente grupată pe funcționalități</b> (Fișier, Vizualizare, Interogare, Selecție, Instrumente, Hartă), fără butoanele care dublau Zoom + / Zoom −.</td></tr>
 </table>
 
 <!-- ===================================================================== -->

@@ -1,6 +1,6 @@
 [package]
 name = "cadastru"
-version = "1.10.0"
+version = "1.11.0"
 edition = "2024"
 description = "Cadastru - aplicație GIS desktop: vizualizare hărți, conversie formate, reproiecție"
 license = "MIT"

@@ -40,6 +40,11 @@ pub fn open_manual() -> anyhow::Result<PathBuf> {
     Ok(path)
 }
 
+/// Deschide un fișier sau o adresă web cu programul implicit (browserul, pentru URL-uri).
+pub fn open_external(target: &std::ffi::OsStr) -> anyhow::Result<()> {
+    open_with_default_app(std::path::Path::new(target))
+}
+
 #[cfg(windows)]
 fn open_with_default_app(path: &std::path::Path) -> anyhow::Result<()> {
     use std::os::windows::ffi::OsStrExt;
@@ -59,6 +64,9 @@ fn open_with_default_app(path: &std::path::Path) -> anyhow::Result<()> {
         )
     };
     // conform documentației, valorile <= 32 sunt coduri de eroare
+    if r as isize <= 32 && path.to_string_lossy().starts_with("http") {
+        anyhow::bail!("{}", tr!("Windows nu a putut deschide browserul implicit (cod {})", r as isize));
+    }
     if r as isize <= 32 {
         anyhow::bail!(
             "{}", tr!("nu există un program asociat fișierelor PDF (cod {}). Manualul este în {}",

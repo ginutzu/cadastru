@@ -507,9 +507,17 @@ fn system_proxy() -> Option<String> {
 }
 
 pub(crate) fn make_agent() -> ureq::Agent {
+    make_agent_with(10, true)
+}
+
+/// Agent HTTP cu redirecționări și tratarea codurilor de eroare alese
+/// (0 redirecționări = răspunsul 3xx se primește ca atare).
+pub(crate) fn make_agent_with(max_redirects: u32, status_as_error: bool) -> ureq::Agent {
     use ureq::tls::{RootCerts, TlsConfig};
     ureq::Agent::config_builder()
         .timeout_global(Some(Duration::from_secs(25)))
+        .max_redirects(max_redirects)
+        .http_status_as_error(status_as_error)
         .user_agent(concat!(
             "Cadastru/",
             env!("CARGO_PKG_VERSION"),
