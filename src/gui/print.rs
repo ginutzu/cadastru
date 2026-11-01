@@ -576,7 +576,7 @@ fn render_page(
                 ..
             } => {
                 let mul = |c: [u8; 4]| [c[0], c[1], c[2], (c[3] as f32 * opacity) as u8];
-                let fillp = paint(mul(style.fill));
+                let fillp = paint(mul(style.poly_fill()));
                 let strokep = paint(mul(style.stroke));
                 let sw = stroke(style.width * k);
                 for (g, _) in geoms {
@@ -595,7 +595,7 @@ fn render_page(
                             pb.close();
                         }
                         if let Some(path) = pb.finish() {
-                            if style.fill[3] > 0 {
+                            if style.poly_fill()[3] > 0 {
                                 map.fill_path(&path, &fillp, FillRule::EvenOdd, Transform::identity(), None);
                             }
                             if style.width > 0.0 {
@@ -847,7 +847,9 @@ fn render_page(
                         }
                         _ => {
                             if let Some(p) = rect_path(x, sy, sym_w, sym_h) {
-                                page.fill_path(&p, &paint(style.fill), FillRule::Winding, Transform::identity(), None);
+                                if style.poly_fill()[3] > 0 {
+                                    page.fill_path(&p, &paint(style.poly_fill()), FillRule::Winding, Transform::identity(), None);
+                                }
                                 page.stroke_path(&p, &paint(style.stroke), &stroke(style.width.max(0.8) * k), Transform::identity(), None);
                             }
                         }

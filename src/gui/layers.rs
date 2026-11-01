@@ -16,6 +16,9 @@ pub struct VectorStyle {
     pub label_field: Option<String>,
     pub label_size: f32,
     pub label_color: [u8; 4],
+    /// poligoane fără umplere („No fill”): doar conturul
+    #[serde(default)]
+    pub no_fill: bool,
 }
 
 impl VectorStyle {
@@ -39,6 +42,7 @@ impl VectorStyle {
             label_field: None,
             label_size: 12.0,
             label_color: [20, 20, 20, 255],
+            no_fill: false,
         }
     }
     pub fn stroke_c(&self) -> Color32 {
@@ -48,6 +52,10 @@ impl VectorStyle {
             self.stroke[2],
             self.stroke[3],
         )
+    }
+    /// Umplerea poligoanelor (transparentă pentru „No fill”).
+    pub fn poly_fill(&self) -> [u8; 4] {
+        if self.no_fill { [0, 0, 0, 0] } else { self.fill }
     }
     pub fn fill_c(&self) -> Color32 {
         Color32::from_rgba_unmultiplied(self.fill[0], self.fill[1], self.fill[2], self.fill[3])

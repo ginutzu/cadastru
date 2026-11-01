@@ -52,8 +52,8 @@ pub struct AttrSelDlg {
     pub mode: Mode,
     /// textele se compară exact (majuscule, diacritice)
     pub exact: bool,
-    /// zoom pe rezultat
-    pub zoom: bool,
+    /// fără zoom pe rezultat (implicit harta se centrează pe încadrarea selecției)
+    pub no_zoom: bool,
     /// câmpul ales în listă (pentru valori)
     field: Option<usize>,
     values: Option<Values>,
@@ -64,6 +64,8 @@ pub struct AttrSelDlg {
     pub history: Vec<String>,
     /// expresia scrisă pentru fiecare strat
     per_layer: HashMap<u64, String>,
+    /// locul ferestrei pe ecran (zoom-ul pe rezultat folosește partea hărții neacoperită de ea)
+    win_rect: Option<egui::Rect>,
 }
 
 enum Act {
@@ -71,6 +73,7 @@ enum Act {
     Apply,
     ClearLayer,
     Table,
+    Zoom,
 }
 
 /// Ce se inserează în expresie: textul și cu câte caractere se mută cursorul înapoi.
@@ -152,7 +155,7 @@ impl App {
         let mut insert: Option<Insert> = None;
         let mut new_layer: Option<u64> = None;
         let layer = d.layer.and_then(|id| self.layer(id));
-        egui::Window::new(tr!("Selectare după atribute"))
+        let win = egui::Window::new(tr!("Selectare după atribute"))
             .id(egui::Id::unique("win_attrsel"))
             .open(&mut open)
             .default_width(620.0)
@@ -360,7 +363,14 @@ impl App {
                         });
                     ui.checkbox(&mut d.exact, tr!("Exact (majuscule și diacritice)"))
                         .on_hover_text(tr!("Implicit „Argeș” = „ARGES”; bifat, textele trebuie să fie identice"));
-                    ui.checkbox(&mut d.zoom, tr!("Zoom pe rezultat"));
+                    let mut zoom = !d.no_zoom;
+                    if ui
+                        .checkbox(&mut zoom, tr!("Zoom pe rezultat"))
+                        .on_hover_text(tr!("Harta se centrează și se încadrează pe entitățile selectate"))
+                        .changed()
+                    {
+                        d.no_zoom = !zoom;
+                    }
                 });
                 ui.horizontal(|ui| {
                     let ok = matches!(check, Some(Ok(_)));
@@ -378,6 +388,9 @@ impl App {
                         d.msg = None;
                     }
                     ui.separator();
+                    if ui.add_enabled(!v.sel.is_empty(), egui::Button::new(tr!("Zoom pe selecție"))).on_hover_text(tr!("Centrează harta pe încadrarea entităților selectate din strat")).clicked() {
+                        act = Some(Act::Zoom);
+                    }
                     if ui.add_enabled(!v.sel.is_empty(), egui::Button::new(tr!("Deselectează"))).clicked() {
                         act = Some(Act::ClearLayer);
                     }
@@ -401,6 +414,7 @@ impl App {
                     ui.colored_label(c, m);
                 }
             });
+        d.win_rect = win.map(|w| w.response.rect);
         if let Some(id) = new_layer.filter(|&id| Some(id) != d.layer) {
             if let Some(old) = d.layer {
                 d.per_layer.insert(old, std::mem::take(&mut d.expr));
@@ -420,6 +434,11 @@ impl App {
                 if let Some(id) = d.layer {
                     self.selection_action(id, "clear");
                     d.msg = None;
+                }
+            }
+            Some(Act::Zoom) => {
+                if let Some(id) = d.layer {
+                    self.focus_selection(id, d.win_rect);
                 }
             }
             Some(Act::Table) => {
@@ -486,8 +505,8 @@ impl App {
         let msg = tr!("{} potrivite din {}; în „{}”: {}.", nhits, tot, name, sel);
         self.status = msg.clone();
         d.msg = Some((true, msg));
-        if d.zoom && nsel > 0 {
-            self.zoom_to_selection(Some(id));
+        if !d.no_zoom && nsel > 0 {
+            self.focus_selection(id, d.win_rect);
         }
     }
 }

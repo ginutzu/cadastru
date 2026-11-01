@@ -508,6 +508,8 @@ impl App {
         let mul = |c: Color32| c.gamma_multiply(alpha);
         let stroke = Stroke::new(st.width, mul(st.stroke_c()));
         let fill = mul(st.fill_c());
+        // umplerea poligoanelor („No fill” = doar contur); punctele își păstrează umplerea
+        let pfill = if st.no_fill { Color32::TRANSPARENT } else { fill };
         let mut mesh = Mesh::default();
         let mut shapes: Vec<Shape> = vec![];
         let tiny = self.view.scale * 1.5;
@@ -525,8 +527,8 @@ impl App {
                 shapes.push(Shape::rect_filled(
                     Rect::from_min_size(p, Vec2::splat(1.5)),
                     0.0,
-                    if d.geom.kind() == GeomKind::Polygon && fill.a() > 0 {
-                        fill
+                    if d.geom.kind() == GeomKind::Polygon && pfill.a() > 0 {
+                        pfill
                     } else {
                         stroke.color
                     },
@@ -534,10 +536,10 @@ impl App {
                 continue;
             }
             // umplere
-            if fill.a() > 0 && !d.tri_idx.is_empty() {
+            if pfill.a() > 0 && !d.tri_idx.is_empty() {
                 let base = mesh.vertices.len() as u32;
                 for v in &d.tri_verts {
-                    mesh.colored_vertex(self.w2s(v[0], v[1]), fill);
+                    mesh.colored_vertex(self.w2s(v[0], v[1]), pfill);
                 }
                 mesh.indices.extend(d.tri_idx.iter().map(|i| base + i));
             }

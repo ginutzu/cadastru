@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.9.0 – Documentație tehnică</title>
+<title>Cadastru 1.10.0 – Documentație tehnică</title>
 <link rel="stylesheet" href="stil.css">
 <style>
   .arch { width: 100%; margin: 2mm 0 1mm; }
@@ -18,7 +18,7 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Documentație tehnică · versiunea 1.9.0</div>
+  <div class="sub">Documentație tehnică · versiunea 1.10.0</div>
   <div class="shot"><img src="img/plansa_lat.png" alt=""></div>
   <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Octombrie 2026</span></div>
 </section>
@@ -40,7 +40,7 @@
 <h3 id="t1-2"><span class="n">1.2</span>Date de identificare</h3>
 <table>
   <tr><th style="width:30%">Element</th><th>Valoare</th></tr>
-  <tr><td>Nume, versiune</td><td>Cadastru 1.9.0</td></tr>
+  <tr><td>Nume, versiune</td><td>Cadastru 1.10.0</td></tr>
   <tr><td>Autor</td><td>Ginu Popescu, scriemiaici@proton.me</td></tr>
   <tr><td>Licență</td><td>MIT</td></tr>
   <tr><td>Limbaj</td><td>Rust, ediția 2024 (compilator 1.97)</td></tr>
@@ -85,37 +85,37 @@
   <tr><th style="width:28%">Fișier</th><th style="width:9%">Linii</th><th>Responsabilitate</th></tr>
   <tr><td><code>src/lib.rs</code></td><td>18</td><td>Rădăcina bibliotecii; reexportă <code>Crs</code>, <code>Transformer</code> și modelul.</td></tr>
   <tr><td><code>src/expr.rs</code></td><td>939</td><td>Expresii pe atribute în stilul SQL <code>WHERE</code>: analiză lexicală și sintactică, evaluare cu logica în trei valori (secțiunea 8.10).</td></tr>
-  <tr><td><code>src/area.rs</code></td><td>229</td><td>Filtrul pe zonă la încărcare: entitățile din încadrarea României în EPSG:3844 sau din alt dreptunghi (secțiunea 6.6).</td></tr>
+  <tr><td><code>src/area.rs</code></td><td>234</td><td>Filtrul pe zonă la încărcare: entitățile din încadrarea României în EPSG:3844 sau din alt dreptunghi (secțiunea 6.6).</td></tr>
   <tr><td><code>src/query.rs</code></td><td>374</td><td>Interogări pe atribute: condiții cu operatori, legate prin ȘI / SAU, comparații fără majuscule și diacritice (secțiunea 8.8).</td></tr>
-  <tr><td><code>src/i18n.rs</code></td><td>113</td><td>Limba curentă (<code>Lang</code>), comutarea, traducerea la rulare (<code>trs</code>) a textelor din constante (secțiunea 8.6).</td></tr>
+  <tr><td><code>src/i18n.rs</code></td><td>144</td><td>Limba curentă (<code>Lang</code>), comutarea, traducerea la rulare (<code>trs</code>) a textelor din constante (secțiunea 8.6).</td></tr>
   <tr><td><code>i18n-macros/src/lib.rs</code></td><td>121</td><td>Crate <i>proc-macro</i> <code>cadastru-i18n-macros</code>: macrourile <code>tr!</code> și <code>tr_table!</code>.</td></tr>
   <tr><td><code>lang/en.tsv</code></td><td>807</td><td>Pachetul pentru limba engleză: text românesc ↦ text englez.</td></tr>
-  <tr><td><code>src/model.rs</code></td><td>1 028</td><td>Coordonate, dreptunghiuri, geometrii, câmpuri și valori, straturi vectoriale, rastere, statistici.</td></tr>
-  <tr><td><code>src/crs.rs</code></td><td>1 027</td><td>Sisteme de coordonate (EPSG, PROJ, WKT, .prj ESRI), căutare, sisteme presupuse, <code>Transformer</code>.</td></tr>
-  <tr><td><code>src/transdatro.rs</code></td><td>998</td><td>Portul algoritmului TransDatRO, gridurile, formatul de fișiere TransDatRO.</td></tr>
-  <tr><td><code>src/geomio.rs</code></td><td>497</td><td>Codificare și decodificare WKB (inclusiv GeoPackage) și WKT.</td></tr>
+  <tr><td><code>src/model.rs</code></td><td>1 131</td><td>Coordonate, dreptunghiuri, geometrii, câmpuri și valori, straturi vectoriale, rastere, statistici.</td></tr>
+  <tr><td><code>src/crs.rs</code></td><td>1 028</td><td>Sisteme de coordonate (EPSG, PROJ, WKT, .prj ESRI), căutare, sisteme presupuse, <code>Transformer</code>.</td></tr>
+  <tr><td><code>src/transdatro.rs</code></td><td>999</td><td>Portul algoritmului TransDatRO, gridurile, formatul de fișiere TransDatRO.</td></tr>
+  <tr><td><code>src/geomio.rs</code></td><td>498</td><td>Codificare și decodificare WKB (inclusiv GeoPackage) și WKT.</td></tr>
   <tr><td><code>src/convert.rs</code></td><td>541</td><td>Conversia unui fișier, conversia în lot, exportul pe tipuri de geometrie (secțiunea 6.5).</td></tr>
-  <tr><td><code>src/rasterops.rs</code></td><td>534</td><td>Reproiecție raster, reeșantionare, randare RGBA, rampe de culori, hillshade.</td></tr>
-  <tr><td><code>src/formats/mod.rs</code></td><td>524</td><td>Registrul formatelor, deschiderea după extensie, scriere, codificări, fișiere <code>.prj</code>.</td></tr>
-  <tr><td><code>src/formats/*.rs</code></td><td>6 657</td><td>Câte un modul pe format (capitolul 6).</td></tr>
-  <tr><td><code>src/main.rs</code></td><td>69</td><td>Punctul de intrare al interfeței: fereastra, pictograma, argumentele.</td></tr>
-  <tr><td><code>src/gui/mod.rs</code></td><td>2 161</td><td>Starea aplicației (<code>App</code>), meniuri, bara de instrumente (cu comutatorul de limbă), panoul de straturi, sarcini în fundal, scurtături.</td></tr>
-  <tr><td><code>src/gui/map.rs</code></td><td>1 299</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
-  <tr><td><code>src/gui/layers.rs</code></td><td>339</td><td>Straturile hărții, stiluri, geometria de afișare și triangularea.</td></tr>
-  <tr><td><code>src/gui/basemap.rs</code></td><td>1 463</td><td>Hărțile de fundal: furnizori, descărcare, cache, plase reproiectate.</td></tr>
-  <tr><td><code>src/gui/print.rs</code></td><td>1 655</td><td>Planșa de tipărire, PDF, tipărirea prin Windows.</td></tr>
-  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 644</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
-  <tr><td><code>src/gui/tdr.rs</code></td><td>515</td><td>Fereastra TransDatRO.</td></tr>
-  <tr><td><code>src/gui/workspace.rs</code></td><td>260</td><td>Spațiul de lucru <code>.cgw</code>.</td></tr>
-  <tr><td><code>src/gui/theme.rs</code></td><td>453</td><td>Teme, pictograme desenate vectorial, setările persistente.</td></tr>
-  <tr><td><code>src/gui/select.rs</code></td><td>331</td><td>Selecția: instrumentul Selectare, operațiile pe selecție, desenarea entităților selectate (secțiunea 8.7).</td></tr>
-  <tr><td><code>src/gui/search.rs</code></td><td>832</td><td>Fereastra Căutare: geocodare Nominatim, coordonate, căutare rapidă în straturi, interogări pe câmpuri, marcajul locului (secțiunea 8.8).</td></tr>
+  <tr><td><code>src/rasterops.rs</code></td><td>535</td><td>Reproiecție raster, reeșantionare, randare RGBA, rampe de culori, hillshade.</td></tr>
+  <tr><td><code>src/formats/mod.rs</code></td><td>531</td><td>Registrul formatelor, deschiderea după extensie, scriere, codificări, fișiere <code>.prj</code>.</td></tr>
+  <tr><td><code>src/formats/*.rs</code></td><td>6 912</td><td>Câte un modul pe format (capitolul 6).</td></tr>
+  <tr><td><code>src/main.rs</code></td><td>70</td><td>Punctul de intrare al interfeței: fereastra, pictograma, argumentele.</td></tr>
+  <tr><td><code>src/gui/mod.rs</code></td><td>2 235</td><td>Starea aplicației (<code>App</code>), meniuri, bara de instrumente (cu comutatorul de limbă), panoul de straturi, sarcini în fundal, scurtături.</td></tr>
+  <tr><td><code>src/gui/map.rs</code></td><td>1 333</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
+  <tr><td><code>src/gui/layers.rs</code></td><td>395</td><td>Straturile hărții, stiluri, geometria de afișare și triangularea.</td></tr>
+  <tr><td><code>src/gui/basemap.rs</code></td><td>1 476</td><td>Hărțile de fundal: furnizori, descărcare, cache, plase reproiectate.</td></tr>
+  <tr><td><code>src/gui/print.rs</code></td><td>1 661</td><td>Planșa de tipărire, PDF, tipărirea prin Windows.</td></tr>
+  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 645</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
+  <tr><td><code>src/gui/tdr.rs</code></td><td>516</td><td>Fereastra TransDatRO.</td></tr>
+  <tr><td><code>src/gui/workspace.rs</code></td><td>261</td><td>Spațiul de lucru <code>.cgw</code>.</td></tr>
+  <tr><td><code>src/gui/theme.rs</code></td><td>470</td><td>Teme, pictograme desenate vectorial, setările persistente.</td></tr>
+  <tr><td><code>src/gui/select.rs</code></td><td>409</td><td>Selecția: instrumentul Selectare, operațiile pe selecție, desenarea entităților selectate (secțiunea 8.7).</td></tr>
+  <tr><td><code>src/gui/search.rs</code></td><td>839</td><td>Fereastra Căutare: geocodare Nominatim, coordonate, căutare rapidă în straturi, interogări pe câmpuri, marcajul locului (secțiunea 8.8).</td></tr>
   <tr><td><code>src/gui/bulk.rs</code></td><td>572</td><td>Deschiderea în masă a fișierelor de un tip dintr-un dosar (secțiunea 8.9).</td></tr>
-  <tr><td><code>src/gui/attrsel.rs</code></td><td>569</td><td>Fereastra „Selectare după atribute” (secțiunea 8.10).</td></tr>
+  <tr><td><code>src/gui/attrsel.rs</code></td><td>588</td><td>Fereastra „Selectare după atribute” (secțiunea 8.10).</td></tr>
   <tr><td><code>src/gui/loadfilter.rs</code></td><td>260</td><td>Bifa, fereastra și indicatorul filtrului de încărcare; filtrarea unui strat încărcat (secțiunea 6.6).</td></tr>
   <tr><td><code>src/gui/split.rs</code></td><td>285</td><td>Fereastra „Export pe tipuri de geometrie”.</td></tr>
-  <tr><td><code>src/gui/manual.rs</code></td><td>85</td><td>Manualul de utilizare inclus și deschiderea lui (<kbd>F1</kbd>).</td></tr>
-  <tr><td><code>src/bin/cli.rs</code></td><td>677</td><td>Linia de comandă.</td></tr>
+  <tr><td><code>src/gui/manual.rs</code></td><td>86</td><td>Manualul de utilizare inclus și deschiderea lui (<kbd>F1</kbd>).</td></tr>
+  <tr><td><code>src/bin/cli.rs</code></td><td>681</td><td>Linia de comandă.</td></tr>
 </table>
 
 <h3 id="t2-3"><span class="n">2.3</span>Fluxul datelor</h3>
@@ -218,7 +218,7 @@
   <tr><td><code>geojson.rs</code></td><td>GeoJSON (RFC 7946) cu <code>serde_json</code>; membrul „crs” pentru alte sisteme; coordonatele sunt scrise cu precizia potrivită (grade sau metri).</td></tr>
   <tr><td><code>kml.rs</code></td><td>KML și KMZ (<code>zip</code>): Folder, Placemark, ExtendedData/SimpleData, MultiGeometry, gx:Track. La scriere, datele trec în WGS84.</td></tr>
   <tr><td><code>gpx.rs</code></td><td>Waypoint-uri, rute și trasee (câte un strat), cu cotă.</td></tr>
-  <tr><td><code>dxf.rs</code></td><td>Citire DXF ASCII: POINT, LINE, LWPOLYLINE/POLYLINE (cu arce „bulge”), CIRCLE, ARC, ELLIPSE, SPLINE, TEXT, MTEXT, INSERT (blocuri cu transformări și ATTRIB), HATCH, 3DFACE, SOLID, polyface; atributele stratului, culorii și textului. Scriere DXF R12.</td></tr>
+  <tr><td><code>dxf.rs</code></td><td>Citire DXF ASCII: POINT, LINE, LWPOLYLINE/POLYLINE (cu arce „bulge”), CIRCLE, ARC, ELLIPSE, SPLINE, TEXT, MTEXT, INSERT (blocuri cu transformări și ATTRIB), HATCH, 3DFACE, SOLID, polyface; atributele stratului, culorii și textului; eliminarea punctelor RTCM (secțiunea 6.7). Scriere DXF R12.</td></tr>
   <tr><td><code>csv.rs</code></td><td>Detecția separatorului, a zecimalelor cu virgulă și a coloanelor de coordonate (nume uzuale: x/y, est/nord, lon/lat etc.); geometrie WKT; deducerea tipului câmpurilor.</td></tr>
   <tr><td><code>cgxml.rs</code></td><td>Port al nucleului CGXML2SHP v3.0: punctele cu BUILDINGID aparțin construcției; sortare după NO; eliminarea duplicatelor (0,5 mm); împărțirea în inele la revenirea în primul punct; clasificarea exterior / enclavă / parte multiplă prin vot de conținere; orientare ESRI; câmpurile <code>teren.dbf</code> / <code>constructii.dbf</code>; arhive ZIP (ignorând <code>__MACOSX</code>).</td></tr>
 </table>
@@ -253,6 +253,15 @@
 <p>În interfață, filtrul este setarea <code>load_area_filter</code> (cu <code>load_area_partial</code> și <code>load_area_bounds</code>); <code>App::open_path</code>, deschiderea în masă și importul CSV o copiază în <code>ReadOptions::area</code>. Spațiile de lucru construiesc propriile <code>ReadOptions</code> și se încarcă întregi. <code>App::filter_loaded_layer</code> aplică același filtru unui strat deja încărcat, golește selecția lui și reface geometria de afișare. În linia de comandă, filtrele corespund opțiunilor <code>--doar-romania</code>, <code>--zona-3844</code>, <code>--partial</code> și <code>--where</code>.</p>
 
 <!-- ===================================================================== -->
+<h3 id="t6-7"><span class="n">6.7</span>DXF: eliminarea punctelor RTCM</h3>
+<p>Desenele DXF din receptoarele GNSS conțin și punctele stațiilor de bază (descrierea „RTCM”), aflate de obicei departe de lucrare. <code>dxf::read</code> le elimină înainte de construirea stratului, cu excepția cazului <code>ReadOptions::dxf_keep_rtcm</code> (CLI: <code>--dxf-pastreaza-rtcm</code>), și întoarce <code>RtcmStats { points, entities }</code>, al cărui mesaj apare în informațiile de deschidere.</p>
+<ul>
+  <li>La fiecare înregistrare emisă, <code>Ctx::emit</code> notează în <code>Meta</code>: poziția (pentru POINT / INSERT / TEXT / MTEXT de pe primul nivel), dacă e etichetă, înălțimea textului, dacă descrierea conține „RTCM” (valorile text ale atributelor și ale textului, numele layerului, XDATA cod 1000; comparație ASCII fără majuscule) și, pentru INSERT, intervalul înregistrărilor generate din bloc.</li>
+  <li><code>rtcm_drop</code>: un INSERT al cărui bloc conține o înregistrare RTCM devine RTCM; fiecare etichetă primește proprietarul = cel mai apropiat POINT / INSERT aflat la cel mult <code>max(4·înălțimea textului, 1)</code> unități (căutare într-o grilă cu celula egală cu raza maximă). Se elimină: punctele RTCM, proprietarii etichetelor RTCM, conținutul blocurilor lor, toate etichetele acestor puncte și etichetele RTCM fără proprietar.</li>
+  <li>Liniile și poligoanele nu sunt afectate. Testul <code>rtcm_points_dropped</code> acoperă cele trei cazuri (etichetă, atribut de bloc, XDATA) și opțiunea de păstrare.</li>
+</ul>
+
+<!-- ===================================================================== -->
 <h2 id="t7"><span class="n">7</span>Operații raster</h2>
 <ul>
   <li><b>Reproiecție</b> (<code>rasterops::warp</code>): extinderea destinației se obține transformând marginile rasterului sursă, densificate (40 de puncte pe latură). Rezoluția implicită păstrează aproximativ mărimea pixelului din centru. Fiecare pixel destinație este transformat <i>invers</i> în sursă și eșantionat prin cel mai apropiat vecin sau biliniar (<code>resample</code>). Pixelii fără corespondent primesc NoData. Rezultatele peste 10⁹ pixeli sunt refuzate.</li>
@@ -276,9 +285,11 @@
 <ol>
   <li>harta de fundal (capitolul 9);</li>
   <li>rasterele, ca texturi;</li>
-  <li>pentru fiecare strat vectorial vizibil, în ordinea listei: entitățile din afara ecranului sunt sărite (încadrare); cele mai mici de 1,5 pixeli sunt desenate ca un singur pixel; poligoanele intră într-o singură plasă de triunghiuri de umplere, iar contururile sunt adăugate prin <code>push_stroke</code>; punctele sunt cercuri;</li>
+  <li>pentru fiecare strat vectorial vizibil, în ordinea listei: entitățile din afara ecranului sunt sărite (încadrare); cele mai mici de 1,5 pixeli sunt desenate ca un singur pixel; poligoanele intră într-o singură plasă de triunghiuri de umplere (sărită când stilul are <code>no_fill</code>; câmpul are <code>#[serde(default)]</code>, deci spațiile de lucru vechi se citesc neschimbate), iar contururile sunt adăugate prin <code>push_stroke</code>; punctele sunt cercuri;</li>
   <li>selecția, etichetele (fără suprapuneri, cu halou; desenate doar când pe ecran sunt cel mult 3 000 pentru stratul respectiv), măsurarea, dreptunghiul de zoom, scara grafică, controlul de navigație și atribuirea hărții de fundal.</li>
 </ol>
+
+<p><b>Redraw</b> (<code>App::redraw_all</code>, <kbd>F5</kbd>): golește grafica temporară (măsurarea, dreptunghiul de zoom, marcajul căutării, evidențierea identificării), reface geometria de afișare a tuturor straturilor (<code>refresh_projections</code>), scoate din harta de fundal tile-urile eșuate și plasele reproiectate (<code>Basemap::redraw</code>), apoi cere redesenarea. Vederea și selecțiile rămân.</p>
 
 <h3 id="t8-4"><span class="n">8.4</span>Desenarea contururilor (push_stroke)</h3>
 <p>egui unește segmentele unui contur prin îmbinări în colț ascuțit (miter) fără limită. La o întoarcere de aproape 180° colțul devine o linie lungă cât ecranul, iar trei puncte identice consecutive dau coordonate <code>NaN</code>. Datele detaliate (de exemplu limitele UAT) au asemenea zigzaguri, adesea sub un pixel la scara de afișare. Măsurat pe limitele UAT ale unui județ, conturul desenat direct ieșea cu până la 1 190 px din poligon. <code>map::push_stroke</code> previne problema:</p>
@@ -342,6 +353,7 @@ operand   := câmp | "câmp" | [câmp] | `câmp` | 'text' | număr | NULL | TRUE
 <p>Analiza lexicală reține poziția fiecărui simbol (în caractere), iar <code>ExprError { msg, pos }</code> o raportează. Un nume simplu trebuie să fie un câmp al stratului (căutat exact, apoi fără majuscule, apoi după <code>fold</code>); un text între ghilimele duble este câmp dacă există, altfel valoare (comoditate pentru <code>judet = "Argeș"</code>); parantezele drepte și accentele grave cer un câmp. Un predicat fără operator (<code>is_active</code>) este adevărat dacă valoarea nu este 0, goală sau <i>false/fals/nu/no</i>. <code>x = NULL</code> și <code>x &lt;&gt; NULL</code> sunt rescrise ca <code>IS NULL</code> / <code>IS NOT NULL</code>.</p>
 <p><b>Evaluarea</b> folosește logica SQL în trei valori (<code>Option&lt;bool&gt;</code>, <code>None</code> = necunoscut): o comparație cu o valoare lipsă este necunoscută, <code>NOT</code> păstrează necunoscutul, <code>AND</code>/<code>OR</code> urmează tabelele Kleene, iar o entitate este selectată doar dacă rezultatul este <code>Some(true)</code>. <code>IS NULL</code> este adevărat și pentru textele goale (DBF-urile nu disting golul de NULL). Comparația a două valori: dacă niciuna nu este text scris între apostrofuri și ambele au valoare numerică (numerele câmpurilor, textele care se citesc ca numere cu punct sau virgulă), se compară numeric cu toleranța relativă 10<sup>−9</sup>; un număr scris în expresie comparat cu un text care nu este număr dă „diferit” (doar <code>&lt;&gt;</code> este adevărat); altfel se compară textele după <code>fold</code> (sau exact, cu opțiunea <i>Exact</i>). <code>LIKE</code> folosește un algoritm liniar cu revenire la ultimul <code>%</code>.</p>
 <p><b>Fereastra</b> (<code>gui/attrsel.rs</code>) compilează expresia la fiecare modificare (doar analiză, fără evaluare) și arată eroarea; „Verifică” și „Selectează” o evaluează pe <code>data.features</code>. Rezultatul trece prin <code>VLayer::apply_sel</code> cu modurile <code>Replace</code>, <code>Add</code>, <code>Remove</code>, iar „din selecția curentă” este intersecția cu selecția existentă, aplicată cu <code>Replace</code>. Lista valorilor distincte ale unui câmp (cel mult 5 000, cu numărul de apariții, sortate numeric sau după <code>fold</code>) este calculată o singură dată pentru strat și câmp. Inserarea din liste folosește cursorul păstrat de <code>TextEditState</code>; dublu-click pe o valoare înlocuiește valoarea inserată la primul click cu <code>câmp = valoare</code>. Expresia scrisă este păstrată pe strat, iar ultimele 20 de expresii folosite sunt în meniul „Recente”.</p>
+<p><b>Zoom pe rezultat</b> (implicit activ): <code>App::focus_selection(id, avoid)</code> ia încadrarea selecției în sistemul hărții (<code>selection_bounds</code>), o lărgește cu 15% și cu un minim (100 m pentru un singur punct, 10 m altfel; 0,001° / 0,0001° în grade), face stratul vizibil și o încadrează. <code>avoid</code> este dreptunghiul ferestrei de selectare din cadrul anterior: <code>free_map_rect</code> alege cea mai mare dintre cele patru fâșii ale hărții neacoperite de fereastră (dacă are cel puțin o treime din hartă și 150 px pe latură), iar <code>zoom_into</code> calculează scara și centrul vederii astfel încât încadrarea să umple acea fâșie.</p>
 
 <!-- ===================================================================== -->
 <h2 id="t9"><span class="n">9</span>Hărți de fundal</h2>
@@ -471,7 +483,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
 <!-- ===================================================================== -->
 <h2 id="t14"><span class="n">14</span>Testare și validare</h2>
 <h3 id="t14-1"><span class="n">14.1</span>Teste automate</h3>
-<p><code>cargo test</code> rulează 46 de teste, printre care:</p>
+<p><code>cargo test</code> rulează 47 de teste, printre care:</p>
 <table>
   <tr><th style="width:40%">Test</th><th>Verifică</th></tr>
   <tr><td><code>official_stereo70</code>, <code>official_stereo30</code></td><td>Punctele de test oficiale ANCPI, în ambele sensuri, în toleranța 3 mm / 0,00003″.</td></tr>
@@ -491,6 +503,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td><code>merge_and_split</code>, <code>writes_three_shapefiles</code></td><td>Unirea straturilor DXF și împărțirea pe puncte, linii și poligoane (blocuri, hașuri, polilinii închise).</td></tr>
   <tr><td><code>simple_and_combined</code>, <code>text_and_numbers</code>, <code>like_in_between_null</code>, <code>errors</code>, <code>quoting</code></td><td>Expresiile pe atribute: priorități, numere și texte, LIKE / IN / BETWEEN / IS NULL, logica în trei valori, erorile cu poziție, scrierea câmpurilor și valorilor.</td></tr>
   <tr><td><code>stereo70</code>, <code>wgs84_and_unknown</code>, <code>parse</code></td><td>Filtrul pe zonă: Stereo 70, WGS84, sistem ghicit, modul parțial, citirea dreptunghiului.</td></tr>
+  <tr><td><code>rtcm_points_dropped</code></td><td>Eliminarea punctelor RTCM din DXF: după etichetă, atribut de bloc (cu desenul blocului) și XDATA; păstrarea cu <code>dxf_keep_rtcm</code>.</td></tr>
   <tr><td><code>distinct_sorted</code></td><td>Lista valorilor distincte din fereastra de selectare.</td></tr>
   <tr><td><code>coords</code>, <code>encode</code>, <code>nominatim_json</code></td><td>Recunoașterea coordonatelor, codificarea URL și citirea răspunsului Nominatim.</td></tr>
 </table>
@@ -537,8 +550,9 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>1.5.0</td><td>Interfața bilingvă: română (implicit) și engleză, cu comutatorul <b>RO | EN</b> din bara de instrumente și din meniul Vizualizare; pachetul <code>lang/en.tsv</code> și macrourile <code>tr!</code> (crate-ul <code>i18n-macros</code>); limba se păstrează în setări.</td></tr>
   <tr><td>1.6.0</td><td>Instrumentul <b>Selectare</b> (click, <kbd>Ctrl</kbd>+click, dreptunghi, Shift/Alt), selecția sincronizată cu tabelul de atribute, operațiile pe selecție și <b>exportul doar al selecției</b>; instrumentul <b>Căutare</b>: locuri și adrese prin OpenStreetMap Nominatim, coordonate, căutare rapidă în straturi și interogări pe câmpuri cu ȘI / SAU (<code>query.rs</code>).</td></tr>
   <tr><td>1.7.0</td><td><b>Export pe tipuri de geometrie</b>: unul sau mai multe desene DXF (sau alte straturi) unite și scrise ca trei shapefile – puncte, linii, poligoane –, din meniul Fișier, din meniul stratului și cu <code>cadastru-cli split</code>.</td></tr>
-  <tr><td>1.9.0</td><td><b>Selectarea după atribute</b> cu expresii de tip SQL <code>WHERE</code> (<code>status = 1 AND is_active = 1</code>, LIKE, IN, BETWEEN, IS NULL), cu liste de câmpuri și valori; <b>filtrul de încărcare</b>: doar entitățile din interiorul României (EPSG:3844) sau dintr-o zonă proprie, și în linia de comandă (<code>--doar-romania</code>, <code>--where</code>).</td></tr>
   <tr><td>1.8.0</td><td><b>Deschiderea în masă</b>: toate fișierele de un tip (vector sau raster) dintr-un dosar și din subdosarele lui, citite în paralel, cu geometria de afișare pregătită în firele de lucru, progres și oprire.</td></tr>
+  <tr><td>1.9.0</td><td><b>Selectarea după atribute</b> cu expresii de tip SQL <code>WHERE</code> (<code>status = 1 AND is_active = 1</code>, LIKE, IN, BETWEEN, IS NULL), cu liste de câmpuri și valori; <b>filtrul de încărcare</b>: doar entitățile din interiorul României (EPSG:3844) sau dintr-o zonă proprie, și în linia de comandă (<code>--doar-romania</code>, <code>--where</code>).</td></tr>
+  <tr><td>1.10.0</td><td>La citirea DXF se elimină <b>punctele cu „RTCM” în descriere</b> (stațiile de bază GNSS), cu etichetele lor și cu desenul blocurilor (<code>--dxf-pastreaza-rtcm</code> le păstrează); butonul <b>Redraw</b> (<kbd>F5</kbd>), ca REDRAWALL / REGEN în CAD; selectarea după atribute <b>centrează și încadrează harta pe selecție</b>, în partea liberă a hărții; opțiunea <b>Fără umplere (No fill)</b> pentru poligoane; bara de instrumente se compactează în ferestrele înguste.</td></tr>
 </table>
 
 <!-- ===================================================================== -->

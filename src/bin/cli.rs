@@ -49,6 +49,9 @@ struct InOpts {
     /// DXF: păstrează poliliniile închise ca linii (nu poligoane)
     #[arg(long)]
     dxf_lines: bool,
+    /// DXF: păstrează punctele cu „RTCM” în descriere (implicit sunt eliminate)
+    #[arg(long)]
+    dxf_pastreaza_rtcm: bool,
     /// CGXML: nu genera stratul de construcții
     #[arg(long)]
     cgxml_fara_constructii: bool,
@@ -249,6 +252,7 @@ fn read_opts(i: &InOpts) -> Result<ReadOptions> {
         z_field: i.z_field.clone(),
         crs: i.s_srs.as_deref().map(Crs::parse).transpose()?,
         dxf_closed_as_lines: i.dxf_lines,
+        dxf_keep_rtcm: i.dxf_pastreaza_rtcm,
         cgxml_custom: true,
         cgxml: cadastru::formats::cgxml::CgxmlOptions {
             close_ring: !i.cgxml_fara_inchidere,

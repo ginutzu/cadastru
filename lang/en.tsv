@@ -806,3 +806,17 @@ Fereastra filtrului de zonă, cu acest strat ales	The area filter window, with t
 Paranteză „)” în plus	Extra closing parenthesis “)”
 Se aștepta un operator (=, <>, LIKE, IN …) sau AND / OR înainte de {}	Expected an operator (=, <>, LIKE, IN …) or AND / OR before {}
 {} prin expresie	{} by the expression
+# 1.10.0
+DXF: eliminate {} puncte cu „RTCM” în descriere ({} entități, cu etichetele lor)	DXF: removed {} points with “RTCM” in the description ({} entities, with their labels)
+Fără umplere (No fill)	No fill
+Poligoanele se desenează doar cu conturul; punctele își păstrează culoarea	Polygons are drawn with their outline only; points keep their colour
+Redraw	Redraw
+Redraw (curăță și redesenează harta)   F5	Redraw (clean up and redraw the map)   F5
+Ca REDRAWALL / REGEN în CAD: șterge grafica temporară, regenerează straturile și reîncarcă harta de fundal	Like REDRAWALL / REGEN in CAD: clears temporary graphics, regenerates the layers and reloads the basemap
+Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD: șterge măsurătoarea, marcajele și evidențierile temporare, regenerează straturile și reîncarcă tile-urile de fundal eșuate (F5)	Clean up and redraw the map, like REDRAWALL / REGEN in CAD: clears the measurement, temporary markers and highlights, regenerates the layers and reloads failed basemap tiles (F5)
+Redraw: harta a fost curățată și redesenată; straturi regenerate: {} ({:.2} s).	Redraw: the map was cleaned up and redrawn; layers regenerated: {} ({:.2} s).
+{} tile-uri de fundal se reîncarcă.	{} basemap tiles are reloading.
+Harta se centrează și se încadrează pe entitățile selectate	The map is centred and fitted on the selected features
+Zoom pe selecție	Zoom to selection
+Centrează harta pe încadrarea entităților selectate din strat	Centre the map on the extent of the layer's selected features
+Redraw: curăță grafica temporară și redesenează harta	Redraw: clear temporary graphics and redraw the map

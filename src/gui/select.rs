@@ -272,14 +272,85 @@ impl App {
         }
     }
 
-    /// Zoom pe o încadrare, cu o margine; punctele izolate primesc o fereastră minimă.
+    /// Centrează și încadrează harta pe selecția stratului; un strat ascuns devine vizibil
+    /// (altfel selecția nu s-ar vedea). `avoid` = fereastra care acoperă harta (de ex. dialogul
+    /// de selectare): selecția se încadrează în partea liberă a hărții.
+    pub fn focus_selection(&mut self, id: u64, avoid: Option<egui::Rect>) {
+        let Some(b) = self.selection_bounds(Some(id)) else {
+            self.status = tr!("Nicio entitate selectată.").into();
+            return;
+        };
+        if let Some(l) = self.layer_mut(id)
+            && !l.visible
+        {
+            l.visible = true;
+        }
+        let b = self.padded(b);
+        match avoid.and_then(|w| self.free_map_rect(w)) {
+            Some(r) => self.zoom_into(b, r),
+            None => self.zoom_to(b),
+        }
+    }
+
+    /// Cea mai mare fâșie a hărții neacoperită de fereastra `w` (dacă e cel puțin o treime din hartă).
+    fn free_map_rect(&self, w: egui::Rect) -> Option<egui::Rect> {
+        let m = self.map_rect;
+        let w = w.intersect(m);
+        if !w.is_positive() || m.area() <= 0.0 {
+            return None;
+        }
+        let cands = [
+            egui::Rect::from_min_max(m.min, egui::pos2(w.min.x, m.max.y)),
+            egui::Rect::from_min_max(egui::pos2(w.max.x, m.min.y), m.max),
+            egui::Rect::from_min_max(m.min, egui::pos2(m.max.x, w.min.y)),
+            egui::Rect::from_min_max(egui::pos2(m.min.x, w.max.y), m.max),
+        ];
+        let best = cands
+            .into_iter()
+            .filter(|r| r.is_positive())
+            .max_by(|a, b| a.area().total_cmp(&b.area()))?;
+        (best.area() >= m.area() / 3.0 && best.width() >= 150.0 && best.height() >= 150.0).then_some(best)
+    }
+
+    /// Încadrează `b` în dreptunghiul `r` al ecranului (parte a hărții).
+    fn zoom_into(&mut self, b: Bounds, r: egui::Rect) {
+        if !b.is_valid() {
+            return;
+        }
+        let s = (b.width() / r.width() as f64).max(b.height() / r.height() as f64) * 1.18;
+        if s <= 0.0 || !s.is_finite() {
+            return self.zoom_to(b);
+        }
+        let c = self.map_rect.center();
+        let (bx, by) = b.center();
+        self.view.scale = s;
+        self.view.cx = bx - (r.center().x - c.x) as f64 * s;
+        self.view.cy = by + (r.center().y - c.y) as f64 * s;
+        self.view_initialized = self.map_rect.width() > 0.0;
+    }
+
+    /// Zoom pe o încadrare, centrată, cu o margine; punctele izolate primesc o fereastră minimă.
     pub fn zoom_to_padded(&mut self, b: Bounds) {
+        let b = self.padded(b);
+        self.zoom_to(b);
+    }
+
+    /// Încadrarea cu margine; punctele izolate primesc o fereastră minimă.
+    fn padded(&self, b: Bounds) -> Bounds {
         let geo = self.map_crs.as_ref().is_some_and(|c| c.is_geographic());
-        let min = if geo { 0.002 } else { 200.0 };
+        // un punct (încadrare fără dimensiuni) primește o fereastră de ~100 m; altfel încadrarea
+        // se umple, cu cel puțin ~10 m
+        let point = b.width() <= 0.0 && b.height() <= 0.0;
+        let min = match (geo, point) {
+            (true, true) => 0.001,
+            (true, false) => 0.0001,
+            (false, true) => 100.0,
+            (false, false) => 10.0,
+        };
         let (cx, cy) = b.center();
         let w = b.width().max(min) * 1.15;
         let h = b.height().max(min) * 1.15;
-        self.zoom_to(Bounds::new(cx - w / 2.0, cy - h / 2.0, cx + w / 2.0, cy + h / 2.0));
+        Bounds::new(cx - w / 2.0, cy - h / 2.0, cx + w / 2.0, cy + h / 2.0)
     }
 
     /// Desenează entitățile selectate peste straturi.

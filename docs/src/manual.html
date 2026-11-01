@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.9.0 – Manual de utilizare</title>
+<title>Cadastru 1.10.0 – Manual de utilizare</title>
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Manual de utilizare · versiunea 1.9.0</div>
+  <div class="sub">Manual de utilizare · versiunea 1.10.0</div>
   <div class="shot"><img src="img/principal.png" alt=""></div>
   <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Octombrie 2026</span></div>
 </section>
@@ -94,7 +94,7 @@
   <tr><th style="width:24%">Meniu</th><th>Conține</th></tr>
   <tr><td><b>Fișier</b></td><td>Deschidere de date, File Geodatabase, toate fișierele de un tip dintr-un dosar și dosare CGXML; filtrul de încărcare (doar entitățile din România); spațiul de lucru (deschide, salvează, salvează ca); export; închiderea tuturor straturilor; <b>Tipărire</b> și <b>Salvează ca PDF</b>; ieșire.</td></tr>
   <tr><td><b>Vizualizare</b></td><td>Extindere completă, zoom la stratul selectat, sistemul hărții, tabelul de atribute, vederea anterioară/următoare, afișarea etichetelor, controlul de navigație, fereastra de identificare, tema (gri închis sau luminoasă), limba interfeței (română sau engleză).</td></tr>
-  <tr><td><b>Instrumente</b></td><td>Instrumentele hărții, selecția (Selectare, Deselectează tot, Zoom la selecție, selectare doar în stratul activ), Selectare după atribute, Căutare, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML.</td></tr>
+  <tr><td><b>Instrumente</b></td><td>Instrumentele hărții, selecția (Selectare, Deselectează tot, Zoom la selecție, selectare doar în stratul activ), Selectare după atribute, Căutare, <b>Redraw</b>, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML.</td></tr>
   <tr><td><b>Ajutor</b></td><td>Manualul de utilizare (acest document, <kbd>F1</kbd>), lista de scurtături, informații despre aplicație și autor.</td></tr>
 </table>
 
@@ -112,6 +112,7 @@
   <tr><td>Extindere completă</td><td><kbd>Home</kbd></td><td>Arată toate straturile (fără straturi: toată România).</td></tr>
   <tr><td>+ / −</td><td><kbd>+</kbd> <kbd>−</kbd></td><td>Mărire / micșorare față de centrul hărții.</td></tr>
   <tr><td>← / →</td><td><kbd>Backspace</kbd> / <kbd>Alt+→</kbd></td><td>Vederea anterioară / următoare.</td></tr>
+  <tr><td>Redraw</td><td><kbd>F5</kbd></td><td>Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD (secțiunea 4.4).</td></tr>
   <tr><td>Tabel</td><td><kbd>T</kbd></td><td>Tabelul de atribute (secțiunea 7.3).</td></tr>
   <tr><td>Căutare</td><td><kbd>Ctrl+F</kbd></td><td>Caută locuri, adrese, coordonate sau entități după câmpuri (secțiunea 7.8).</td></tr>
   <tr><td>Convertor</td><td></td><td>Convertorul de coordonate (secțiunea 7.5).</td></tr>
@@ -164,7 +165,7 @@
   <tr><td>GeoJSON</td><td>.geojson .json</td><td class="c">✔</td><td class="c">✔</td><td>Sistemul din membrul „crs”, altfel WGS84.</td></tr>
   <tr><td>KML / KMZ</td><td>.kml .kmz</td><td class="c">✔</td><td class="c">✔</td><td>Foldere, ExtendedData; la scriere datele trec automat în WGS84.</td></tr>
   <tr><td>GPX</td><td>.gpx</td><td class="c">✔</td><td class="c">✔</td><td>Puncte, rute, trasee, cotă.</td></tr>
-  <tr><td>AutoCAD DXF</td><td>.dxf</td><td class="c">✔</td><td class="c">✔</td><td>Linii, polilinii (cu arce), cercuri, texte, blocuri, hașuri; scriere DXF R12.</td></tr>
+  <tr><td>AutoCAD DXF</td><td>.dxf</td><td class="c">✔</td><td class="c">✔</td><td>Linii, polilinii (cu arce), cercuri, texte, blocuri, hașuri; punctele cu „RTCM” în descriere sunt eliminate (secțiunea 3.9); scriere DXF R12.</td></tr>
   <tr><td>CSV / text</td><td>.csv .txt</td><td class="c">✔</td><td class="c">✔</td><td>Coloane X/Y/Z sau WKT; dialog de import (secțiunea 3.3).</td></tr>
   <tr><td>GeoTIFF</td><td>.tif .tiff</td><td class="c">✔</td><td class="c">✔</td><td>8–64 biți, RGB, paletă, compresii uzuale, NoData, BigTIFF.</td></tr>
   <tr><td>ESRI ASCII Grid</td><td>.asc</td><td class="c">✔</td><td class="c">✔</td><td>Modele digitale ale terenului.</td></tr>
@@ -253,6 +254,17 @@
 </ul>
 <div class="note"><b>De reținut.</b> Setările filtrului se păstrează la închiderea aplicației. Dacă un fișier pare să aibă „prea puține” entități, verificați indicatorul din bara de stare. În linia de comandă, același filtru se cere cu <code>--doar-romania</code> (capitolul 12).</div>
 
+<h3 id="c3-9"><span class="n">3.9</span>Desene DXF: punctele RTCM sunt eliminate</h3>
+<p>Desenele DXF exportate din receptoarele și programele GNSS conțin adesea și punctele stațiilor de bază de la care au venit corecțiile RTK – stația permanentă (de exemplu ROMPOS) sau baza proprie –, cu descrierea <i>RTCM</i> (după formatul corecțiilor). Aceste puncte sunt de obicei la zeci de kilometri de lucrare, așa că extinderea completă și zoom-ul la strat ar arăta o zonă mult prea mare.</p>
+<p>De aceea, la deschiderea unui fișier <code>.dxf</code>, Cadastru <b>elimină automat punctele care conțin „RTCM” în descriere</b> (fără deosebire între majuscule și minuscule: <i>RTCM 3.2</i>, <i>rtcm_ref</i>, <i>Baza RTCM</i>):</p>
+<ul>
+  <li><b>blocurile</b> (INSERT) care au „RTCM” într-un atribut (de exemplu <code>DESCRIERE = RTCM</code>) sau într-un text din bloc, împreună cu desenul blocului;</li>
+  <li><b>punctele</b> (POINT) cu „RTCM” în layer sau în datele extinse (XDATA);</li>
+  <li><b>punctele etichetate</b> cu un text (TEXT / MTEXT) care conține „RTCM”: se elimină textul, punctul de care ține și celelalte etichete ale punctului (nume, cotă). O etichetă ține de cel mai apropiat punct, aflat la cel mult patru înălțimi de text (minimum 1 m).</li>
+</ul>
+<p>Restul desenului – linii, poligoane, celelalte puncte și texte – rămâne neschimbat; fișierul de pe disc nu se modifică. Bara de stare arată ce s-a eliminat, de exemplu <i>DXF: eliminate 3 puncte cu „RTCM” în descriere (10 entități, cu etichetele lor)</i>. Regula se aplică oriunde se deschide un DXF: <span class="ui">Deschide date…</span>, fișierele trase peste fereastră, deschiderea în masă, exportul pe tipuri de geometrie și conversiile. În linia de comandă, opțiunea <code>--dxf-pastreaza-rtcm</code> păstrează aceste puncte (capitolul 12).</p>
+<div class="tip"><b>Încercați.</b> <code>exemple\ridicare_gnss.dxf</code> conține o ridicare GNSS cu trei puncte RTCM (baza locală, o stație permanentă și un bloc cu atributul <code>DESCRIERE = rtcm_ref</code>): la deschidere rămân 50 din 60 de entități, iar zoom-ul la strat arată doar parcela.</div>
+
 <!-- ===================================================================== -->
 <h2 id="c4"><span class="n">4</span>Navigarea pe hartă</h2>
 
@@ -274,6 +286,16 @@
 
 <h3 id="c4-3"><span class="n">4.3</span>Zoom la strat și extindere completă</h3>
 <p><span class="ui">Vizualizare → Zoom la stratul selectat</span> (sau click dreapta pe strat → <span class="ui">Zoom la strat</span>) arată întregul strat. <span class="ui">Extindere completă</span> arată toate straturile. Când nu este deschis niciun strat, extinderea completă arată toată România.</p>
+
+<h3 id="c4-4"><span class="n">4.4</span>Redraw: curățarea și redesenarea hărții</h3>
+<p>Butonul <span class="ui">Redraw</span> din bara de instrumente (săgeata circulară), <span class="ui">Instrumente → Redraw</span> sau tasta <kbd>F5</kbd> fac ceea ce fac REDRAW / REDRAWALL și REGEN în programele CAD:</p>
+<ul>
+  <li>șterg <b>grafica temporară</b>: linia și rezultatele măsurării, dreptunghiul de zoom început, marcajul locului găsit cu Căutare și evidențierea entității identificate;</li>
+  <li><b>regenerează</b> afișarea tuturor straturilor în sistemul hărții (reproiectare, triangularea poligoanelor, imaginile rasterelor) – util după schimbarea metodei Stereo 70 sau dacă harta pare desenată incomplet;</li>
+  <li>reîncarcă imediat <b>tile-urile hărții de fundal</b> care nu s-au putut descărca, fără să mai aștepte reîncercarea automată;</li>
+  <li>redesenează harta.</li>
+</ul>
+<p>Vederea (centrul și scara), straturile, stilurile și selecțiile rămân neschimbate. Bara de stare arată câte straturi au fost regenerate și în cât timp.</p>
 
 <!-- ===================================================================== -->
 <h2 id="c5"><span class="n">5</span>Hărți de fundal (Basemap)</h2>
@@ -320,6 +342,7 @@
       <dt>Setează sistemul de coordonate…</dt><dd>Corectează sistemul unui fișier fără <code>.prj</code> sau cu <code>.prj</code> greșit. Datele nu sunt transformate, doar interpretate altfel.</dd>
       <dt>Folosește sistemul stratului pentru hartă</dt><dd>Trece harta în sistemul acestui strat.</dd>
       <dt>Export…</dt><dd>Salvează stratul în alt format sau sistem (capitolul 9).</dd>
+      <dt>Fără umplere (No fill)</dt><dd>Pentru straturile cu poligoane: doar conturul, fără umplere (secțiunea 6.3).</dd>
       <dt>Selecție</dt><dd>Selectare după atribute, selectează tot, inversează, deselectează, zoom și exportul selecției (secțiunile 7.7, 7.9).</dd>
       <dt>Scoate entitățile din afara României…</dt><dd>Filtrul de zonă aplicat stratului încărcat (secțiunea 3.8).</dd>
       <dt>Elimină</dt><dd>Scoate stratul din hartă.</dd>
@@ -335,7 +358,7 @@
     <ul>
       <li><b>Contur</b>: culoarea liniilor și a marginilor poligoanelor.</li>
       <li><b>Grosime</b>: grosimea conturului, în pixeli (0 = fără contur).</li>
-      <li><b>Umplere</b>: culoarea și transparența poligoanelor și a punctelor.</li>
+      <li><b>Umplere</b>: culoarea și transparența poligoanelor și a punctelor. Bifa <b>Fără umplere (No fill)</b> desenează poligoanele doar cu conturul – util pentru limite peste ortofoto sau peste alte straturi; punctele își păstrează culoarea. Aceeași bifă e în meniul contextual al stratului.</li>
       <li><b>Mărime punct</b>: raza simbolului pentru puncte.</li>
       <li><b>Etichete</b>: câmpul afișat ca etichetă (sau niciunul).</li>
       <li><b>Text etichetă</b>: mărimea și culoarea etichetelor.</li>
@@ -456,13 +479,14 @@
 <pre><code>admin_unit_id = 123
 status = 1 AND is_active = 1
 (judet = 'Argeș' OR judet = 'Olt') AND suprafata &gt;= 5000</code></pre>
-<figure><img src="img/selectie_atribute.png" alt=""><figcaption><b>Figura 7.11.</b> Selectarea după atribute: câmpurile, valorile câmpului ales, operatorii și expresia.</figcaption></figure>
+<figure><img src="img/selectie_atribute.png" alt=""><figcaption><b>Figura 7.11.</b> Selectarea după atribute: câmpurile, operatorii și expresia; harta s-a încadrat pe cele patru entități selectate, în dreapta ferestrei.</figcaption></figure>
 <ol>
   <li>Alegeți <span class="ui">Stratul</span>. Fiecare strat își păstrează expresia scrisă.</li>
   <li>Scrieți expresia sau construiți-o din liste: <b>dublu-click pe un câmp</b> îi inserează numele; <b>click pe un câmp</b> arată valorile lui distincte, cu numărul de apariții (cu o casetă de filtrare); <b>click pe o valoare</b> o inserează, iar <b>dublu-click</b> inserează direct <code>câmp = valoare</code>. Butoanele de operatori inserează <code>=</code>, <code>&lt;&gt;</code>, <code>LIKE</code>, <code>IN ()</code>, <code>AND</code> etc. în locul cursorului.</li>
   <li>Expresia este verificată pe măsură ce scrieți: o greșeală apare cu roșu, cu poziția ei (de exemplu <i>Câmpul „statu” nu există în strat (la caracterul 1)</i>).</li>
   <li>Alegeți modul: <b>Selecție nouă</b>, <b>Adaugă la selecție</b>, <b>Scoate din selecție</b> sau <b>Selectează din selecția curentă</b> (păstrează doar entitățile deja selectate care îndeplinesc expresia).</li>
-  <li>Apăsați <span class="ui">Selectează</span> (sau <kbd>Ctrl+Enter</kbd> în casetă). <span class="ui">Verifică</span> doar numără entitățile potrivite, fără să schimbe selecția. Cu <span class="ui">Zoom pe rezultat</span> bifat, harta se încadrează pe selecție.</li>
+  <li>Apăsați <span class="ui">Selectează</span> (sau <kbd>Ctrl+Enter</kbd> în casetă). <span class="ui">Verifică</span> doar numără entitățile potrivite, fără să schimbe selecția.</li>
+  <li>După selectare, harta se <b>centrează și se încadrează pe extinderea selecției</b>, în partea hărții rămasă liberă lângă fereastră, ca rezultatul să se vadă întreg (un singur punct primește o fereastră de circa 100 m). Dacă stratul era ascuns, devine vizibil. Comportamentul se oprește debifând <span class="ui">Zoom pe rezultat</span>; butonul <span class="ui">Zoom pe selecție</span> reîncadrează oricând selecția stratului.</li>
 </ol>
 <p>Rezultatul este o selecție obișnuită (secțiunea 7.7): apare cu galben, poate fi văzut în tabel (butonul <span class="ui">Tabel</span> deschide tabelul cu „Doar selecția”) și exportat. Expresiile folosite se regăsesc în meniul <span class="ui">Recente…</span>.</p>
 <table>
@@ -610,7 +634,7 @@ cadastru-cli split D:\iesire\toate.shp D:\desene -r --inchise-ca-linii -o
 cadastru-cli convert adrese.gpkg adrese_ro.shp --doar-romania
 cadastru-cli convert uat.shp uat_active.gpkg --where "status = 1 AND is_active = 1"
 cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></pre>
-<p><b>Filtre la citire</b> (pentru <code>info</code>, <code>convert</code>, <code>batch</code> și <code>split</code>): <code>--doar-romania</code> păstrează doar entitățile aflate în întregime în interiorul României (aceeași zonă ca în aplicație, secțiunea 3.8); <code>--zona-3844 "minX,minY,maxX,maxY"</code> folosește alt dreptunghi; <code>--partial</code> păstrează și entitățile care doar ating zona; <code>--where "EXPRESIE"</code> păstrează doar entitățile care îndeplinesc expresia (sintaxa din secțiunea 7.9). Filtrele se pot combina.</p>
+<p><b>Filtre la citire</b> (pentru <code>info</code>, <code>convert</code>, <code>batch</code> și <code>split</code>): <code>--doar-romania</code> păstrează doar entitățile aflate în întregime în interiorul României (aceeași zonă ca în aplicație, secțiunea 3.8); <code>--zona-3844 "minX,minY,maxX,maxY"</code> folosește alt dreptunghi; <code>--partial</code> păstrează și entitățile care doar ating zona; <code>--where "EXPRESIE"</code> păstrează doar entitățile care îndeplinesc expresia (sintaxa din secțiunea 7.9). Filtrele se pot combina. La DXF, punctele cu „RTCM” în descriere sunt eliminate (secțiunea 3.9); <code>--dxf-pastreaza-rtcm</code> le păstrează.</p>
 <p>La <code>split</code>, intrările pot fi fișiere sau dosare (din dosare se iau toate fișierele <code>.dxf</code>, cu <code>-r</code> și din subdosare). Opțiuni: <code>--fara-puncte</code>, <code>--fara-linii</code>, <code>--fara-poligoane</code>, <code>--inchise-ca-linii</code>, <code>--fara-camp-fisier</code>, plus <code>--s-srs</code>, <code>--t-srs</code>, <code>--out-encoding</code> și <code>-o</code>.</p>
 <p>Opțiuni frecvente: <code>--s-srs</code> (sistemul sursă), <code>--t-srs</code> (reproiecție), <code>-o</code> (suprascrie), <code>--out-encoding cp1250</code> (DBF pentru programe vechi), <code>--layer</code> (un singur strat), <code>--fara-transdatro</code> (Stereo 70 cu Helmert). Lista completă: <code>cadastru-cli &lt;comandă&gt; --help</code> și documentația tehnică. Codul de ieșire este 0 la succes, 1 la eroare și 2 dacă o conversie în lot a avut erori.</p>
 
@@ -619,6 +643,7 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
 <table>
   <tr><th style="width:32%">Tastă</th><th>Acțiune</th></tr>
   <tr><td><kbd>F1</kbd></td><td>Manualul de utilizare</td></tr>
+  <tr><td><kbd>F5</kbd></td><td>Redraw: curăță grafica temporară și redesenează harta</td></tr>
   <tr><td><kbd>Ctrl+O</kbd></td><td>Deschide fișiere</td></tr>
   <tr><td><kbd>Ctrl+S</kbd></td><td>Salvează spațiul de lucru</td></tr>
   <tr><td><kbd>Ctrl+P</kbd></td><td>Tipărire</td></tr>
@@ -643,7 +668,7 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
   <tr><th style="width:44%">Locație</th><th>Conținut</th></tr>
   <tr><td><code>%APPDATA%\Cadastru\setari.json</code></td><td>Limba interfeței, tema, etichetele, controlul de navigație, metoda pentru Stereo 70, opțiunile CGXML, opacitatea hărții de fundal, ultimul șablon XYZ.</td></tr>
   <tr><td><code>%LOCALAPPDATA%\Cadastru\tile-cache\</code></td><td>Cache-ul hărților de fundal.</td></tr>
-  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.9.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
+  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.10.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
   <tr><td><code>grile\</code> lângă <code>cadastru.exe</code></td><td>Opțional: griduri TransDatRO mai noi (secțiunea 8.4).</td></tr>
 </table>
 <p>Ștergerea fișierului <code>setari.json</code> readuce setările implicite. Aplicația nu scrie nimic în registrul Windows și nu are nevoie de drepturi de administrator.</p>
@@ -672,7 +697,7 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
 <div class="cols">
   <figure><img src="img/despre.png" alt=""><figcaption><b>Figura 16.1.</b> <span class="ui">Ajutor → Despre Cadastru</span>.</figcaption></figure>
   <div>
-    <p><b>Cadastru 1.9.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
+    <p><b>Cadastru 1.10.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
     <p>Aplicația este scrisă în Rust și distribuită cu codul sursă, sub licența MIT.</p>
     <p class="small">TransDatRO: algoritm și griduri © ANCPI (Agenția Națională de Cadastru și Publicitate Imobiliară).<br>
     Hărțile de fundal aparțin furnizorilor lor (OpenStreetMap, Esri, Google, Microsoft, CARTO, BKG, EOX) și se folosesc conform condițiilor fiecăruia.<br>

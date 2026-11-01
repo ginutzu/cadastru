@@ -228,6 +228,7 @@ pub enum Icon {
     Select,
     Search,
     SelectAttr,
+    Redraw,
 }
 
 fn arrow_head(p: &Painter, tip: Pos2, dir: egui::Vec2, size: f32, c: Color32) {
@@ -381,6 +382,22 @@ pub fn paint_icon(p: &Painter, r: Rect, icon: Icon, c: Color32) {
             p.line_segment([pt(-7.5, -3.0), pt(7.5, -3.0)], s);
             p.line_segment([pt(-2.5, -6.0), pt(-2.5, 6.0)], Stroke::new(1.0, c));
             p.line_segment([pt(-7.5, 4.0), pt(7.5, 4.0)], Stroke::new(1.0, c));
+        }
+        Icon::Redraw => {
+            // săgeată circulară (reîmprospătare)
+            let r = 6.0 * u;
+            let n = 20;
+            let (a0, a1) = (0.35_f32, 0.35 + std::f32::consts::TAU * 0.80);
+            let pts: Vec<Pos2> = (0..=n)
+                .map(|i| {
+                    let a = a0 + (a1 - a0) * i as f32 / n as f32;
+                    ctr + vec2(a.cos(), -a.sin()) * r
+                })
+                .collect();
+            p.add(Shape::line(pts, Stroke::new(1.8, c)));
+            let tip = ctr + vec2(a1.cos(), -a1.sin()) * r;
+            let dir = vec2(-a1.sin(), -a1.cos());
+            arrow_head(p, tip + dir * 2.0 * u, dir, 4.5 * u, c);
         }
         Icon::Search => {
             p.circle_stroke(pt(-1.5, -1.5), 5.0 * u, Stroke::new(1.8, c));

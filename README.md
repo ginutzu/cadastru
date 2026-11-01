@@ -1,4 +1,4 @@
-# Cadastru 1.9.0
+# Cadastru 1.10.0
 
 Autor: **Ginu Popescu** (scriemiaici@proton.me)
 
@@ -59,7 +59,8 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 - straturi vectoriale și raster suprapuse, cu ordine, vizibilitate și opacitate reglabile
 - **reproiecție din mers**: fiecare strat se afișează în sistemul hărții, indiferent de sistemul fișierului
 - navigare: rotița mouse-ului pentru zoom la cursor; tragere sau butonul din mijloc pentru deplasare; zoom pe fereastră; extindere completă
-- stiluri pentru vectori: culoare de contur și de umplere, grosime, mărimea punctelor, etichete din orice câmp (cu evitarea suprapunerilor)
+- stiluri pentru vectori: culoare de contur și de umplere, **fără umplere (No fill)** pentru poligoane (doar conturul; și din meniul stratului), grosime, mărimea punctelor, etichete din orice câmp (cu evitarea suprapunerilor)
+- **Redraw (F5)**, în bara de instrumente și în *Instrumente*: ca REDRAWALL / REGEN din programele CAD – șterge grafica temporară (măsurătoarea, marcajul căutării, evidențierea de la identificare), regenerează afișarea tuturor straturilor, reîncearcă tile-urile de fundal eșuate și redesenează harta; selecțiile și vederea rămân
 - rastere: compunere RGB din benzi la alegere, întindere min/max automată sau manuală, rampe de culori (Relief, Gri, Spectral, Viridis), umbrire de relief (hillshade), alb transparent pentru hărți scanate, NoData transparent
 - randare adaptivă: rasterele mari se redesenează la rezoluția ecranului după fiecare zoom
 - scară grafică și scară numerică calculate geodezic; coordonatele cursorului în sistemul hărții și în WGS84 (zecimal și grade-minute-secunde)
@@ -67,7 +68,7 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 ### Instrumente
 - **Identificare (I)**: atributele entității și valorile pixelilor din toate rasterele aflate sub cursor; pentru poligoane și linii afișează și aria, perimetrul și lungimea
 - **Selectare (S)**: click = o entitate, Ctrl+click = adaugă / scoate, dreptunghi = toate entitățile atinse (Shift adaugă, Alt scoate); selecția apare cu galben pe hartă și ca număr lângă numele stratului, e sincronizată cu tabelul de atribute (Ctrl/Shift+click, bifa „Doar selecția”) și are operații în meniul stratului: selectează tot, inversează, deselectează, zoom la selecție, **exportă selecția** (în orice format vectorial, cu reproiecție). Ctrl+Shift+A golește selecția
-- **Selectare după atribute (Ctrl+Shift+F)**: expresie în stilul SQL `WHERE` pe un strat – `admin_unit_id = 123`, `status = 1 AND is_active = 1`, `judet LIKE 'Arg%'`, `cod IN (13, 14)`, `supr BETWEEN 100 AND 500`, `obs IS NULL`, paranteze, `NOT`; lista câmpurilor și a valorilor distincte (cu numărul de apariții) se inserează cu click, expresia e verificată pe loc (eroarea cu poziția ei); selecție nouă, adaugă, scoate sau doar din selecția curentă; textele fără deosebire de majuscule și diacritice (sau exact)
+- **Selectare după atribute (Ctrl+Shift+F)**: expresie în stilul SQL `WHERE` pe un strat – `admin_unit_id = 123`, `status = 1 AND is_active = 1`, `judet LIKE 'Arg%'`, `cod IN (13, 14)`, `supr BETWEEN 100 AND 500`, `obs IS NULL`, paranteze, `NOT`; lista câmpurilor și a valorilor distincte (cu numărul de apariții) se inserează cu click, expresia e verificată pe loc (eroarea cu poziția ei); selecție nouă, adaugă, scoate sau doar din selecția curentă; textele fără deosebire de majuscule și diacritice (sau exact); după selectare harta se **centrează și se încadrează pe selecție** (bifa „Zoom pe rezultat”, activă implicit, și butonul „Zoom pe selecție”)
 - **Filtrul de încărcare** (*Fișier → La deschidere: doar entitățile din interiorul României*): la deschiderea fișierelor vectoriale se încarcă doar entitățile aflate în interiorul încadrării României în Stereo 70 (EPSG:3844: 114000, 235000 – 885000, 764000) – în întregime sau, opțional, și cele care doar ating zona; zona poate fi înlocuită cu alt dreptunghi; se aplică și la deschiderea în masă, la fișierele trase în fereastră și la importul CSV, iar pentru un strat deja încărcat există comanda „Scoate entitățile din afara României”
 - **Căutare (Ctrl+F)**: locuri, adrese și obiective prin **OpenStreetMap Nominatim** (ca în Google Maps; implicit doar în România), cu zoom și marcaj pe hartă; coordonate „lat, lon” WGS84 sau „X Y” în sistemul hărții; căutare rapidă a textului în toate straturile încărcate; **interogări după câmpuri** cu operatori (=, ≠, conține, începe cu, >, ≤, este gol …) legați prin **ȘI / SAU**, fără deosebire de majuscule și diacritice, cu lista valorilor existente; rezultatele se pot selecta, adăuga la selecție sau încadra pe hartă
 - **Măsurare (M)**: distanță plană și pe elipsoid (Vincenty, WGS84), ultimul segment, arie și perimetru
@@ -115,7 +116,7 @@ Integrarea în restul aplicației:
 | GeoJSON | .geojson .json | ✔ | ✔ | membrul „crs” pentru alte sisteme decât WGS84 |
 | KML / KMZ | .kml .kmz | ✔ | ✔ | foldere, ExtendedData, MultiGeometry, gx:Track; la scriere transformă automat în WGS84 |
 | GPX | .gpx | ✔ | ✔ | puncte, rute, trasee, cota (ele) |
-| AutoCAD DXF | .dxf | ✔ | ✔ | citire: POINT, LINE, LWPOLYLINE/POLYLINE (cu arce „bulge”), CIRCLE, ARC, ELLIPSE, SPLINE, TEXT, MTEXT, INSERT (blocuri, cu ATTRIB), HATCH, 3DFACE, SOLID, polyface; scriere: DXF R12, compatibil cu orice program CAD |
+| AutoCAD DXF | .dxf | ✔ | ✔ | citire: POINT, LINE, LWPOLYLINE/POLYLINE (cu arce „bulge”), CIRCLE, ARC, ELLIPSE, SPLINE, TEXT, MTEXT, INSERT (blocuri, cu ATTRIB), HATCH, 3DFACE, SOLID, polyface; la citire se elimină punctele cu „RTCM” în descriere (stațiile de bază GNSS), cu etichetele lor; scriere: DXF R12, compatibil cu orice program CAD |
 | CSV / text | .csv .txt | ✔ | ✔ | coloane X/Y/Z sau WKT, separator `,` `;` tab, zecimale cu virgulă; dialog de import cu previzualizare |
 | GeoTIFF | .tif .tiff | ✔ | ✔ | 8/16/32/64 biți, întregi sau reali, RGB/RGBA, paletă, tiled/strip, LZW/Deflate/JPEG/PackBits, NoData, BigTIFF, sisteme definite de utilizator în cheile GeoTIFF (recunoscute automat ca EPSG când se potrivesc) |
 | ESRI ASCII Grid | .asc | ✔ | ✔ | |
@@ -189,7 +190,7 @@ cadastru-cli convert uat.shp uat_active.gpkg --where "status = 1 AND is_active =
 cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania --partial -r -o
 ```
 
-Opțiuni comune: `--s-srs` (sistemul sursă, suprascrie .prj), `--t-srs` (reproiecție), `-o` (suprascrie), `--encoding` (codificarea la citire), `--out-encoding`, `--layer` (un singur strat din GeoPackage), `--name-field` (câmpul de nume pentru KML/GPX/DXF), `--wkt` (CSV cu geometrie WKT), `--append` (adaugă la un GeoPackage existent), `--dxf-lines` (poliliniile închise rămân linii), `--cgxml-fara-constructii`, `--cgxml-inversare-xy`, `--cgxml-cnp`, `--cgxml-dbf-simplu`, `--cgxml-fara-inchidere`, `--fara-transdatro` (Stereo 70 cu Helmert 7 parametri), `--doar-egg97` (altitudini doar cu cvasigeoidul național), `--doar-romania` (doar entitățile din încadrarea României în EPSG:3844), `--zona-3844 "minX,minY,maxX,maxY"` (alt dreptunghi), `--partial` (și entitățile care doar ating zona), `--where "EXPRESIE"` (doar entitățile care îndeplinesc expresia). Codul de ieșire e 0 la succes, 1 la eroare și 2 dacă o conversie în lot a avut erori.
+Opțiuni comune: `--s-srs` (sistemul sursă, suprascrie .prj), `--t-srs` (reproiecție), `-o` (suprascrie), `--encoding` (codificarea la citire), `--out-encoding`, `--layer` (un singur strat din GeoPackage), `--name-field` (câmpul de nume pentru KML/GPX/DXF), `--wkt` (CSV cu geometrie WKT), `--append` (adaugă la un GeoPackage existent), `--dxf-lines` (poliliniile închise rămân linii), `--dxf-pastreaza-rtcm` (nu elimina punctele cu „RTCM” în descriere), `--cgxml-fara-constructii`, `--cgxml-inversare-xy`, `--cgxml-cnp`, `--cgxml-dbf-simplu`, `--cgxml-fara-inchidere`, `--fara-transdatro` (Stereo 70 cu Helmert 7 parametri), `--doar-egg97` (altitudini doar cu cvasigeoidul național), `--doar-romania` (doar entitățile din încadrarea României în EPSG:3844), `--zona-3844 "minX,minY,maxX,maxY"` (alt dreptunghi), `--partial` (și entitățile care doar ating zona), `--where "EXPRESIE"` (doar entitățile care îndeplinesc expresia). Codul de ieșire e 0 la succes, 1 la eroare și 2 dacă o conversie în lot a avut erori.
 
 ---
 
@@ -207,6 +208,7 @@ Opțiuni: `--fara-puncte`, `--fara-linii`, `--fara-poligoane`, `--inchise-ca-lin
 | Tastă | Acțiune |
 |---|---|
 | F1 | manualul de utilizare (PDF) |
+| F5 | Redraw: curăță grafica temporară și redesenează harta |
 | Ctrl+O | deschide fișiere |
 | Ctrl+S | salvează spațiul de lucru |
 | Ctrl+P | tipărire |
@@ -305,8 +307,8 @@ Sursele documentației sunt în `docs/src` (HTML + CSS, capturile în `docs/src/
 
 ```bash
 cd docs/src
-python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.9.0 · Manual de utilizare"
-python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.9.0 · Documentație tehnică"
+python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.10.0 · Manual de utilizare"
+python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.10.0 · Documentație tehnică"
 ```
 
 `docs/Manual_Cadastru.pdf` este inclus în `cadastru.exe` (tasta F1), deci după reconstruirea lui trebuie recompilată aplicația.

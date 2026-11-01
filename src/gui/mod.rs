@@ -209,6 +209,34 @@ impl App {
         self.layers.iter_mut().find(|l| l.id == id)
     }
 
+    /// „Redraw” (ca REDRAWALL / REGEN din programele CAD): șterge grafica temporară
+    /// (măsurătoarea, dreptunghiul de zoom, marcajul căutării, evidențierea de la identificare),
+    /// regenerează afișarea tuturor straturilor în sistemul hărții, reîncearcă tile-urile
+    /// eșuate ale hărții de fundal și redesenează harta. Selecțiile și vederea rămân.
+    pub fn redraw_all(&mut self, ctx: &egui::Context) {
+        let t0 = std::time::Instant::now();
+        self.measure.clear();
+        self.measure_done = false;
+        self.zoom_box_start = None;
+        self.nav_press = None;
+        self.search_marker = None;
+        self.selection = None;
+        self.refresh_projections();
+        let retried = self.basemap.redraw();
+        ctx.request_repaint();
+        let n = self.layers.len();
+        let mut msg = tr!(
+            "Redraw: harta a fost curățată și redesenată; straturi regenerate: {} ({:.2} s).",
+            n,
+            t0.elapsed().as_secs_f64()
+        );
+        if retried > 0 {
+            msg.push(' ');
+            msg.push_str(&tr!("{} tile-uri de fundal se reîncarcă.", retried));
+        }
+        self.status = msg;
+    }
+
     pub fn set_map_crs(&mut self, c: Option<Crs>) {
         // păstrează centrul vederii
         let center = match (&self.map_crs, &c) {
@@ -602,6 +630,7 @@ impl App {
             t: bool,
             s: bool,
             ctrl_f: bool,
+            f5: bool,
             deselect: bool,
             attr_sel: bool,
             back: bool,
@@ -631,6 +660,7 @@ impl App {
                 ctrl_s: cmd && i.key_pressed(Key::S),
                 ctrl_p: cmd && i.key_pressed(Key::P),
                 f1: i.key_pressed(Key::F1),
+                f5: i.key_pressed(Key::F5),
                 home: i.key_pressed(Key::Home),
                 esc: i.key_pressed(Key::Escape),
                 i: !cmd && i.key_pressed(Key::I),
@@ -661,6 +691,9 @@ impl App {
         }
         if k.f1 {
             self.open_manual();
+        }
+        if k.f5 {
+            self.redraw_all(ctx);
         }
         if k.home {
             self.zoom_full();
@@ -1141,6 +1174,14 @@ impl App {
                     self.dlg.search.focus = true;
                     ui.close();
                 }
+                if ui
+                    .button(tr!("Redraw (curăță și redesenează harta)   F5"))
+                    .on_hover_text(tr!("Ca REDRAWALL / REGEN în CAD: șterge grafica temporară, regenerează straturile și reîncarcă harta de fundal"))
+                    .clicked()
+                {
+                    ui.close();
+                    self.redraw_all(ui.ctx());
+                }
                 ui.separator();
                 if ui.button(tr!("Convertor de coordonate…")).clicked() {
                     ui.close();
@@ -1199,6 +1240,8 @@ impl App {
     fn toolbar(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
             ui.spacing_mut().item_spacing.x = 2.0;
+            // fereastră îngustă: instrumentele hărții doar cu pictograme (textul rămâne în indicii)
+            let compact = ui.available_width() < 1360.0;
             if icon_button(
                 ui,
                 Icon::Open,
@@ -1249,7 +1292,9 @@ impl App {
                     tr!("Click pentru puncte, dublu-click pentru final, Esc pentru ștergere (M)"),
                 ),
             ] {
-                if icon_button(ui, icon, label, self.tool == t, tip).clicked() {
+                let tip = if compact { format!("{label} – {tip}") } else { tip.to_string() };
+                let label = if compact { "" } else { label };
+                if icon_button(ui, icon, label, self.tool == t, &tip).clicked() {
                     self.tool = t;
                 }
             }
@@ -1293,6 +1338,17 @@ impl App {
             {
                 self.history_forward();
             }
+            if icon_button(
+                ui,
+                Icon::Redraw,
+                if compact { "" } else { tr!("Redraw") },
+                false,
+                tr!("Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD: șterge măsurătoarea, marcajele și evidențierile temporare, regenerează straturile și reîncarcă tile-urile de fundal eșuate (F5)"),
+            )
+            .clicked()
+            {
+                self.redraw_all(ui.ctx());
+            }
             ui.separator();
             if icon_button(ui, Icon::Table, tr!("Tabel"), false, tr!("Tabel de atribute (T)")).clicked() {
                 self.open_table();
@@ -1327,10 +1383,15 @@ impl App {
             let label = match self.map_crs.as_ref() {
                 Some(c) => {
                     let full = c.to_string();
-                    if ui.available_width() > full.chars().count() as f32 * 7.2 + 150.0 {
+                    let short = c.short();
+                    let room = ui.available_width();
+                    if room > full.chars().count() as f32 * 7.2 + 150.0 {
                         full
+                    } else if room > short.chars().count() as f32 * 7.2 + 130.0 {
+                        short
                     } else {
-                        c.short()
+                        // bara e prea îngustă: doar globul (sistemul e în indiciul butonului)
+                        String::new()
                     }
                 }
                 None => tr!("nedefinit").into(),
@@ -1507,6 +1568,11 @@ impl App {
                             {
                                 action = Some((l.id, "split"));
                                 ui.close();
+                            }
+                            if let LayerKind::Vector(v) = &mut l.kind
+                                && matches!(v.data.geom_kind(), GeomKind::Polygon | GeomKind::Mixed)
+                            {
+                                ui.checkbox(&mut v.style.no_fill, tr!("Fără umplere (No fill)"));
                             }
                             if let LayerKind::Vector(v) = &l.kind {
                                 let n = v.sel.len();
@@ -1701,10 +1767,16 @@ impl App {
                         ui.add(egui::Slider::new(&mut s.width, 0.0..=10.0));
                         ui.end_row();
                         ui.label(tr!("Umplere:"));
-                        let mut c = s.fill_c();
-                        if ui.color_edit_button_srgba(&mut c).changed() {
-                            s.fill = c.to_srgba_unmultiplied();
-                        }
+                        ui.horizontal(|ui| {
+                            ui.add_enabled_ui(!s.no_fill, |ui| {
+                                let mut c = s.fill_c();
+                                if ui.color_edit_button_srgba(&mut c).changed() {
+                                    s.fill = c.to_srgba_unmultiplied();
+                                }
+                            });
+                            ui.checkbox(&mut s.no_fill, tr!("Fără umplere (No fill)"))
+                                .on_hover_text(tr!("Poligoanele se desenează doar cu conturul; punctele își păstrează culoarea"));
+                        });
                         ui.end_row();
                         ui.label(tr!("Mărime punct:"));
                         ui.add(egui::Slider::new(&mut s.point_size, 1.0..=20.0));
@@ -2055,7 +2127,9 @@ fn layer_swatch(ui: &mut egui::Ui, kind: &LayerKind) {
                 }
                 _ => {
                     let rr = r.shrink(2.0);
-                    p.rect_filled(rr, 1.0, st.fill_c());
+                    if !st.no_fill {
+                        p.rect_filled(rr, 1.0, st.fill_c());
+                    }
                     p.rect_stroke(rr, 1.0, stroke, egui::StrokeKind::Inside);
                 }
             }

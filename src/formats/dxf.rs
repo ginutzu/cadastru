@@ -523,6 +523,30 @@ struct Ctx<'a> {
     blocks: &'a HashMap<String, Block>,
     closed_as_lines: bool,
     recs: Vec<(Option<Geometry>, Vec<(String, Value)>)>,
+    /// informații pentru filtrul RTCM, câte una pentru fiecare înregistrare din `recs`
+    meta: Vec<Meta>,
+    /// adâncimea entității curente (0 = în secțiunea ENTITIES)
+    depth: usize,
+}
+
+/// Ce trebuie știut despre o înregistrare pentru eliminarea punctelor RTCM.
+#[derive(Clone, Debug, Default)]
+struct Meta {
+    /// poziția, pentru entitățile punctuale de pe primul nivel (POINT, INSERT, TEXT, MTEXT)
+    pos: Option<Coord>,
+    /// TEXT / MTEXT (etichetă), altfel punct propriu-zis (POINT / INSERT)
+    label: bool,
+    /// înălțimea textului (etichete)
+    height: f64,
+    /// descrierea conține „RTCM”
+    rtcm: bool,
+    /// înregistrările generate din conținutul blocului (pentru INSERT)
+    children: std::ops::Range<usize>,
+}
+
+/// Textul conține „RTCM” (fără deosebire între majuscule și minuscule).
+fn has_rtcm(s: &str) -> bool {
+    s.to_ascii_uppercase().contains("RTCM")
 }
 
 impl<'a> Ctx<'a> {
@@ -575,11 +599,29 @@ impl<'a> Ctx<'a> {
                     .unwrap_or(Value::Null),
             ),
         ];
+        // descrierea: valorile text (atribute, conținutul textului), stratul și XDATA (cod 1000)
+        let rtcm = extra.iter().any(|(_, v)| matches!(v, Value::Text(t) if has_rtcm(t)))
+            || e.s(8).is_some_and(has_rtcm)
+            || e.pairs.iter().any(|(c, v)| *c == 1000 && has_rtcm(v));
+        let pointlike = matches!(e.kind.as_str(), "POINT" | "INSERT" | "TEXT" | "MTEXT");
+        let pos = match &g {
+            Geometry::Point(p) if self.depth == 0 && pointlike => Some(*p),
+            _ => None,
+        };
+        let label = matches!(e.kind.as_str(), "TEXT" | "MTEXT");
+        self.meta.push(Meta {
+            pos,
+            label,
+            height: if label { e.fd(40, 0.0) } else { 0.0 },
+            rtcm: rtcm && (pointlike || self.depth > 0),
+            children: 0..0,
+        });
         attrs.extend(extra);
         self.recs.push((Some(g), attrs));
     }
 
     fn entity(&mut self, e: &Ent, tf: &dyn Fn(Coord) -> Coord, block: Option<&str>, depth: usize) {
+        self.depth = depth;
         match e.kind.as_str() {
             "POINT" => self.emit(e, Geometry::Point(e.pt(10)), tf, block, vec![]),
             "LINE" => self.emit(
@@ -891,6 +933,7 @@ impl<'a> Ctx<'a> {
                     }
                 }
                 self.emit(e, Geometry::Point(ins), tf, Some(&name), extra);
+                let me = self.recs.len() - 1;
                 if depth > 8 {
                     return;
                 }
@@ -918,13 +961,14 @@ impl<'a> Ctx<'a> {
                 for se in &b.ents {
                     self.entity(se, &composed, Some(&name), depth + 1);
                 }
+                self.meta[me].children = me + 1..self.recs.len();
             }
             _ => {}
         }
     }
 }
 
-pub fn read(path: &Path, opts: &ReadOptions) -> Result<VectorLayer> {
+pub fn read(path: &Path, opts: &ReadOptions) -> Result<(VectorLayer, RtcmStats)> {
     let bytes = fs::read(path).with_context(|| tr!("Nu pot citi {}", path.display()))?;
     if bytes.starts_with(b"AutoCAD Binary DXF") {
         bail!(tr!("DXF binar nu este suportat – salvați fișierul ca DXF ASCII"));
@@ -1000,6 +1044,8 @@ pub fn read(path: &Path, opts: &ReadOptions) -> Result<VectorLayer> {
         blocks: &blocks,
         closed_as_lines: opts.dxf_closed_as_lines,
         recs: vec![],
+        meta: vec![],
+        depth: 0,
     };
     let id = |c: Coord| c;
     for e in &ents {
@@ -1009,10 +1055,133 @@ pub fn read(path: &Path, opts: &ReadOptions) -> Result<VectorLayer> {
         .file_stem()
         .map(|s| s.to_string_lossy().to_string())
         .unwrap_or_default();
-    let mut layer = VectorLayer::from_named_records(&name, ctx.recs);
+    let mut recs = ctx.recs;
+    let mut rtcm = RtcmStats::default();
+    if !opts.dxf_keep_rtcm {
+        let drop = rtcm_drop(&ctx.meta);
+        rtcm.points = drop.points;
+        rtcm.entities = drop.remove.iter().filter(|&&r| r).count();
+        if rtcm.entities > 0 {
+            let mut it = drop.remove.into_iter();
+            recs.retain(|_| !it.next().unwrap_or(false));
+        }
+    }
+    let mut layer = VectorLayer::from_named_records(&name, recs);
     layer.source = Some(path.to_path_buf());
     layer.crs = read_prj_sidecar(path);
-    Ok(layer)
+    Ok((layer, rtcm))
+}
+
+/// Câte puncte RTCM au fost eliminate la citire.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
+pub struct RtcmStats {
+    /// puncte (POINT / INSERT / texte fără punct) cu „RTCM” în descriere
+    pub points: usize,
+    /// entități eliminate în total (cu etichetele și conținutul blocurilor)
+    pub entities: usize,
+}
+
+impl RtcmStats {
+    pub fn message(&self) -> Option<String> {
+        (self.entities > 0).then(|| {
+            tr!(
+                "DXF: eliminate {} puncte cu „RTCM” în descriere ({} entități, cu etichetele lor)",
+                self.points,
+                self.entities
+            )
+        })
+    }
+}
+
+struct RtcmDrop {
+    remove: Vec<bool>,
+    points: usize,
+}
+
+/// Alege înregistrările de eliminat: punctele (POINT / INSERT) a căror descriere conține „RTCM”
+/// – în atributele blocului, în strat sau în XDATA – împreună cu conținutul blocului și cu
+/// etichetele lor, plus punctele etichetate cu un text care conține „RTCM”.
+///
+/// O etichetă (TEXT / MTEXT de pe primul nivel) aparține celui mai apropiat punct, dacă acesta
+/// este la cel mult 4 înălțimi de text (minimum 1 unitate).
+fn rtcm_drop(meta: &[Meta]) -> RtcmDrop {
+    let n = meta.len();
+    let mut remove = vec![false; n];
+    let mut rtcm: Vec<bool> = meta.iter().map(|m| m.rtcm).collect();
+    // un bloc care conține un text cu RTCM face punctul RTCM
+    for (i, m) in meta.iter().enumerate() {
+        if m.pos.is_some() && !m.children.is_empty() && m.children.clone().any(|c| meta[c].rtcm) {
+            rtcm[i] = true;
+        }
+    }
+    if !rtcm.iter().any(|&r| r) {
+        return RtcmDrop { remove, points: 0 };
+    }
+    let owners: Vec<usize> = (0..n).filter(|&i| meta[i].pos.is_some() && !meta[i].label).collect();
+    let labels: Vec<usize> = (0..n).filter(|&i| meta[i].pos.is_some() && meta[i].label).collect();
+    // grilă pentru căutarea celui mai apropiat punct
+    let radius = |h: f64| (4.0 * h).max(1.0);
+    let cell = labels
+        .iter()
+        .map(|&i| radius(meta[i].height))
+        .fold(1.0_f64, f64::max);
+    let key = |c: &Coord| ((c.x / cell).floor() as i64, (c.y / cell).floor() as i64);
+    let mut grid: HashMap<(i64, i64), Vec<usize>> = HashMap::new();
+    for &o in &owners {
+        grid.entry(key(meta[o].pos.as_ref().unwrap())).or_default().push(o);
+    }
+    let owner_of = |l: usize| -> Option<usize> {
+        let p = meta[l].pos?;
+        let r = radius(meta[l].height);
+        let (kx, ky) = key(&p);
+        let mut best: Option<(f64, usize)> = None;
+        for dx in -1..=1 {
+            for dy in -1..=1 {
+                for &o in grid.get(&(kx + dx, ky + dy)).into_iter().flatten() {
+                    let q = meta[o].pos.unwrap();
+                    let d = ((q.x - p.x).powi(2) + (q.y - p.y).powi(2)).sqrt();
+                    if d <= r && best.is_none_or(|(bd, _)| d < bd) {
+                        best = Some((d, o));
+                    }
+                }
+            }
+        }
+        best.map(|(_, o)| o)
+    };
+    let label_owner: Vec<(usize, Option<usize>)> = labels.iter().map(|&l| (l, owner_of(l))).collect();
+    // punctele de eliminat
+    let mut dead = vec![false; n];
+    for &o in &owners {
+        dead[o] = rtcm[o];
+    }
+    let mut orphans = 0;
+    for &(l, o) in &label_owner {
+        if rtcm[l] {
+            match o {
+                Some(o) => dead[o] = true,
+                None => {
+                    remove[l] = true;
+                    orphans += 1;
+                }
+            }
+        }
+    }
+    let mut points = orphans;
+    for &o in &owners {
+        if dead[o] {
+            points += 1;
+            remove[o] = true;
+            for c in meta[o].children.clone() {
+                remove[c] = true;
+            }
+        }
+    }
+    for &(l, o) in &label_owner {
+        if o.is_some_and(|o| dead[o]) {
+            remove[l] = true;
+        }
+    }
+    RtcmDrop { remove, points }
 }
 
 // ---------------------------------------------------------------------------
@@ -1226,4 +1395,80 @@ pub fn write(layer: &VectorLayer, path: &Path, opts: &WriteOptions) -> Result<()
         write_prj_sidecar(path, c)?;
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn ent(kind: &str, pairs: &[(i32, &str)]) -> String {
+        let mut s = format!("0\n{kind}\n");
+        for (c, v) in pairs {
+            s.push_str(&format!("{c}\n{v}\n"));
+        }
+        s
+    }
+
+    fn text(x: f64, y: f64, t: &str) -> String {
+        ent(
+            "TEXT",
+            &[(8, "NUME"), (10, &x.to_string()), (20, &y.to_string()), (40, "0.5"), (1, t)],
+        )
+    }
+
+    fn point(x: f64, y: f64, layer: &str) -> String {
+        ent("POINT", &[(8, layer), (10, &x.to_string()), (20, &y.to_string())])
+    }
+
+    #[test]
+    fn rtcm_points_dropped() {
+        let mut d = String::new();
+        d += "0\nSECTION\n2\nBLOCKS\n";
+        d += &ent("BLOCK", &[(2, "PCT"), (10, "0"), (20, "0")]);
+        d += &ent("CIRCLE", &[(8, "0"), (10, "0"), (20, "0"), (40, "0.2")]);
+        d += "0\nENDBLK\n0\nENDSEC\n";
+        d += "0\nSECTION\n2\nENTITIES\n";
+        // punct obișnuit cu două etichete – rămâne
+        d += &point(500_000.0, 400_000.0, "PUNCTE");
+        d += &text(500_000.6, 400_000.3, "P1");
+        d += &text(500_000.6, 399_999.6, "gard");
+        // stația de bază: punct cu etichetele „B1” și „RTCM 3.2” – dispare cu totul
+        d += &point(600_000.0, 450_000.0, "PUNCTE");
+        d += &text(600_000.6, 450_000.3, "B1");
+        d += &text(600_000.6, 449_999.6, "RTCM 3.2");
+        // bloc cu atributul de descriere RTCM – dispare împreună cu cercul din bloc
+        d += &ent("INSERT", &[(8, "PUNCTE"), (66, "1"), (2, "PCT"), (10, "100"), (20, "100")]);
+        d += &ent("ATTRIB", &[(8, "PUNCTE"), (10, "100"), (20, "100"), (2, "DESC"), (1, "rtcm_ref")]);
+        d += "0\nSEQEND\n";
+        // bloc obișnuit – rămâne
+        d += &ent("INSERT", &[(8, "PUNCTE"), (66, "1"), (2, "PCT"), (10, "500010"), (20, "400010")]);
+        d += &ent("ATTRIB", &[(8, "PUNCTE"), (10, "500010"), (20, "400010"), (2, "DESC"), (1, "borna")]);
+        d += "0\nSEQEND\n";
+        // punct cu descrierea în XDATA
+        d += &ent("POINT", &[(8, "PUNCTE"), (10, "700000"), (20, "300000"), (1001, "TOPO"), (1000, "Rtcm base")]);
+        // o linie care trece pe lângă stația de bază – rămâne (nu e punct)
+        d += &ent("LINE", &[(8, "0"), (10, "600000"), (20, "450000"), (11, "600010"), (21, "450010")]);
+        d += "0\nENDSEC\n0\nEOF\n";
+
+        let dir = std::env::temp_dir().join(format!("cadastru_rtcm_{}", std::process::id()));
+        std::fs::create_dir_all(&dir).unwrap();
+        let p = dir.join("gnss.dxf");
+        std::fs::write(&p, d).unwrap();
+
+        let (l, st) = read(&p, &ReadOptions::default()).unwrap();
+        // rămân: P1 + 2 etichete, INSERT borna + cercul, linia = 6
+        assert_eq!(l.features.len(), 6, "{st:?}");
+        assert_eq!(st.points, 3);
+        assert_eq!(st.entities, 3 + 2 + 1);
+        assert!(st.message().unwrap().contains('3'));
+        let b = l.bounds();
+        assert!(b.minx >= 500_000.0 - 1.0 && b.maxx <= 600_010.0, "{b:?}");
+
+        let keep = ReadOptions { dxf_keep_rtcm: true, ..Default::default() };
+        let (l, st) = read(&p, &keep).unwrap();
+        assert_eq!(l.features.len(), 12);
+        assert_eq!(st, RtcmStats::default());
+        assert!(st.message().is_none());
+        let _ = std::fs::remove_dir_all(&dir);
+    }
 }

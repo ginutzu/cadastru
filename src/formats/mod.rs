@@ -31,6 +31,8 @@ pub struct ReadOptions {
     pub crs: Option<Crs>,
     /// DXF: polilinii închise ca linii (implicit devin poligoane).
     pub dxf_closed_as_lines: bool,
+    /// DXF: păstrează punctele cu „RTCM” în descriere (implicit sunt eliminate la citire).
+    pub dxf_keep_rtcm: bool,
     /// Opțiunile de conversie CGXML.
     pub cgxml: cgxml::CgxmlOptions,
     /// Opțiunile CGXML au fost alese explicit (nu se înlocuiesc cu setările aplicației).
@@ -315,7 +317,11 @@ fn open_raw(path: &Path, opts: &ReadOptions) -> Result<(Vec<Dataset>, Vec<String
         "geojson" | "json" => vec![Dataset::Vector(geojson::read(path)?)],
         "kml" | "kmz" => kml::read(path)?.into_iter().map(Dataset::Vector).collect(),
         "gpx" => gpx::read(path)?.into_iter().map(Dataset::Vector).collect(),
-        "dxf" => vec![Dataset::Vector(dxf::read(path, opts)?)],
+        "dxf" => {
+            let (l, st) = dxf::read(path, opts)?;
+            info.extend(st.message());
+            vec![Dataset::Vector(l)]
+        }
         "csv" | "txt" => vec![Dataset::Vector(csv::read(path, opts)?)],
         "tif" | "tiff" | "asc" | "png" | "jpg" | "jpeg" | "bmp" => {
             vec![Dataset::Raster(raster::read(path)?)]

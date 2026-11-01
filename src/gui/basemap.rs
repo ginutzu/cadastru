@@ -678,6 +678,18 @@ impl Basemap {
         }
     }
 
+    /// Redesenare: reîncearcă imediat tile-urile eșuate și reface geometria tile-urilor.
+    /// Întoarce câte tile-uri eșuate se reîncearcă.
+    pub fn redraw(&mut self) -> usize {
+        let before = self.tiles.len();
+        self.tiles.retain(|_, (st, _)| !matches!(st, TileState::Failed(_)));
+        self.meshes.clear();
+        self.last_needed.clear();
+        self.errors = 0;
+        self.last_error = None;
+        before - self.tiles.len()
+    }
+
     fn start(&mut self, ctx: &egui::Context) {
         if self.started {
             return;

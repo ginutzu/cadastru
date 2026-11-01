@@ -1628,6 +1628,7 @@ impl App {
                     ("Ctrl+Shift+A", tr!("Deselectează tot")),
                     ("Ctrl+F", tr!("Căutare: loc, adresă, coordonate sau după câmpuri")),
                     ("Ctrl+Shift+F", tr!("Selectare după atribute (expresie: status = 1 AND is_active = 1)")),
+                    ("F5", tr!("Redraw: curăță grafica temporară și redesenează harta")),
                     ("Basemap", tr!("Harta de fundal (OSM, Esri, Google, Bing, CARTO…), opacitate, șablon XYZ propriu")),
                     ("Esc", tr!("Anulează măsurarea și selecția")),
                     (tr!("Click dreapta"), tr!("Meniu: copiere coordonate, centrare, identificare")),
