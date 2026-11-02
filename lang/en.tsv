@@ -855,3 +855,47 @@ Caută în straturile încărcate (orice câmp) și online. Se pot scrie și: co
 Locuri (Google)	Places (Google)
 Locuri (Google și OpenStreetMap)	Places (Google and OpenStreetMap)
 Ascunde / arată panoul Straturi	Hide / show the Layers panel
+Loc din linkul Google Maps	Place from the Google Maps link
+Loc din codul Plus	Place from the Plus Code
+Coordonate	Coordinates
+Locuri	Places
+Contur	Outline
+Dreptunghi	Box
+Fără halo	No halo
+Halo etichete:	Label halo:
+Contur: urmează literele · Dreptunghi: fundal sub text	Outline: follows the letters · Box: background behind the text
+Grosimea halo-ului (la dreptunghi: marginea din jurul textului)	Halo width (for a box: the margin around the text)
+Culoare halo:	Halo colour:
+Automată	Automatic
+Alb pentru text închis, negru pentru text deschis	White for dark text, black for light text
+Transparență halo:	Halo transparency:
+0 % = opac, 100 % = invizibil	0 % = opaque, 100 % = invisible
+Nu am găsit GDAL pe acest calculator. Pentru ECW și MrSID instalați QGIS (gratuit, qgis.org) sau alegeți dosarul „bin” al unei instalări GDAL / OSGeo4W din Instrumente » Formate ECW / MrSID (GDAL).	GDAL was not found on this computer. For ECW and MrSID install QGIS (free, qgis.org) or choose the “bin” folder of a GDAL / OSGeo4W installation in Tools » ECW / MrSID formats (GDAL).
+Eroare la citirea rasterului: {}	Error reading the raster: {}
+GDAL-ul găsit ({}) nu are driverul ECW. Instalați QGIS (instalatorul complet include citirea ECW) sau, în OSGeo4W, pachetul gdal-ecw.	The GDAL found ({}) has no ECW driver. Install QGIS (the full installer includes ECW reading) or, in OSGeo4W, the gdal-ecw package.
+GDAL-ul găsit ({}) nu are driverul MrSID. În OSGeo4W instalați pachetul gdal-mrsid (citire gratuită).	The GDAL found ({}) has no MrSID driver. In OSGeo4W install the gdal-mrsid package (free reading).
+GDAL-ul găsit ({}) nu are niciun driver JPEG 2000.	The GDAL found ({}) has no JPEG 2000 driver.
+GDAL nu a putut deschide fișierul: {}	GDAL could not open the file: {}
+Rasterul nu are benzi sau are dimensiune nulă.	The raster has no bands or a zero size.
+Formate ECW / MrSID	ECW / MrSID formats
+ECW și MrSID sunt formate proprietare. Cadastru le deschide doar pentru vizualizare, prin GDAL-ul unei instalări QGIS sau OSGeo4W de pe acest calculator, care are driverele gratuite de citire. Cadastru nu scrie și nu convertește în aceste formate.	ECW and MrSID are proprietary formats. Cadastru opens them for viewing only, through the GDAL of a QGIS or OSGeo4W installation on this computer, which has the free reading drivers. Cadastru does not write or convert to these formats.
+GDAL:	GDAL:
+disponibil	available
+lipsește	missing
+Pentru MrSID: în OSGeo4W Setup (din meniul Start al QGIS) alegeți Advanced Install și bifați pachetul gdal-mrsid.	For MrSID: in OSGeo4W Setup (in the QGIS Start menu) choose Advanced Install and tick the gdal-mrsid package.
+Pentru ECW: instalatorul complet QGIS include citirea ECW; în OSGeo4W bifați pachetul gdal-ecw.	For ECW: the full QGIS installer includes ECW reading; in OSGeo4W tick the gdal-ecw package.
+GDAL nu a fost încă încărcat (se caută la deschiderea primului fișier ECW / MrSID).	GDAL has not been loaded yet (it is looked up when the first ECW / MrSID file is opened).
+Dosarul GDAL (opțional, altfel se caută automat QGIS / OSGeo4W):	GDAL folder (optional, otherwise QGIS / OSGeo4W is found automatically):
+Dosarul „bin” al QGIS / OSGeo4W (conține gdal*.dll)	The “bin” folder of QGIS / OSGeo4W (contains gdal*.dll)
+Caută GDAL acum	Look for GDAL now
+Un alt dosar se folosește după repornirea aplicației.	A different folder is used after restarting the application.
+Licențe	Licences
+Decodarea ECW folosește ERDAS ECW/JP2 SDK (Hexagon), iar MrSID – MrSID Decode SDK (Extensis / LizardTech); ambele sunt gratuite pentru citire și vin cu instalarea GDAL (QGIS / OSGeo4W), sub licențele lor. Cadastru nu include aceste biblioteci și nu le modifică.	ECW decoding uses the ERDAS ECW/JP2 SDK (Hexagon) and MrSID the MrSID Decode SDK (Extensis / LizardTech); both are free for reading and come with the GDAL installation (QGIS / OSGeo4W), under their own licences. Cadastru does not include or modify these libraries.
+Imaginile se afișează la rezoluția ecranului: în memorie se ține o imagine de ansamblu (max. 4096 px), iar detaliul se citește din fișier pentru zona vizibilă și la tipărire.	Images are shown at screen resolution: an overview image (max. 4096 px) is kept in memory and the detail is read from the file for the visible area and for printing.
+Formate ECW / MrSID (GDAL)…	ECW / MrSID formats (GDAL)…
+Citirea rasterelor ECW, MrSID și JPEG 2000 prin GDAL-ul unei instalări QGIS / OSGeo4W	Reading ECW, MrSID and JPEG 2000 rasters through the GDAL of a QGIS / OSGeo4W installation
+Format: {} (citit prin GDAL, doar vizualizare)	Format: {} (read through GDAL, view only)
+Dimensiune: {} x {} px; în memorie: imagine de ansamblu {} x {} px	Size: {} x {} px; in memory: overview image {} x {} px
+Cadastru nu scrie în formatele ECW, MrSID sau JPEG 2000: acestea se pot doar deschide (citire).	Cadastru does not write ECW, MrSID or JPEG 2000: these can only be opened (read).
+Rasterele ECW, MrSID și JPEG 2000 se pot doar vizualiza în Cadastru; nu se exportă și nu se convertesc în alte formate.	ECW, MrSID and JPEG 2000 rasters can only be viewed in Cadastru; they are not exported or converted to other formats.
+Grosime halo:	Halo width:

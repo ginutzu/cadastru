@@ -351,6 +351,7 @@ pub struct Dialogs {
     pub batch: Option<BatchDlg>,
     pub about: bool,
     pub help: bool,
+    pub ecw: super::ecw::EcwDlg,
     pub pending_settings: HashMap<PathBuf, Vec<LayerSettings>>,
     pub ws_order: HashMap<u64, usize>,
     pub ws_view: Option<super::View>,
@@ -510,6 +511,7 @@ impl App {
         self.csv_window(ctx);
         self.batch_window(ctx);
         self.help_windows(ctx);
+        self.ecw_window(ctx);
     }
 
     fn crs_picker_window(&mut self, ctx: &egui::Context) {
@@ -818,6 +820,9 @@ impl App {
                                     formats::write_vector(&[&v], &path, &wopts)
                                 }
                                 Dataset::Raster(r) => {
+                                    if formats::is_view_only(&r) {
+                                        anyhow::bail!("{}", tr!("Rasterele ECW, MrSID și JPEG 2000 se pot doar vizualiza în Cadastru; nu se exportă și nu se convertesc în alte formate."));
+                                    }
                                     let r2 = match &target {
                                         Some(t) if r.crs.as_ref() != Some(t) => {
                                             rasterops::warp(&r, t, res, rs)?

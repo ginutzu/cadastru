@@ -455,23 +455,12 @@ impl App {
                     let Some((sx, sy)) = t.and_then(|t| t.xy(x, y)) else {
                         continue;
                     };
-                    let Some(ig) = r.data.inv_gt() else { continue };
-                    let col = (ig[0] + sx * ig[1] + sy * ig[2]).floor();
-                    let row = (ig[3] + sx * ig[4] + sy * ig[5]).floor();
-                    if col < 0.0
-                        || row < 0.0
-                        || col >= r.data.width as f64
-                        || row >= r.data.height as f64
-                    {
-                        continue;
-                    }
-                    let i = row as usize * r.data.width + col as usize;
+                    let Some((col, row, vals)) = r.values_at(sx, sy) else { continue };
                     let mut rows = vec![(
                         "‹pixel›".to_string(),
-                        tr!("coloana {}, rândul {}", col as i64, row as i64),
+                        tr!("coloana {}, rândul {}", col, row),
                     )];
-                    for (b, band) in r.data.bands.iter().enumerate() {
-                        let v = band.get(i);
+                    for (b, v) in vals.into_iter().enumerate() {
                         rows.push((
                             tr!("Banda {}", b + 1),
                             if r.data.is_nodata(v) {
@@ -593,18 +582,11 @@ impl App {
                     -galley.size() / 2.0
                 };
                 let r = Rect::from_min_size(p + off, galley.size());
-                if placed.iter().any(|q| q.intersects(r)) {
+                let hw = if st.halo == HaloMode::Off { 0.0 } else { st.halo_width.max(0.0) };
+                if placed.iter().any(|q| q.intersects(r.expand(hw))) {
                     continue;
                 }
-                // halou în contrast cu culoarea textului
-                let lc = st.label_c();
-                let lum = 0.299 * lc.r() as f32 + 0.587 * lc.g() as f32 + 0.114 * lc.b() as f32;
-                let halo = if lum > 140.0 {
-                    Color32::from_black_alpha(150)
-                } else {
-                    Color32::from_white_alpha(160)
-                };
-                painter.rect_filled(r.expand(1.0), 2.0, halo);
+                draw_label_halo(painter, st, r, &galley);
                 painter.galley(r.min, galley, st.label_c());
                 placed.push(r);
             }
@@ -1088,7 +1070,7 @@ impl App {
                                     .clamp(1.0, 4096.0)
                                     as usize;
                                 r.detail = r
-                                    .render(&ctx, map_crs.as_ref(), &ib, w, h, &format!("det{id}"))
+                                    .render(&ctx, map_crs.as_ref(), &ib, w, h, &format!("det{id}"), true)
                                     .map(|t| (t, ib));
                                 r.detail_key = Some(key);
                             } else {
@@ -1328,6 +1310,47 @@ mod real_data {
                 }
             }
             println!("1:{denom}: egui direct depășește cu {raw:.0} px, push_stroke cu {ours:.1} px");
+        }
+    }
+}
+
+/// Halo-ul unei etichete: contur care urmează literele sau dreptunghi,
+/// în culoarea și cu transparența alese pe strat.
+fn draw_label_halo(
+    painter: &egui::Painter,
+    st: &VectorStyle,
+    r: Rect,
+    galley: &std::sync::Arc<egui::Galley>,
+) {
+    let Some(h) = st.halo_rgba() else { return };
+    let w = st.halo_width.max(0.0);
+    match st.halo {
+        HaloMode::Off => {}
+        HaloMode::Box => {
+            let c = Color32::from_rgba_unmultiplied(h[0], h[1], h[2], h[3]);
+            painter.rect_filled(r.expand(w.max(0.5)), 2.0, c);
+        }
+        HaloMode::Outline => {
+            if w <= 0.0 {
+                return;
+            }
+            // copii ale textului deplasate pe un cerc (și pe unul interior, la
+            // grosimi mari); copiile se suprapun, așa că opacitatea fiecăreia se
+            // micșorează ca halo-ul să aibă aproximativ transparența cerută
+            let rings: &[f32] = if w > 1.6 { &[1.0, 0.5] } else { &[1.0] };
+            let n = 8 * rings.len();
+            let a = h[3] as f32 / 255.0;
+            let k = if n > 8 { 5.0 } else { 3.0 };
+            let each = if a >= 0.999 { 1.0 } else { 1.0 - (1.0 - a).powf(1.0 / k) };
+            let c = Color32::from_rgba_unmultiplied(h[0], h[1], h[2], (each * 255.0).round() as u8);
+            for f in rings {
+                let d = w * f;
+                for i in 0..8 {
+                    let ang = i as f32 * std::f32::consts::FRAC_PI_4;
+                    let o = Vec2::new(ang.cos() * d, ang.sin() * d);
+                    painter.galley_with_override_text_color(r.min + o, galley.clone(), c);
+                }
+            }
         }
     }
 }

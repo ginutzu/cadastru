@@ -267,7 +267,7 @@ checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
 
 [[package]]
 name = "cadastru"
-version = "1.11.0"
+version = "1.12.0"
 dependencies = [
  "ab_glyph",
  "anyhow",
@@ -282,6 +282,7 @@ dependencies = [
  "encoding_rs",
  "epaint_default_fonts",
  "image",
+ "libloading",
  "proj4rs",
  "proj4wkt",
  "rfd",

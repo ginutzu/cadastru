@@ -963,6 +963,42 @@ pub struct Raster {
     pub gt: [f64; 6],
     pub nodata: Option<f64>,
     pub crs: Option<Crs>,
+    /// Sursa la rezoluție completă pentru rasterele foarte mari (ECW, MrSID,
+    /// JPEG 2000): în memorie (`bands`) se ține doar o imagine de ansamblu,
+    /// iar detaliul se citește din fișier pentru zona afișată.
+    pub full: Option<FullSource>,
+}
+
+/// O sursă raster citită pe ferestre, la rezoluția cerută.
+pub trait RasterSource: Send + Sync {
+    /// Dimensiunea completă, în pixeli.
+    fn size(&self) -> (usize, usize);
+    /// Geotransformarea la rezoluție completă.
+    fn geo_transform(&self) -> [f64; 6];
+    /// Numele formatului / driverului (ex. „ECW”).
+    fn driver(&self) -> String;
+    /// Citește fereastra (col, rând, lățime, înălțime) din imaginea completă,
+    /// eșantionată la `bw` × `bh` pixeli; rezultatul are geotransformarea lui.
+    fn read_window(
+        &self,
+        col: usize,
+        row: usize,
+        w: usize,
+        h: usize,
+        bw: usize,
+        bh: usize,
+    ) -> anyhow::Result<Raster>;
+}
+
+/// Referință partajată la o sursă raster citită pe ferestre.
+#[derive(Clone)]
+pub struct FullSource(pub std::sync::Arc<dyn RasterSource>);
+
+impl std::fmt::Debug for FullSource {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let (w, h) = self.0.size();
+        write!(f, "FullSource({} {w}x{h})", self.0.driver())
+    }
 }
 
 impl Raster {

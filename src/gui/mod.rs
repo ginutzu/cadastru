@@ -2,6 +2,7 @@
 
 mod attrsel;
 mod dialogs;
+mod ecw;
 mod layers;
 mod basemap;
 mod bulk;
@@ -134,6 +135,10 @@ impl App {
         let ctx = &cc.egui_ctx;
         let settings = Settings::load();
         cadastru::i18n::set_lang(settings.lang);
+        {
+            let p = settings.gdal_path.trim();
+            cadastru::formats::gdalrt::set_hint((!p.is_empty()).then(|| PathBuf::from(p)));
+        }
         let bm_opacity = settings.basemap_opacity;
         let bm_custom = settings.basemap_custom.clone();
         cadastru::crs::set_transdatro(settings.transdatro);
@@ -1239,6 +1244,14 @@ impl App {
                     ui.close();
                     self.show_cgxml_opts = true;
                 }
+                if ui
+                    .button(tr!("Formate ECW / MrSID (GDAL)…"))
+                    .on_hover_text(tr!("Citirea rasterelor ECW, MrSID și JPEG 2000 prin GDAL-ul unei instalări QGIS / OSGeo4W"))
+                    .clicked()
+                {
+                    ui.close();
+                    self.dlg.ecw.open = true;
+                }
             });
             ui.menu_button(tr!("Ajutor"), |ui| {
                 if ui.button(tr!("Manual de utilizare (PDF)   F1")).clicked() {
@@ -1887,6 +1900,54 @@ impl App {
                             }
                         });
                         ui.end_row();
+                        ui.label(tr!("Halo etichete:"));
+                        egui::ComboBox::from_id_salt("halo_mode")
+                            .selected_text(s.halo.label())
+                            .show_ui(ui, |ui| {
+                                for m in layers::HaloMode::ALL {
+                                    ui.selectable_value(&mut s.halo, m, m.label());
+                                }
+                            })
+                            .response
+                            .on_hover_text(tr!("Contur: urmează literele · Dreptunghi: fundal sub text"));
+                        ui.end_row();
+                        if s.halo != layers::HaloMode::Off {
+                            ui.label(tr!("Culoare halo:"));
+                            ui.horizontal(|ui| {
+                                let mut auto = s.halo_color.is_none();
+                                if ui
+                                    .checkbox(&mut auto, tr!("Automată"))
+                                    .on_hover_text(tr!("Alb pentru text închis, negru pentru text deschis"))
+                                    .changed()
+                                {
+                                    s.halo_color = if auto { None } else { Some(s.halo_rgb()) };
+                                }
+                                let mut rgb = s.halo_rgb();
+                                let r = ui.add_enabled_ui(!auto, |ui| ui.color_edit_button_srgb(&mut rgb)).inner;
+                                if r.changed() {
+                                    s.halo_color = Some(rgb);
+                                }
+                            });
+                            ui.end_row();
+                            ui.label(tr!("Transparență halo:"));
+                            ui.add(
+                                egui::Slider::new(&mut s.halo_transparency, 0.0..=100.0)
+                                    .suffix(" %")
+                                    .integer(),
+                            )
+                            .on_hover_text(tr!("0 % = opac, 100 % = invizibil"));
+                            ui.end_row();
+                            ui.label(tr!("Grosime halo:"));
+                            ui.add(
+                                egui::DragValue::new(&mut s.halo_width)
+                                    .range(0.5..=6.0)
+                                    .speed(0.1)
+                                    .max_decimals(1)
+                                    .suffix(" pt"),
+                            )
+                            .on_hover_text(tr!("Grosimea halo-ului (la dreptunghi: marginea din jurul textului)"));
+                            ui.end_row();
+                        }
                     });
                 });
                 ui.collapsing(tr!("Câmpuri"), |ui| {
@@ -2013,7 +2074,18 @@ impl App {
                     }
                 });
                 ui.collapsing(tr!("Informații raster"), |ui| {
-                    let (px, py) = r.data.pixel_size();
+                    let (px, py) = match &r.data.full {
+                        Some(f) => {
+                            let g = f.0.geo_transform();
+                            ((g[1].powi(2) + g[4].powi(2)).sqrt(), (g[2].powi(2) + g[5].powi(2)).sqrt())
+                        }
+                        None => r.data.pixel_size(),
+                    };
+                    if let Some(f) = &r.data.full {
+                        let (w, h) = f.0.size();
+                        ui.label(tr!("Format: {} (citit prin GDAL, doar vizualizare)", f.0.driver()));
+                        ui.label(tr!("Dimensiune: {} x {} px; în memorie: imagine de ansamblu {} x {} px", w, h, r.data.width, r.data.height));
+                    }
                     ui.label(tr!("Tip date: {}", r.data.bands[0].type_name()));
                     ui.label(format!("Pixel: {} x {}", fmt_real(px), fmt_real(py)));
                     ui.label(tr!(

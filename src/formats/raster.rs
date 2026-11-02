@@ -406,6 +406,7 @@ fn read_geotiff(path: &Path) -> Result<Raster> {
         gt,
         nodata,
         crs,
+        full: None,
     })
 }
 
@@ -663,6 +664,7 @@ fn read_asc(path: &Path) -> Result<Raster> {
         gt: [xll, dx, 0.0, yll + nrows as f64 * dy, 0.0, -dy],
         nodata,
         crs: read_prj_sidecar(path),
+        full: None,
     })
 }
 
@@ -765,6 +767,7 @@ fn read_image(path: &Path) -> Result<Raster> {
         gt,
         nodata: None,
         crs: read_prj_sidecar(path),
+        full: None,
     })
 }
 

@@ -248,6 +248,7 @@ pub fn warp(src: &Raster, dst: &Crs, res: Option<f64>, rs: Resampling) -> Result
         gt,
         nodata: Some(nodata),
         crs: Some(dst.clone()),
+        full: None,
     })
 }
 
@@ -272,6 +273,7 @@ pub fn resize(src: &Raster, res: f64, rs: Resampling) -> Result<Raster> {
         gt,
         nodata: src.nodata.or(Some(nodata)),
         crs: src.crs.clone(),
+        full: None,
     })
 }
 

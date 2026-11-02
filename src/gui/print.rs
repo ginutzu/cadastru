@@ -311,6 +311,94 @@ fn draw_text_halo(
     draw_text(pm, font, px, x, y, c, s);
 }
 
+/// Halo-ul unei etichete de strat (contur sau dreptunghi), cu transparența
+/// exactă: contururile deplasate se combină într-o mască (maximul acoperirii),
+/// apoi masca se aplică o singură dată, cu opacitatea halo-ului.
+#[allow(clippy::too_many_arguments)]
+fn draw_label_halo(
+    pm: &mut Pixmap,
+    font: &FontVec,
+    px: f32,
+    x: f32,
+    y: f32,
+    tw: f32,
+    mode: HaloMode,
+    halo: [u8; 4],
+    w: f32,
+    s: &str,
+) {
+    match mode {
+        HaloMode::Off => {}
+        HaloMode::Box => {
+            let pad = w.max(0.5);
+            let (x0, y0) = ((x - pad).floor() as i32, (y - px * 0.95 - pad).floor() as i32);
+            let (x1, y1) = ((x + tw + pad).ceil() as i32, (y + px * 0.3 + pad).ceil() as i32);
+            for yy in y0..y1 {
+                for xx in x0..x1 {
+                    blend(pm, xx, yy, halo, 1.0);
+                }
+            }
+        }
+        HaloMode::Outline => {
+            if w <= 0.0 {
+                return;
+            }
+            let m = w.ceil() as i32 + 2;
+            let ox = (x - m as f32).floor() as i32;
+            let oy = (y - px * 1.2 - m as f32).floor() as i32;
+            let mw = (tw + px * 0.5) as i32 + 2 * m + 2;
+            let mh = (px * 1.7) as i32 + 2 * m + 2;
+            if mw <= 0 || mh <= 0 {
+                return;
+            }
+            let mut mask = vec![0f32; (mw * mh) as usize];
+            let sf = font.as_scaled(PxScale::from(px));
+            // cercuri de deplasări (exterior și, la grosimi mari, interior)
+            let steps = ((w * 3.0).ceil() as usize).clamp(8, 24);
+            let rings: Vec<f32> = if w > 1.5 { vec![w, w * 0.5] } else { vec![w] };
+            let mut offs = vec![(0.0f32, 0.0f32)];
+            for r in &rings {
+                for i in 0..steps {
+                    let a = i as f32 * std::f32::consts::TAU / steps as f32;
+                    offs.push((a.cos() * r, a.sin() * r));
+                }
+            }
+            for (dx, dy) in offs {
+                let mut pen = x + dx;
+                let mut prev = None;
+                for ch in s.chars() {
+                    let id = sf.glyph_id(ch);
+                    if let Some(p) = prev {
+                        pen += sf.kern(p, id);
+                    }
+                    let g = id.with_scale_and_position(PxScale::from(px), ab_glyph::point(pen, y + dy));
+                    if let Some(og) = font.outline_glyph(g) {
+                        let b = og.px_bounds();
+                        og.draw(|gx, gy, cov| {
+                            let mx = b.min.x as i32 + gx as i32 - ox;
+                            let my = b.min.y as i32 + gy as i32 - oy;
+                            if mx >= 0 && my >= 0 && mx < mw && my < mh {
+                                let v = &mut mask[(my * mw + mx) as usize];
+                                *v = v.max(cov);
+                            }
+                        });
+                    }
+                    pen += sf.h_advance(id);
+                    prev = Some(id);
+                }
+            }
+            for my in 0..mh {
+                for mx in 0..mw {
+                    let cov = mask[(my * mw + mx) as usize];
+                    if cov > 0.0 {
+                        blend(pm, ox + mx, oy + my, halo, cov);
+                    }
+                }
+            }
+        }
+    }
+}
+
 fn paint(c: [u8; 4]) -> Paint<'static> {
     let mut p = Paint::default();
     p.set_color_rgba8(c[0], c[1], c[2], c[3]);
@@ -640,12 +728,7 @@ fn render_page(
                 if spec.show_labels {
                     let fpx = style.label_size * k;
                     let lc = style.label_color;
-                    let lum = 0.299 * lc[0] as f32 + 0.587 * lc[1] as f32 + 0.114 * lc[2] as f32;
-                    let halo = if lum > 140.0 {
-                        [0, 0, 0, 170]
-                    } else {
-                        [255, 255, 255, 220]
-                    };
+                    let halo = style.halo_rgba().map(|h| (style.halo, h, style.halo_width.max(0.0) * k));
                     for (g, label) in geoms {
                         let (Some(t), Some(lp)) = (label, g.label_point()) else {
                             continue;
@@ -657,7 +740,8 @@ fn render_page(
                         } else {
                             (x - tw / 2.0, y + fpx * 0.35)
                         };
-                        let bb = [bx, by - fpx, bx + tw, by + fpx * 0.3];
+                        let hw = halo.map_or(0.0, |h| h.2);
+                        let bb = [bx - hw, by - fpx - hw, bx + tw + hw, by + fpx * 0.3 + hw];
                         if bb[2] < 0.0 || bb[0] > mw as f32 || bb[3] < 0.0 || bb[1] > mh as f32 {
                             continue;
                         }
@@ -668,7 +752,10 @@ fn render_page(
                             continue;
                         }
                         label_boxes.push(bb);
-                        draw_text_halo(&mut map, &fonts.regular, fpx, bx, by, lc, halo, t);
+                        if let Some((mode, h, w)) = halo {
+                            draw_label_halo(&mut map, &fonts.regular, fpx, bx, by, tw, mode, h, w, t);
+                        }
+                        draw_text(&mut map, &fonts.regular, fpx, bx, by, lc, t);
                     }
                 }
             }
@@ -1306,14 +1393,7 @@ impl App {
                         }
                         _ => Transformer::identity(),
                     };
-                    let rgba = cadastru::rasterops::render_rgba(
-                        &r.data,
-                        &r.style,
-                        &inv,
-                        &spec.extent,
-                        mw.max(1),
-                        mh.max(1),
-                    );
+                    let rgba = r.rgba_for(&inv, &spec.extent, mw.max(1), mh.max(1), true);
                     out.push(PrintLayer::Raster {
                         name: l.name.clone(),
                         opacity: l.opacity,

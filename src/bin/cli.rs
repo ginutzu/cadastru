@@ -337,14 +337,29 @@ fn print_info(path: &Path, inp: &InOpts, nfeat: usize) -> Result<()> {
             }
             Dataset::Raster(r) => {
                 println!("Raster: {}", r.name);
+                let (w, h) = r.full.as_ref().map_or((r.width, r.height), |f| f.0.size());
                 println!(
                     "  Dimensiuni: {} x {} pixeli, {} benzi ({})",
-                    r.width,
-                    r.height,
+                    w,
+                    h,
                     r.bands.len(),
                     r.bands[0].type_name()
                 );
-                let (px, py) = r.pixel_size();
+                if let Some(f) = &r.full {
+                    println!(
+                        "  Citit prin GDAL ({}), doar vizualizare; statisticile sunt calculate pe imaginea de ansamblu {} x {} px",
+                        f.0.driver(),
+                        r.width,
+                        r.height
+                    );
+                }
+                let (px, py) = match &r.full {
+                    Some(f) => {
+                        let g = f.0.geo_transform();
+                        ((g[1].powi(2) + g[4].powi(2)).sqrt(), (g[2].powi(2) + g[5].powi(2)).sqrt())
+                    }
+                    None => r.pixel_size(),
+                };
                 println!("  Mărime pixel: {} x {}", fmt_real(px), fmt_real(py));
                 println!(
                     "  Sistem: {}",

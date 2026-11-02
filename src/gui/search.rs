@@ -164,6 +164,45 @@ fn geocode_osm(q: &str, ro_only: bool, lang: &str) -> Result<Vec<Place>, String>
     parse_nominatim(&body)
 }
 
+impl Place {
+    /// Rezultat obținut local, fără niciun serviciu online: link Google Maps citit
+    /// din adresă, cod Plus decodat sau coordonate scrise.
+    pub fn is_local(&self) -> bool {
+        self.src == PlaceSrc::Coords || self.kind == "Google Maps" || self.kind == "Plus Code"
+    }
+}
+
+/// Titlul listei de rezultate: după proveniența reală a rezultatelor afișate,
+/// nu după sursa aleasă la „Sursă:” (un link Google Maps sau un cod Plus se
+/// citesc local, oricare ar fi sursa). Fără rezultate (doar un mesaj), titlul
+/// spune ce sursă s-a interogat.
+pub fn places_heading(places: &[Place], geocoder: Geocoder) -> &'static str {
+    if places.is_empty() {
+        return match geocoder {
+            Geocoder::Osm => tr!("Locuri (OpenStreetMap)"),
+            Geocoder::Google => tr!("Locuri (Google)"),
+            Geocoder::Both => tr!("Locuri (Google și OpenStreetMap)"),
+        };
+    }
+    if places.iter().all(|p| p.kind == "Google Maps") {
+        return tr!("Loc din linkul Google Maps");
+    }
+    if places.iter().all(|p| p.kind == "Plus Code") {
+        return tr!("Loc din codul Plus");
+    }
+    if places.iter().all(|p| p.src == PlaceSrc::Coords) {
+        return tr!("Coordonate");
+    }
+    let osm = places.iter().any(|p| p.src == PlaceSrc::Osm);
+    let google = places.iter().any(|p| p.src == PlaceSrc::Google && !p.is_local());
+    match (osm, google) {
+        (true, true) => tr!("Locuri (Google și OpenStreetMap)"),
+        (true, false) => tr!("Locuri (OpenStreetMap)"),
+        (false, true) => tr!("Locuri (Google)"),
+        (false, false) => tr!("Locuri"),
+    }
+}
+
 /// Locul unui cod Plus decodat.
 fn plus_place(code: &str, locality: &str, lat: f64, lon: f64, size: f64) -> Place {
     let h = size.max(0.0005) / 2.0;
@@ -307,7 +346,7 @@ impl App {
         } else if let Some((x, y)) = t.xy(p.lon, p.lat) {
             self.zoom_point(x, y);
         }
-        let label = if p.src == PlaceSrc::Coords || p.kind == "Google Maps" || p.kind == "Plus Code" {
+        let label = if p.is_local() {
             p.name.clone()
         } else {
             p.name.split(',').next().unwrap_or(&p.name).trim().to_string()
@@ -758,11 +797,7 @@ impl App {
         let msg = self.dlg.search.place_msg.clone();
         let places = self.dlg.search.places.clone();
         if !places.is_empty() || !msg.is_empty() {
-            ui.strong(match self.settings.geocoder {
-                Geocoder::Osm => tr!("Locuri (OpenStreetMap)"),
-                Geocoder::Google => tr!("Locuri (Google)"),
-                Geocoder::Both => tr!("Locuri (Google și OpenStreetMap)"),
-            });
+            ui.strong(places_heading(&places, self.settings.geocoder));
         }
         if !msg.is_empty() {
             ui.label(RichText::new(msg).weak());
@@ -797,7 +832,7 @@ impl App {
         if places.iter().any(|p| p.src == PlaceSrc::Osm) {
             attr.push("© OpenStreetMap contributors · Nominatim");
         }
-        if places.iter().any(|p| p.src == PlaceSrc::Google) {
+        if places.iter().any(|p| p.src == PlaceSrc::Google && !p.is_local()) {
             attr.push("Google Maps Platform");
         }
         if !attr.is_empty() {
@@ -1085,5 +1120,30 @@ mod tests {
         assert_eq!(v[0].kind, "boundary / administrative");
         assert_eq!(v[1].kind, "");
         assert!(parse_nominatim("{}").is_err());
+    }
+}
+
+#[cfg(test)]
+mod heading_tests {
+    use super::*;
+
+    fn place(kind: &str, src: PlaceSrc) -> Place {
+        Place { name: "x".into(), kind: kind.into(), lon: 24.0, lat: 45.0, bbox: None, src }
+    }
+
+    #[test]
+    fn heading_follows_results_not_selected_source() {
+        cadastru::i18n::set_lang(cadastru::i18n::Lang::Ro);
+        // link Google Maps căutat cu sursa OpenStreetMap
+        let p = [place("Google Maps", PlaceSrc::Google)];
+        assert_eq!(places_heading(&p, Geocoder::Osm), "Loc din linkul Google Maps");
+        let p = [place("Plus Code", PlaceSrc::Google)];
+        assert_eq!(places_heading(&p, Geocoder::Osm), "Loc din codul Plus");
+        let p = [place("city", PlaceSrc::Osm)];
+        assert_eq!(places_heading(&p, Geocoder::Google), "Locuri (OpenStreetMap)");
+        let p = [place("city", PlaceSrc::Osm), place("locality", PlaceSrc::Google)];
+        assert_eq!(places_heading(&p, Geocoder::Osm), "Locuri (Google și OpenStreetMap)");
+        // fără rezultate: sursa interogată
+        assert_eq!(places_heading(&[], Geocoder::Google), "Locuri (Google)");
     }
 }

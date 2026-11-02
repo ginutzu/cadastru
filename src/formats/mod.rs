@@ -2,6 +2,7 @@
 
 pub mod cgxml;
 pub mod gdb;
+pub mod gdalrt;
 pub mod csv;
 pub mod dxf;
 pub mod geojson;
@@ -186,6 +187,28 @@ pub const FORMATS: &[FormatInfo] = &[
         read: true,
         write: false,
     },
+    // formate proprietare: doar citire, prin GDAL-ul unei instalări QGIS / OSGeo4W
+    FormatInfo {
+        name: "ECW (prin GDAL)",
+        exts: &["ecw"],
+        kind: Kind::Raster,
+        read: true,
+        write: false,
+    },
+    FormatInfo {
+        name: "MrSID (prin GDAL)",
+        exts: &["sid"],
+        kind: Kind::Raster,
+        read: true,
+        write: false,
+    },
+    FormatInfo {
+        name: "JPEG 2000 (prin GDAL)",
+        exts: &["jp2"],
+        kind: Kind::Raster,
+        read: true,
+        write: false,
+    },
 ];
 
 pub fn ext_of(path: &Path) -> String {
@@ -326,6 +349,7 @@ fn open_raw(path: &Path, opts: &ReadOptions) -> Result<(Vec<Dataset>, Vec<String
         "tif" | "tiff" | "asc" | "png" | "jpg" | "jpeg" | "bmp" => {
             vec![Dataset::Raster(raster::read(path)?)]
         }
+        e if gdalrt::handles_ext(e) => vec![Dataset::Raster(gdalrt::open(path)?)],
         _ => bail!("{}", tr!("Format necunoscut: .{e}")),
     };
     if let Some(c) = &opts.crs {
@@ -408,8 +432,19 @@ pub fn write_vector(
 }
 
 pub fn write_raster(r: &Raster, path: &Path, opts: &WriteOptions) -> Result<Vec<PathBuf>> {
+    if gdalrt::handles_ext(&ext_of(path)) {
+        bail!("{}", tr!("Cadastru nu scrie în formatele ECW, MrSID sau JPEG 2000: acestea se pot doar deschide (citire)."));
+    }
+    if is_view_only(r) {
+        bail!("{}", tr!("Rasterele ECW, MrSID și JPEG 2000 se pot doar vizualiza în Cadastru; nu se exportă și nu se convertesc în alte formate."));
+    }
     check_overwrite(path, opts)?;
     raster::write(r, path)
+}
+
+/// Raster citit prin GDAL dintr-un format proprietar (doar vizualizare).
+pub fn is_view_only(r: &Raster) -> bool {
+    r.full.is_some() || r.source.as_deref().is_some_and(|p| gdalrt::handles_ext(&ext_of(p)))
 }
 
 pub fn sanitize(s: &str) -> String {

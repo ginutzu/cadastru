@@ -64,6 +64,9 @@ pub fn convert_file(input: &Path, output: &Path, o: &ConvertOptions) -> Result<C
                 vecs.push(v);
             }
             Dataset::Raster(r) => {
+                if formats::is_view_only(&r) {
+                    bail!("{}", tr!("Rasterele ECW, MrSID și JPEG 2000 se pot doar vizualiza în Cadastru; nu se exportă și nu se convertesc în alte formate."));
+                }
                 if out_kind != Kind::Raster {
                     bail!(
                         "{}", tr!("Nu pot scrie un raster în formatul vectorial {}",

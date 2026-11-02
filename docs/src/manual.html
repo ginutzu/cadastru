@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.11.0 – Manual de utilizare</title>
+<title>Cadastru 1.12.0 – Manual de utilizare</title>
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
@@ -12,9 +12,9 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Manual de utilizare · versiunea 1.11.0</div>
+  <div class="sub">Manual de utilizare · versiunea 1.12.0</div>
   <div class="shot"><img src="img/principal.png" alt=""></div>
-  <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Octombrie 2026</span></div>
+  <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Noiembrie 2026</span></div>
 </section>
 
 <nav id="toc"></nav>
@@ -95,7 +95,7 @@
   <tr><th style="width:24%">Meniu</th><th>Conține</th></tr>
   <tr><td><b>Fișier</b></td><td>Deschidere de date, File Geodatabase, toate fișierele de un tip dintr-un dosar și dosare CGXML; filtrul de încărcare (doar entitățile din România); spațiul de lucru (deschide, salvează, salvează ca); export; închiderea tuturor straturilor; <b>Tipărire</b> și <b>Salvează ca PDF</b>; ieșire.</td></tr>
   <tr><td><b>Vizualizare</b></td><td>Extindere completă, zoom la stratul selectat, sistemul hărții, tabelul de atribute, vederea anterioară/următoare, afișarea etichetelor, controlul de navigație, fereastra de identificare, <b>panoul Straturi</b> (<kbd>Ctrl+L</kbd>), tema (gri închis sau luminoasă), limba interfeței (română sau engleză).</td></tr>
-  <tr><td><b>Instrumente</b></td><td>Instrumentele hărții, selecția (Selectare, Deselectează tot, Zoom la selecție, selectare doar în stratul activ), Selectare după atribute, Căutare, <b>Redraw</b>, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML.</td></tr>
+  <tr><td><b>Instrumente</b></td><td>Instrumentele hărții, selecția (Selectare, Deselectează tot, Zoom la selecție, selectare doar în stratul activ), Selectare după atribute, Căutare, <b>Redraw</b>, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML, <b>Formate ECW / MrSID (GDAL)</b> (secțiunea 3.10).</td></tr>
   <tr><td><b>Ajutor</b></td><td>Manualul de utilizare (acest document, <kbd>F1</kbd>), lista de scurtături, informații despre aplicație și autor.</td></tr>
 </table>
 
@@ -181,6 +181,9 @@
   <tr><td>Imagini georeferențiate</td><td>.png .jpg .bmp + world file</td><td class="c">✔</td><td class="c">✔*</td><td>*PNG și JPEG; la scriere se creează world file, .prj și .aux.xml.</td></tr>
   <tr><td>CGXML (ANCPI)</td><td>.cgxml, .zip, dosar</td><td class="c">✔</td><td class="c">–</td><td>Straturile „teren” și „constructii” (secțiunea 3.5).</td></tr>
   <tr><td>Esri File Geodatabase</td><td>dosar .gdb</td><td class="c">✔</td><td class="c">–</td><td>Fără ArcGIS (secțiunea 3.4).</td></tr>
+  <tr><td>ECW</td><td>.ecw</td><td class="c">✔*</td><td class="c">–</td><td>*Doar vizualizare, prin GDAL-ul din QGIS / OSGeo4W (secțiunea 3.10).</td></tr>
+  <tr><td>MrSID</td><td>.sid</td><td class="c">✔*</td><td class="c">–</td><td>*Doar vizualizare, prin GDAL cu pachetul gdal-mrsid (secțiunea 3.10).</td></tr>
+  <tr><td>JPEG 2000</td><td>.jp2</td><td class="c">✔*</td><td class="c">–</td><td>*Doar vizualizare, prin GDAL (secțiunea 3.10).</td></tr>
 </table>
 
 <h3 id="c3-3"><span class="n">3.3</span>Fișiere text și CSV</h3>
@@ -273,6 +276,16 @@
 </ul>
 <p>Restul desenului – linii, poligoane, celelalte puncte și texte – rămâne neschimbat; fișierul de pe disc nu se modifică. Bara de stare arată ce s-a eliminat, de exemplu <i>DXF: eliminate 3 puncte cu „RTCM” în descriere (10 entități, cu etichetele lor)</i>. Regula se aplică oriunde se deschide un DXF: <span class="ui">Deschide date…</span>, fișierele trase peste fereastră, deschiderea în masă, exportul pe tipuri de geometrie și conversiile. În linia de comandă, opțiunea <code>--dxf-pastreaza-rtcm</code> păstrează aceste puncte (capitolul 12).</p>
 <div class="tip"><b>Încercați.</b> <code>exemple\ridicare_gnss.dxf</code> conține o ridicare GNSS cu trei puncte RTCM (baza locală, o stație permanentă și un bloc cu atributul <code>DESCRIERE = rtcm_ref</code>): la deschidere rămân 50 din 60 de entități, iar zoom-ul la strat arată doar parcela.</div>
+
+<h3 id="c3-10"><span class="n">3.10</span>Rastere ECW, MrSID și JPEG 2000</h3>
+<p>ECW și MrSID sunt formate proprietare, folosite des pentru ortofotoplanuri. Decodarea lor are nevoie de bibliotecile producătorilor (ERDAS ECW/JP2 SDK – Hexagon, MrSID Decode SDK – Extensis / LizardTech). Acestea sunt gratuite pentru citire, dar nu pot fi incluse într-o aplicație distribuită sub licența MIT. De aceea Cadastru le citește prin <b>GDAL-ul unei instalări QGIS sau OSGeo4W</b> de pe același calculator:</p>
+<ul>
+  <li><b>QGIS</b> (gratuit, <code>qgis.org</code>): instalatorul complet include citirea <b>ECW</b>. Pentru <b>MrSID</b>, porniți <i>OSGeo4W Setup</i> din meniul Start al QGIS, alegeți <i>Advanced Install</i> și bifați pachetul <code>gdal-mrsid</code>.</li>
+  <li><b>OSGeo4W</b>: pachetele <code>gdal-ecw</code> și <code>gdal-mrsid</code>.</li>
+</ul>
+<p>Cadastru găsește singur GDAL-ul în <code>C:\Program Files\QGIS …</code> (cea mai nouă versiune), <code>C:\OSGeo4W</code> sau în PATH, la deschiderea primului fișier ECW / MrSID. Fereastra <span class="ui">Instrumente → Formate ECW / MrSID (GDAL)…</span> arată versiunea GDAL găsită și driverele disponibile (ECW, MrSID, JPEG 2000) și permite alegerea manuală a dosarului <code>bin</code> al altei instalări (de exemplu <code>C:\Program Files\QGIS 3.40.5\bin</code>). Fără GDAL, restul aplicației funcționează normal; doar aceste formate nu se deschid.</p>
+<p>Fișierele <code>.ecw</code>, <code>.sid</code> și <code>.jp2</code> se deschid ca orice raster (<span class="ui">Deschide date…</span>, trase peste fereastră, spațiul de lucru). Pentru că au adesea zeci de mii de pixeli pe latură, în memorie se ține doar o <b>imagine de ansamblu</b> (cel mult 4096 px pe latură); la zoom, <b>detaliul se citește din fișier doar pentru zona vizibilă</b>, la rezoluția ecranului, iar la tipărire la rezoluția planșei. Identificarea arată valorile pixelului la rezoluția completă. <span class="ui">Informații raster</span> arată formatul, dimensiunea reală și mărimea pixelului.</p>
+<div class="tip"><b>Doar vizualizare.</b> Cadastru <b>nu scrie și nu convertește</b> în ECW, MrSID sau JPEG 2000, iar straturile citite din aceste formate nu se exportă în alte formate (nici în GeoTIFF). Pentru conversii folosiți programele care au licența de scriere a formatelor respective.</div>
 
 <!-- ===================================================================== -->
 <h2 id="c4"><span class="n">4</span>Navigarea pe hartă</h2>
@@ -371,15 +384,20 @@
       <li><b>Mărime punct</b>: raza simbolului pentru puncte.</li>
       <li><b>Etichete</b>: câmpul afișat ca etichetă (sau niciunul).</li>
       <li><b>Text etichetă</b>: mărimea și culoarea etichetelor.</li>
+      <li><b>Halo etichete</b>: fondul care face etichetele lizibile peste hartă – <i>Contur</i> (o margine care urmează literele), <i>Dreptunghi</i> (fond sub text) sau <i>Fără halo</i>.</li>
+      <li><b>Culoare halo</b>: <i>Automată</i> (alb pentru text închis, negru pentru text deschis) sau orice culoare aleasă.</li>
+      <li><b>Transparență halo</b>: de la 0 % (opac) la 100 % (invizibil).</li>
+      <li><b>Grosime halo</b>: lățimea conturului, respectiv marginea dreptunghiului din jurul textului.</li>
     </ul>
     <p>Secțiunea <span class="ui">Câmpuri</span> listează câmpurile stratului și tipul lor.</p>
   </div>
 </div></div>
-<p>Etichetele care s-ar suprapune nu sunt desenate. Toate etichetele pot fi ascunse din <span class="ui">Vizualizare → Afișează etichetele</span>.</p>
+<p>Etichetele care s-ar suprapune nu sunt desenate. Toate etichetele pot fi ascunse din <span class="ui">Vizualizare → Afișează etichetele</span>. Setările halo-ului sunt pe fiecare strat în parte, se păstrează în spațiul de lucru și se aplică la fel pe planșa tipărită și în PDF.</p>
+<figure><img src="img/etichete_halo.png" alt=""><figcaption><b>Figura 6.3.</b> Halo pe strat: UAT-uri cu contur albastru, 40 % transparent; orașe cu dreptunghi galben.</figcaption></figure>
 
 <div class="keep"><h3 id="c6-4"><span class="n">6.4</span>Afișarea rasterelor</h3>
 <div class="cols">
-  <figure><img src="img/raster_style.png" alt=""><figcaption><b>Figura 6.3.</b> Afișarea unui model digital al terenului.</figcaption></figure>
+  <figure><img src="img/raster_style.png" alt=""><figcaption><b>Figura 6.4.</b> Afișarea unui model digital al terenului.</figcaption></figure>
   <div>
     <p>Pentru un strat raster, secțiunea <span class="ui">Afișare raster</span> oferă:</p>
     <ul>
@@ -390,7 +408,7 @@
       <li><b>Alb transparent</b>, pentru hărțile scanate;</li>
       <li><b>Întindere automată</b>: recalculează min/max din datele rasterului.</li>
     </ul>
-    <p>Valorile NoData sunt transparente. <span class="ui">Informații raster</span> arată tipul datelor, mărimea pixelului și extinderea.</p>
+    <p>Valorile NoData sunt transparente. <span class="ui">Informații raster</span> arată tipul datelor, mărimea pixelului și extinderea (pentru ECW / MrSID și formatul și dimensiunea reală, secțiunea 3.10).</p>
   </div>
 </div></div>
 
@@ -462,7 +480,7 @@
 <p><b>Loc / adresă.</b> Scrieți un nume de localitate, o adresă sau un obiectiv (de exemplu <i>Pitești</i>, <i>Str. Victoriei 10 Brașov</i>) și apăsați <kbd>Enter</kbd>. Aplicația caută în același timp:</p>
 <ul>
   <li><b>în straturile încărcate</b>: entitățile care conțin textul în orice câmp, fără să țină cont de majuscule și diacritice („pitesti” găsește „PITEȘTI”). Rezultatele pot fi selectate, adăugate la selecție sau încadrate pe hartă; click pe un rezultat face zoom la entitate;</li>
-  <li><b>online</b>, în sursa aleasă la <span class="ui">Sursă</span>: <b>OpenStreetMap</b> (serviciul Nominatim, implicit), <b>Google</b> sau <b>Ambele</b> (rezultatele Google și OpenStreetMap în aceeași listă, marcate [Google] / [OSM]). Se găsesc localități, străzi, adrese, obiective. Click pe un loc mută harta acolo și pune un <b>marcaj roșu</b> cu numele lui. Bifa <span class="ui">Doar în România</span> (implicită) limitează căutarea la România; butonul <span class="ui">Șterge marcajul</span> îl elimină.</li>
+  <li><b>online</b>, în sursa aleasă la <span class="ui">Sursă</span>: <b>OpenStreetMap</b> (serviciul Nominatim, implicit), <b>Google</b> sau <b>Ambele</b> (rezultatele Google și OpenStreetMap în aceeași listă, marcate [Google] / [OSM]). Se găsesc localități, străzi, adrese, obiective. Click pe un loc mută harta acolo și pune un <b>marcaj roșu</b> cu numele lui. Bifa <span class="ui">Doar în România</span> (implicită) limitează căutarea la România; butonul <span class="ui">Șterge marcajul</span> îl elimină. Titlul listei arată de unde vin rezultatele afișate: <i>Locuri (OpenStreetMap)</i>, <i>Locuri (Google)</i> sau ambele, iar pentru un link Google Maps, un cod Plus ori coordonate – <i>Loc din linkul Google Maps</i>, <i>Loc din codul Plus</i>, <i>Coordonate</i>, oricare ar fi sursa aleasă.</li>
 </ul>
 <p><b>Căutarea Google.</b> Google nu permite căutarea automată fără cont, așa că sursa <i>Google</i> folosește serviciile oficiale <b>Places API (New)</b> (ca în caseta de căutare din Google Maps, inclusiv firme și obiective) și, dacă acesta nu este activat, <b>Geocoding API</b> (adrese). Pentru ele este nevoie de o <b>cheie API Google Maps Platform</b>, creată gratuit în Google Cloud Console (butonul <span class="ui">Obține o cheie…</span>); Google oferă lunar un număr de căutări gratuite, peste care se plătește. Cheia se scrie în câmpul <span class="ui">Cheie API Google</span>, care apare când este aleasă sursa Google sau Ambele, și se păstrează în setări; poate fi dată și prin variabila de mediu <code>GOOGLE_MAPS_API_KEY</code>.</p>
 <p><b>Fără cheie</b> se poate folosi Google Maps direct:</p>
@@ -556,7 +574,7 @@ status = 1 AND is_active = 1
   <li>dacă stratul are entități selectate: <b>numai cele selectate</b> sau toate (secțiunea 7.7).</li>
 </ul>
 <figure class="half"><img src="img/export.png" alt=""><figcaption><b>Figura 9.1.</b> Exportul unui strat din WGS84 în Stereo 70.</figcaption></figure>
-<p>Rasterele se exportă în GeoTIFF, ASCII Grid, PNG sau JPEG. La reproiectare se pot alege rezoluția de ieșire și metoda de reeșantionare (cel mai apropiat vecin sau biliniară).</p>
+<p>Rasterele se exportă în GeoTIFF, ASCII Grid, PNG sau JPEG. La reproiectare se pot alege rezoluția de ieșire și metoda de reeșantionare (cel mai apropiat vecin sau biliniară). Straturile ECW, MrSID și JPEG 2000 se pot doar vizualiza și nu se exportă (secțiunea 3.10).</p>
 
 <h3 id="c9-2"><span class="n">9.2</span>Toate straturile într-un GeoPackage</h3>
 <p><span class="ui">Fișier → Export toate straturile vectoriale în GeoPackage…</span> scrie toate straturile vectoriale deschise într-un singur fișier <code>.gpkg</code>, câte un strat pentru fiecare.</p>
@@ -619,6 +637,7 @@ status = 1 AND is_active = 1
 <ul>
   <li><span class="ui">Previzualizare</span> arată planșa înainte de tipărire sau salvare.</li>
   <li>Pe planșă apar: titlul, harta în chenar, caroiajul cu coordonate pe margini, nordul (orientat după nordul geografic), legenda straturilor vizibile, scara numerică și grafică, sistemul de coordonate, data, nota și atribuirea hărții de fundal.</li>
+  <li>Etichetele au pe planșă același halo ca pe ecran (culoare, transparență, grosime – secțiunea 6.3). Rasterele ECW / MrSID / JPEG 2000 se citesc din fișier la rezoluția planșei.</li>
   <li>Harta de fundal este descărcată din nou, la detaliul potrivit rezoluției de tipar. Dacă nu poate fi descărcată, planșa se face fără ea, iar bara de stare explică de ce.</li>
   <li><b>La tipărire</b> se deschide dialogul Windows de alegere a imprimantei. Mărimea hârtiei, orientarea și rezoluția sunt cele alese acolo, iar planșa se adaptează zonei tipăribile. Funcționează și cu „Microsoft Print to PDF”.</li>
   <li><b>PDF-ul</b> are mărimea exactă a hârtiei. Planșa este o imagine de înaltă calitate: se deschide oriunde și se tipărește identic, dar textul din ea nu poate fi selectat.</li>
@@ -629,7 +648,7 @@ status = 1 AND is_active = 1
 <p><code>cadastru-cli.exe</code> face aceleași conversii și transformări fără interfață grafică, pentru scripturi <code>.bat</code>, PowerShell sau Task Scheduler. Deschideți un Command Prompt în dosarul aplicației.</p>
 <table>
   <tr><th style="width:20%">Comandă</th><th>Rol</th></tr>
-  <tr><td><code>info</code></td><td>Straturi, câmpuri, sistem, extindere; <code>--features N</code> arată și primele N entități.</td></tr>
+  <tr><td><code>info</code></td><td>Straturi, câmpuri, sistem, extindere; <code>--features N</code> arată și primele N entități. Funcționează și pentru ECW / MrSID / JPEG 2000 (prin GDAL), care însă nu se convertesc.</td></tr>
   <tr><td><code>convert</code></td><td>Conversie de format și/sau reproiecție a unui fișier.</td></tr>
   <tr><td><code>batch</code></td><td>Conversia tuturor fișierelor dintr-un dosar.</td></tr>
   <tr><td><code>transform</code></td><td>Transformarea unor coordonate (argumente sau intrare standard).</td></tr>
@@ -685,9 +704,9 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
 <h2 id="c14"><span class="n">14</span>Setări și fișiere ale aplicației</h2>
 <table>
   <tr><th style="width:44%">Locație</th><th>Conținut</th></tr>
-  <tr><td><code>%APPDATA%\Cadastru\setari.json</code></td><td>Limba interfeței, tema, etichetele, controlul de navigație, metoda pentru Stereo 70, opțiunile CGXML, opacitatea hărții de fundal, ultimul șablon XYZ.</td></tr>
+  <tr><td><code>%APPDATA%\Cadastru\setari.json</code></td><td>Limba interfeței, tema, etichetele, controlul de navigație, metoda pentru Stereo 70, opțiunile CGXML, opacitatea hărții de fundal, ultimul șablon XYZ, dosarul GDAL ales pentru ECW / MrSID.</td></tr>
   <tr><td><code>%LOCALAPPDATA%\Cadastru\tile-cache\</code></td><td>Cache-ul hărților de fundal.</td></tr>
-  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.11.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
+  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.12.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
   <tr><td><code>grile\</code> lângă <code>cadastru.exe</code></td><td>Opțional: griduri TransDatRO mai noi (secțiunea 8.4).</td></tr>
 </table>
 <p>Ștergerea fișierului <code>setari.json</code> readuce setările implicite. Aplicația nu scrie nimic în registrul Windows și nu are nevoie de drepturi de administrator.</p>
@@ -704,7 +723,9 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
   <dt>Aplicația nu pornește într-o sesiune Remote Desktop</dt>
   <dd>Pe versiunile mai vechi de Windows, sesiunea remote nu are OpenGL. Linia de comandă <code>cadastru-cli.exe</code> funcționează oricând.</dd>
   <dt>Un ortofotoplan foarte mare nu se deschide</dt>
-  <dd>Rasterele se încarcă integral în memorie. Decupați rasterul sau convertiți-l la o rezoluție mai mică (<code>cadastru-cli convert … --res 1</code>).</dd>
+  <dd>Rasterele GeoTIFF, PNG și JPEG se încarcă integral în memorie. Decupați rasterul sau convertiți-l la o rezoluție mai mică (<code>cadastru-cli convert … --res 1</code>). Ortofotoplanurile ECW / JPEG 2000 se citesc pe ferestre și nu au această limită.</dd>
+  <dt>Un fișier ECW sau MrSID nu se deschide</dt>
+  <dd>Mesajul spune cauza: GDAL nu a fost găsit (instalați QGIS sau alegeți dosarul în <span class="ui">Instrumente → Formate ECW / MrSID (GDAL)…</span>) sau GDAL-ul găsit nu are driverul formatului (pentru MrSID, pachetul OSGeo4W <code>gdal-mrsid</code>). Fereastra arată ce drivere sunt disponibile.</dd>
   <dt>Un File Geodatabase nu se deschide</dt>
   <dd>Probabil este comprimat. În ArcGIS: <i>Uncompress File Geodatabase</i>, apoi deschideți-l din nou.</dd>
   <dt>Manualul nu se deschide cu <kbd>F1</kbd></dt>
@@ -716,10 +737,11 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
 <div class="cols">
   <figure><img src="img/despre.png" alt=""><figcaption><b>Figura 16.1.</b> <span class="ui">Ajutor → Despre Cadastru</span>.</figcaption></figure>
   <div>
-    <p><b>Cadastru 1.11.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
+    <p><b>Cadastru 1.12.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
     <p>Aplicația este scrisă în Rust și distribuită cu codul sursă, sub licența MIT.</p>
     <p class="small">TransDatRO: algoritm și griduri © ANCPI (Agenția Națională de Cadastru și Publicitate Imobiliară).<br>
     Hărțile de fundal aparțin furnizorilor lor (OpenStreetMap, Esri, Google, Microsoft, CARTO, BKG, EOX) și se folosesc conform condițiilor fiecăruia.<br>
+    ECW este marcă Hexagon; MrSID este marcă Extensis (LizardTech). Citirea lor se face prin GDAL-ul instalat de utilizator, sub licențele acestor biblioteci.<br>
     Datele din figurile acestui manual: limitele unităților administrativ-teritoriale ale județului Argeș și datele de test din dosarul <code>exemple</code>.</p>
   </div>
 </div>

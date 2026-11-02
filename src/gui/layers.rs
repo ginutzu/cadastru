@@ -19,6 +19,48 @@ pub struct VectorStyle {
     /// poligoane fără umplere („No fill”): doar conturul
     #[serde(default)]
     pub no_fill: bool,
+    /// forma halo-ului etichetelor
+    #[serde(default)]
+    pub halo: HaloMode,
+    /// culoarea halo-ului; `None` = automată, în contrast cu textul
+    #[serde(default)]
+    pub halo_color: Option<[u8; 3]>,
+    /// transparența halo-ului, în procente (0 = opac, 100 = invizibil)
+    #[serde(default = "default_halo_transparency")]
+    pub halo_transparency: f32,
+    /// grosimea halo-ului (contur) sau marginea dreptunghiului, în pt
+    #[serde(default = "default_halo_width")]
+    pub halo_width: f32,
+}
+
+fn default_halo_transparency() -> f32 {
+    25.0
+}
+fn default_halo_width() -> f32 {
+    1.5
+}
+
+/// Forma halo-ului din jurul etichetelor.
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub enum HaloMode {
+    /// contur care urmează literele
+    #[default]
+    Outline,
+    /// dreptunghi cu colțuri rotunjite sub text
+    Box,
+    /// fără halo
+    Off,
+}
+
+impl HaloMode {
+    pub const ALL: [HaloMode; 3] = [HaloMode::Outline, HaloMode::Box, HaloMode::Off];
+    pub fn label(self) -> &'static str {
+        match self {
+            HaloMode::Outline => tr!("Contur"),
+            HaloMode::Box => tr!("Dreptunghi"),
+            HaloMode::Off => tr!("Fără halo"),
+        }
+    }
 }
 
 impl VectorStyle {
@@ -43,6 +85,10 @@ impl VectorStyle {
             label_size: 12.0,
             label_color: [20, 20, 20, 255],
             no_fill: false,
+            halo: HaloMode::Outline,
+            halo_color: None,
+            halo_transparency: default_halo_transparency(),
+            halo_width: default_halo_width(),
         }
     }
     pub fn stroke_c(&self) -> Color32 {
@@ -59,6 +105,31 @@ impl VectorStyle {
     }
     pub fn fill_c(&self) -> Color32 {
         Color32::from_rgba_unmultiplied(self.fill[0], self.fill[1], self.fill[2], self.fill[3])
+    }
+    /// Culoarea halo-ului (fără transparență): cea aleasă sau, automat,
+    /// alb pentru text închis și negru pentru text deschis.
+    pub fn halo_rgb(&self) -> [u8; 3] {
+        if let Some(c) = self.halo_color {
+            return c;
+        }
+        let lc = self.label_color;
+        let lum = 0.299 * lc[0] as f32 + 0.587 * lc[1] as f32 + 0.114 * lc[2] as f32;
+        if lum > 140.0 { [0, 0, 0] } else { [255, 255, 255] }
+    }
+    /// Opacitatea halo-ului, 0…1 (0 când halo-ul e oprit).
+    pub fn halo_opacity(&self) -> f32 {
+        if self.halo == HaloMode::Off {
+            return 0.0;
+        }
+        (1.0 - self.halo_transparency / 100.0).clamp(0.0, 1.0)
+    }
+    /// Halo-ul ca RGBA, sau `None` dacă nu se desenează.
+    pub fn halo_rgba(&self) -> Option<[u8; 4]> {
+        let a = self.halo_opacity();
+        (a > 0.0).then(|| {
+            let c = self.halo_rgb();
+            [c[0], c[1], c[2], (a * 255.0).round() as u8]
+        })
     }
     pub fn label_c(&self) -> Color32 {
         Color32::from_rgba_unmultiplied(
@@ -162,12 +233,10 @@ impl LayerEntry {
                 v.data.features.len(),
                 v.data.geom_kind().label()
             ),
-            LayerKind::Raster(r) => tr!(
-                "{} x {} px, {} benzi",
-                r.data.width,
-                r.data.height,
-                r.data.bands.len()
-            ),
+            LayerKind::Raster(r) => {
+                let (w, h) = r.full_size();
+                tr!("{} x {} px, {} benzi", w, h, r.data.bands.len())
+            }
         }
     }
 
@@ -357,6 +426,7 @@ impl RLayer {
         w: usize,
         h: usize,
         name: &str,
+        detail: bool,
     ) -> Option<TextureHandle> {
         if w == 0 || h == 0 || !view.is_valid() {
             return None;
@@ -365,9 +435,54 @@ impl RLayer {
             (Some(m), Some(s)) => Transformer::new(m, s).ok()?,
             _ => Transformer::identity(),
         };
-        let rgba = render_rgba(&self.data, &self.style, &inv, view, w, h);
+        let rgba = self.rgba_for(&inv, view, w, h, detail);
         let img = egui::ColorImage::from_rgba_unmultiplied([w, h], &rgba);
         Some(ctx.load_texture(name, img, egui::TextureOptions::LINEAR))
+    }
+
+    /// Pixelii RGBA pentru zona `view` (sistemul hărții), `w` × `h`. Cu
+    /// `detail`, rasterele foarte mari (ECW, MrSID) citesc din fișier doar
+    /// fereastra vizibilă, la rezoluția cerută; altfel se folosește imaginea
+    /// de ansamblu din memorie.
+    pub fn rgba_for(&self, inv: &Transformer, view: &Bounds, w: usize, h: usize, detail: bool) -> Vec<u8> {
+        if detail
+            && let Some(fs) = &self.data.full
+            && let Some(win) = window_raster(fs, inv, view, w, h)
+        {
+            return render_rgba(&win, &self.style, inv, view, w, h);
+        }
+        render_rgba(&self.data, &self.style, inv, view, w, h)
+    }
+
+    /// Dimensiunea reală a rasterului (cea completă, pentru ECW / MrSID).
+    pub fn full_size(&self) -> (usize, usize) {
+        self.data.full.as_ref().map_or((self.data.width, self.data.height), |f| f.0.size())
+    }
+
+    /// Valorile benzilor în punctul (x, y) din sistemul rasterului, la rezoluția
+    /// completă: (coloană, rând, valori).
+    pub fn values_at(&self, x: f64, y: f64) -> Option<(i64, i64, Vec<f64>)> {
+        let (gt, (w, h)) = match &self.data.full {
+            Some(f) => (f.0.geo_transform(), f.0.size()),
+            None => (self.data.gt, (self.data.width, self.data.height)),
+        };
+        let ig = invert_gt(&gt)?;
+        let col = (ig[0] + x * ig[1] + y * ig[2]).floor();
+        let row = (ig[3] + x * ig[4] + y * ig[5]).floor();
+        if col < 0.0 || row < 0.0 || col >= w as f64 || row >= h as f64 {
+            return None;
+        }
+        let vals = match &self.data.full {
+            Some(f) => {
+                let r = f.0.read_window(col as usize, row as usize, 1, 1, 1, 1).ok()?;
+                r.bands.iter().map(|b| b.get(0)).collect()
+            }
+            None => {
+                let i = row as usize * w + col as usize;
+                self.data.bands.iter().map(|b| b.get(i)).collect()
+            }
+        };
+        Some((col as i64, row as i64, vals))
     }
 
     /// Imaginea de ansamblu (toată extinderea, max. 2048 px).
@@ -386,10 +501,85 @@ impl RLayer {
             ((max * b.width() / b.height()).max(1.0), max)
         };
         self.overview = self
-            .render(ctx, map_crs, &b, w as usize, h as usize, &format!("ov{id}"))
+            .render(ctx, map_crs, &b, w as usize, h as usize, &format!("ov{id}"), false)
             .map(|t| (t, b));
         self.detail = None;
         self.detail_key = None;
         self.dirty = false;
+    }
+}
+
+/// Fereastra din rasterul complet care acoperă `view` (sistemul hărții),
+/// citită la rezoluția potrivită pentru `w` × `h` pixeli de ecran.
+fn window_raster(fs: &FullSource, inv: &Transformer, view: &Bounds, w: usize, h: usize) -> Option<Raster> {
+    let src = &fs.0;
+    let (fw, fh) = src.size();
+    let ig = invert_gt(&src.geo_transform())?;
+    let (mut c0, mut r0, mut c1, mut r1) = (f64::INFINITY, f64::INFINITY, f64::NEG_INFINITY, f64::NEG_INFINITY);
+    let n = 8;
+    for i in 0..=n {
+        for j in 0..=n {
+            let x = view.minx + view.width() * i as f64 / n as f64;
+            let y = view.miny + view.height() * j as f64 / n as f64;
+            if let Some((sx, sy)) = inv.xy(x, y) {
+                let c = ig[0] + sx * ig[1] + sy * ig[2];
+                let r = ig[3] + sx * ig[4] + sy * ig[5];
+                c0 = c0.min(c);
+                c1 = c1.max(c);
+                r0 = r0.min(r);
+                r1 = r1.max(r);
+            }
+        }
+    }
+    if !c0.is_finite() || !r0.is_finite() {
+        return None;
+    }
+    let c0 = (c0.floor() - 2.0).clamp(0.0, fw as f64) as usize;
+    let r0 = (r0.floor() - 2.0).clamp(0.0, fh as f64) as usize;
+    let c1 = (c1.ceil() + 2.0).clamp(0.0, fw as f64) as usize;
+    let r1 = (r1.ceil() + 2.0).clamp(0.0, fh as f64) as usize;
+    if c1 <= c0 || r1 <= r0 {
+        return None;
+    }
+    let (cw, ch) = (c1 - c0, r1 - r0);
+    // pixeli de sursă pe pixel de ecran; sub 1 se citește la rezoluția completă
+    let k = (cw as f64 / w.max(1) as f64).max(ch as f64 / h.max(1) as f64).max(1.0);
+    let bw = ((cw as f64 / k).ceil() as usize).clamp(1, 8192);
+    let bh = ((ch as f64 / k).ceil() as usize).clamp(1, 8192);
+    src.read_window(c0, r0, cw, ch, bw, bh).ok()
+}
+
+#[cfg(test)]
+mod halo_tests {
+    use super::*;
+
+    #[test]
+    fn old_workspace_style_gets_halo_defaults() {
+        let st: VectorStyle = serde_json::from_str(
+            r#"{"stroke":[1,2,3,255],"width":1.0,"fill":[1,2,3,60],"point_size":4.0,
+                "label_field":null,"label_size":12.0,"label_color":[20,20,20,255]}"#,
+        )
+        .unwrap();
+        assert_eq!(st.halo, HaloMode::Outline);
+        assert_eq!(st.halo_color, None);
+        // text închis → halo alb automat, 25 % transparent
+        assert_eq!(st.halo_rgba(), Some([255, 255, 255, 191]));
+    }
+
+    #[test]
+    fn halo_color_transparency_and_off() {
+        let mut st = VectorStyle::for_index(0);
+        st.halo_color = Some([10, 20, 30]);
+        st.halo_transparency = 100.0;
+        assert_eq!(st.halo_rgba(), None);
+        st.halo_transparency = 0.0;
+        assert_eq!(st.halo_rgba(), Some([10, 20, 30, 255]));
+        st.halo = HaloMode::Off;
+        assert_eq!(st.halo_rgba(), None);
+        // text deschis → halo negru automat
+        st.halo = HaloMode::Box;
+        st.halo_color = None;
+        st.label_color = [235, 235, 235, 255];
+        assert_eq!(st.halo_rgb(), [0, 0, 0]);
     }
 }

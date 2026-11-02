@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.11.0 – Documentație tehnică</title>
+<title>Cadastru 1.12.0 – Documentație tehnică</title>
 <link rel="stylesheet" href="stil.css">
 <style>
   .arch { width: 100%; margin: 2mm 0 1mm; }
@@ -18,9 +18,9 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Documentație tehnică · versiunea 1.11.0</div>
+  <div class="sub">Documentație tehnică · versiunea 1.12.0</div>
   <div class="shot"><img src="img/plansa_lat.png" alt=""></div>
-  <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Octombrie 2026</span></div>
+  <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Noiembrie 2026</span></div>
 </section>
 
 <nav id="toc"></nav>
@@ -40,7 +40,7 @@
 <h3 id="t1-2"><span class="n">1.2</span>Date de identificare</h3>
 <table>
   <tr><th style="width:30%">Element</th><th>Valoare</th></tr>
-  <tr><td>Nume, versiune</td><td>Cadastru 1.11.0</td></tr>
+  <tr><td>Nume, versiune</td><td>Cadastru 1.12.0</td></tr>
   <tr><td>Autor</td><td>Ginu Popescu, scriemiaici@proton.me</td></tr>
   <tr><td>Licență</td><td>MIT</td></tr>
   <tr><td>Limbaj</td><td>Rust, ediția 2024 (compilator 1.97)</td></tr>
@@ -89,34 +89,36 @@
   <tr><td><code>src/query.rs</code></td><td>374</td><td>Interogări pe atribute: condiții cu operatori, legate prin ȘI / SAU, comparații fără majuscule și diacritice (secțiunea 8.8).</td></tr>
   <tr><td><code>src/i18n.rs</code></td><td>144</td><td>Limba curentă (<code>Lang</code>), comutarea, traducerea la rulare (<code>trs</code>) a textelor din constante (secțiunea 8.6).</td></tr>
   <tr><td><code>i18n-macros/src/lib.rs</code></td><td>121</td><td>Crate <i>proc-macro</i> <code>cadastru-i18n-macros</code>: macrourile <code>tr!</code> și <code>tr_table!</code>.</td></tr>
-  <tr><td><code>lang/en.tsv</code></td><td>857</td><td>Pachetul pentru limba engleză: text românesc ↦ text englez.</td></tr>
-  <tr><td><code>src/model.rs</code></td><td>1 131</td><td>Coordonate, dreptunghiuri, geometrii, câmpuri și valori, straturi vectoriale, rastere, statistici.</td></tr>
+  <tr><td><code>lang/en.tsv</code></td><td>901</td><td>Pachetul pentru limba engleză: text românesc ↦ text englez.</td></tr>
+  <tr><td><code>src/model.rs</code></td><td>1 167</td><td>Coordonate, dreptunghiuri, geometrii, câmpuri și valori, straturi vectoriale, rastere, statistici.</td></tr>
   <tr><td><code>src/crs.rs</code></td><td>1 028</td><td>Sisteme de coordonate (EPSG, PROJ, WKT, .prj ESRI), căutare, sisteme presupuse, <code>Transformer</code>.</td></tr>
   <tr><td><code>src/transdatro.rs</code></td><td>999</td><td>Portul algoritmului TransDatRO, gridurile, formatul de fișiere TransDatRO.</td></tr>
   <tr><td><code>src/geomio.rs</code></td><td>498</td><td>Codificare și decodificare WKB (inclusiv GeoPackage) și WKT.</td></tr>
-  <tr><td><code>src/convert.rs</code></td><td>541</td><td>Conversia unui fișier, conversia în lot, exportul pe tipuri de geometrie (secțiunea 6.5).</td></tr>
+  <tr><td><code>src/convert.rs</code></td><td>544</td><td>Conversia unui fișier, conversia în lot, exportul pe tipuri de geometrie (secțiunea 6.5).</td></tr>
   <tr><td><code>src/rasterops.rs</code></td><td>535</td><td>Reproiecție raster, reeșantionare, randare RGBA, rampe de culori, hillshade.</td></tr>
-  <tr><td><code>src/formats/mod.rs</code></td><td>531</td><td>Registrul formatelor, deschiderea după extensie, scriere, codificări, fișiere <code>.prj</code>.</td></tr>
-  <tr><td><code>src/formats/*.rs</code></td><td>6 912</td><td>Câte un modul pe format (capitolul 6).</td></tr>
+  <tr><td><code>src/formats/mod.rs</code></td><td>566</td><td>Registrul formatelor, deschiderea după extensie, scriere, codificări, fișiere <code>.prj</code>.</td></tr>
+  <tr><td><code>src/formats/*.rs</code></td><td>7 601</td><td>Câte un modul pe format (capitolul 6).</td></tr>
+  <tr><td><code>src/formats/gdalrt.rs</code></td><td>686</td><td>ECW, MrSID și JPEG 2000 prin GDAL încărcat dinamic (<code>libloading</code>): căutarea bibliotecii, imaginea de ansamblu, citirea pe ferestre (secțiunea 6.8).</td></tr>
   <tr><td><code>src/main.rs</code></td><td>72</td><td>Punctul de intrare al interfeței: fereastra (deschisă maximizată), pictograma, argumentele.</td></tr>
-  <tr><td><code>src/gui/mod.rs</code></td><td>2 335</td><td>Starea aplicației (<code>App</code>), meniuri, bara de instrumente grupată (cu comutatorul de limbă), panoul de straturi (ascundere, bandă îngustă), sarcini în fundal, scurtături.</td></tr>
-  <tr><td><code>src/gui/map.rs</code></td><td>1 333</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
-  <tr><td><code>src/gui/layers.rs</code></td><td>395</td><td>Straturile hărții, stiluri, geometria de afișare și triangularea.</td></tr>
+  <tr><td><code>src/gui/mod.rs</code></td><td>2 407</td><td>Starea aplicației (<code>App</code>), meniuri, bara de instrumente grupată (cu comutatorul de limbă), panoul de straturi (ascundere, bandă îngustă), sarcini în fundal, scurtături.</td></tr>
+  <tr><td><code>src/gui/map.rs</code></td><td>1 356</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
+  <tr><td><code>src/gui/layers.rs</code></td><td>585</td><td>Straturile hărții, stiluri (inclusiv halo-ul etichetelor), geometria de afișare și triangularea, citirea pe ferestre a rasterelor ECW / MrSID.</td></tr>
   <tr><td><code>src/gui/basemap.rs</code></td><td>1 484</td><td>Hărțile de fundal: furnizori, descărcare, cache, plase reproiectate.</td></tr>
-  <tr><td><code>src/gui/print.rs</code></td><td>1 661</td><td>Planșa de tipărire, PDF, tipărirea prin Windows.</td></tr>
-  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 646</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
+  <tr><td><code>src/gui/print.rs</code></td><td>1 741</td><td>Planșa de tipărire, PDF, tipărirea prin Windows.</td></tr>
+  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 651</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
   <tr><td><code>src/gui/tdr.rs</code></td><td>516</td><td>Fereastra TransDatRO.</td></tr>
   <tr><td><code>src/gui/workspace.rs</code></td><td>261</td><td>Spațiul de lucru <code>.cgw</code>.</td></tr>
-  <tr><td><code>src/gui/theme.rs</code></td><td>582</td><td>Teme, pictograme desenate vectorial, butoanele și grupurile barei de instrumente, setările persistente.</td></tr>
+  <tr><td><code>src/gui/theme.rs</code></td><td>585</td><td>Teme, pictograme desenate vectorial, butoanele și grupurile barei de instrumente, setările persistente.</td></tr>
   <tr><td><code>src/gui/select.rs</code></td><td>409</td><td>Selecția: instrumentul Selectare, operațiile pe selecție, desenarea entităților selectate (secțiunea 8.7).</td></tr>
-  <tr><td><code>src/gui/search.rs</code></td><td>1 089</td><td>Fereastra Căutare: sursa locurilor (OpenStreetMap, Google, ambele), geocodare Nominatim, coordonate, căutare rapidă în straturi, interogări pe câmpuri, marcajul locului (secțiunea 8.8).</td></tr>
+  <tr><td><code>src/gui/search.rs</code></td><td>1 149</td><td>Fereastra Căutare: sursa locurilor (OpenStreetMap, Google, ambele), geocodare Nominatim, coordonate, căutare rapidă în straturi, interogări pe câmpuri, marcajul locului (secțiunea 8.8).</td></tr>
   <tr><td><code>src/gui/google.rs</code></td><td>568</td><td>Căutarea Google: Places API (New) și Geocoding API, linkuri Google Maps (complete și scurte), coduri Plus, adresele Google Maps pentru browser (secțiunea 8.8).</td></tr>
   <tr><td><code>src/gui/bulk.rs</code></td><td>572</td><td>Deschiderea în masă a fișierelor de un tip dintr-un dosar (secțiunea 8.9).</td></tr>
   <tr><td><code>src/gui/attrsel.rs</code></td><td>588</td><td>Fereastra „Selectare după atribute” (secțiunea 8.10).</td></tr>
   <tr><td><code>src/gui/loadfilter.rs</code></td><td>260</td><td>Bifa, fereastra și indicatorul filtrului de încărcare; filtrarea unui strat încărcat (secțiunea 6.6).</td></tr>
   <tr><td><code>src/gui/split.rs</code></td><td>285</td><td>Fereastra „Export pe tipuri de geometrie”.</td></tr>
+  <tr><td><code>src/gui/ecw.rs</code></td><td>136</td><td>Fereastra „Formate ECW / MrSID (GDAL)”: starea GDAL, driverele, dosarul ales (secțiunea 6.8).</td></tr>
   <tr><td><code>src/gui/manual.rs</code></td><td>94</td><td>Manualul de utilizare inclus și deschiderea lui (<kbd>F1</kbd>); deschiderea adreselor web în browserul implicit.</td></tr>
-  <tr><td><code>src/bin/cli.rs</code></td><td>681</td><td>Linia de comandă.</td></tr>
+  <tr><td><code>src/bin/cli.rs</code></td><td>696</td><td>Linia de comandă.</td></tr>
 </table>
 
 <h3 id="t2-3"><span class="n">2.3</span>Fluxul datelor</h3>
@@ -240,6 +242,8 @@
 <h3 id="t6-4"><span class="n">6.4</span>Formatele raster</h3>
 <p><code>raster.rs</code> citește și scrie GeoTIFF cu biblioteca <code>tiff</code>: 8–64 biți, întregi și reali, RGB/RGBA, paletă, tiled și strip, compresiile LZW, Deflate, JPEG și PackBits, NoData (<code>GDAL_NODATA</code>), BigTIFF. Georeferențierea folosește <code>ModelTiepoint</code> + <code>ModelPixelScale</code> sau <code>ModelTransformation</code>, iar sistemul cheile GeoKey (cod EPSG sau parametri definiți de utilizator, recunoscuți ca EPSG când se potrivesc). Mai sunt citite ESRI ASCII Grid și imaginile PNG/JPEG/BMP cu world file (<code>.pgw</code>, <code>.jgw</code>, <code>.wld</code>) și <code>.prj</code>. La scrierea imaginilor se creează world file, <code>.prj</code> și <code>.aux.xml</code> (citit de GDAL și QGIS).</p>
 
+<p>ECW, MrSID și JPEG 2000 se citesc prin GDAL (secțiunea 6.8).</p>
+
 <h3 id="t6-5"><span class="n">6.5</span>Export pe tipuri de geometrie</h3>
 <p>Formatele cu un singur tip de geometrie (Shapefile) primesc straturile mixte (DXF, GeoJSON, KML) împărțite pe tipuri. <code>shp::write</code> o face automat la orice export: dacă stratul are mai multe tipuri, scrie <code>&lt;nume&gt;_puncte</code>, <code>_linii</code>, <code>_poligoane</code>. Pentru exportul explicit, din GUI și din <code>cadastru-cli split</code>, <code>convert.rs</code> oferă:</p>
 <ul>
@@ -261,6 +265,13 @@
   <li><code>rtcm_drop</code>: un INSERT al cărui bloc conține o înregistrare RTCM devine RTCM; fiecare etichetă primește proprietarul = cel mai apropiat POINT / INSERT aflat la cel mult <code>max(4·înălțimea textului, 1)</code> unități (căutare într-o grilă cu celula egală cu raza maximă). Se elimină: punctele RTCM, proprietarii etichetelor RTCM, conținutul blocurilor lor, toate etichetele acestor puncte și etichetele RTCM fără proprietar.</li>
   <li>Liniile și poligoanele nu sunt afectate. Testul <code>rtcm_points_dropped</code> acoperă cele trei cazuri (etichetă, atribut de bloc, XDATA) și opțiunea de păstrare.</li>
 </ul>
+
+<h3 id="t6-8"><span class="n">6.8</span>ECW, MrSID și JPEG 2000 prin GDAL</h3>
+<p><b>De ce prin GDAL.</b> Formatele sunt proprietare și nu au decodoare libere complete. Bibliotecile producătorilor – ERDAS ECW/JP2 SDK (<i>Desktop Read-Only</i>, gratuită pentru citire) și MrSID Decode SDK (DSDK, gratuită pentru decodare) – au licențe care cer, la redistribuire, acceptarea unui EULA separat, mențiuni în fereastra Despre și interdicții (inginerie inversă, folosire pe servere) incompatibile cu distribuirea într-o aplicație MIT. Cadastru nu include și nu leagă static aceste biblioteci: folosește, dacă există, GDAL-ul unei instalări QGIS / OSGeo4W, în care driverele <code>ECW</code>, <code>JP2ECW</code> și <code>MrSID</code> sunt pluginuri (<code>bin\gdalplugins\gdal_ECW_JP2ECW.dll</code>, <code>gdal_MrSID.dll</code>) instalate de utilizator sub licențele lor.</p>
+<p><b>Încărcarea</b> (<code>gdalrt::get</code>, o singură dată pe proces, la nevoie). Candidații, în ordine: dosarul sau fișierul din setări (<code>gdal_path</code>), variabila <code>CADASTRU_GDAL</code>, apoi pe Windows <code>%ProgramFiles%\QGIS*</code> (cea mai nouă versiune întâi), <code>%ProgramFiles%\GDAL</code>, <code>C:\OSGeo4W</code>, <code>C:\OSGeo4W64</code> și dosarele din PATH; numele recunoscute sunt <code>gdal.dll</code>, <code>gdalNNN.dll</code>, <code>gdal-NN.dll</code> (nu pluginurile <code>gdal_*.dll</code>). Dosarul bibliotecii și <code>gdalplugins</code> sunt puse la începutul PATH-ului procesului, iar DLL-ul se încarcă cu <code>LOAD_WITH_ALTERED_SEARCH_PATH</code>, ca dependențele (PROJ, NCSEcw, lti_dsdk) să fie găsite lângă el. Înainte de <code>GDALAllRegister</code> se setează <code>GDAL_DRIVER_PATH</code> (<code>bin\gdalplugins</code>), <code>GDAL_DATA</code> (<code>apps\gdal\share\gdal</code> sau <code>share\gdal</code>) prin <code>CPLSetConfigOption</code> și calea <code>proj.db</code> prin <code>OSRSetPROJSearchPaths</code>, dacă nu sunt deja în mediu; mesajele GDAL sunt redirecționate către <code>CPLQuietErrorHandler</code> și citite cu <code>CPLGetLastErrorMsg</code>. Se folosește numai API-ul C stabil (<code>GDALOpenEx</code>, <code>GDALDatasetRasterIO</code>, <code>GDALGetGeoTransform</code>, <code>OSRAutoIdentifyEPSG</code> …), prezent în GDAL 2.x și 3.x.</p>
+<p><b>Modelul.</b> <code>Raster</code> are câmpul <code>full: Option&lt;FullSource&gt;</code>, o referință la o sursă care implementează <code>RasterSource</code> (<code>size</code>, <code>geo_transform</code>, <code>driver</code>, <code>read_window(col, rând, l, h, bl, bh)</code>). <code>gdalrt::open</code> citește o <b>imagine de ansamblu</b> de cel mult 4096 px pe latură (GDAL folosește nivelurile de wavelet ale ECW / MrSID și rezoluțiile reduse ale JPEG 2000, deci citirea este rapidă), care devine <code>bands</code>, iar pentru rasterele mai mari păstrează sursa în <code>full</code>. Banda alfa este omisă; NoData se ia din prima bandă; sistemul de coordonate vine din WKT-ul GDAL, identificat ca EPSG cu <code>OSRAutoIdentifyEPSG</code> sau, altfel, prin <code>Crs::from_wkt</code>. Accesul la set de date este serializat cu un <code>Mutex</code> (GDAL nu permite apeluri simultane pe același handle).</p>
+<p><b>Afișarea.</b> <code>RLayer::rgba_for</code>: textura de ansamblu se randează din <code>bands</code>; textura de detaliu (cerută când pixelul ecranului devine mai mic decât cel al texturii de ansamblu) se randează dintr-o fereastră citită din fișier. <code>window_raster</code> transformă o grilă de 9 × 9 puncte ale vederii în sistemul rasterului și apoi în pixeli (inversa geotransformării), adaugă 2 px de margine, limitează la imagine și alege mărimea bufferului astfel încât un pixel citit să corespundă cel mult unui pixel de ecran (k = max(l/w, h/h<sub>ecran</sub>), cel puțin 1; bufferul cel mult 8192 px pe latură). Geotransformarea ferestrei este <code>[x₀, g₁·s<sub>x</sub>, g₂·s<sub>y</sub>, y₀, g₄·s<sub>x</sub>, g₅·s<sub>y</sub>]</code>, cu (x₀, y₀) colțul ferestrei și s factorii de eșantionare; restul randării (stil, reproiecție) este același ca pentru orice raster. Tipărirea folosește aceeași funcție la rezoluția chenarului, iar identificarea citește o fereastră de 1 × 1 px la rezoluția completă.</p>
+<p><b>Doar citire.</b> Formatele sunt înregistrate cu <code>write: false</code>; <code>write_raster</code> refuză extensiile <code>.ecw</code>, <code>.sid</code>, <code>.jp2</code> și orice raster citit prin GDAL (<code>formats::is_view_only</code>: <code>full</code> setat sau sursa cu una dintre aceste extensii); <code>convert_file</code> și exportul din interfață refuză aceste straturi înainte de reproiecție.</p>
 
 <!-- ===================================================================== -->
 <h2 id="t7"><span class="n">7</span>Operații raster</h2>
@@ -289,7 +300,7 @@
   <li>harta de fundal (capitolul 9);</li>
   <li>rasterele, ca texturi;</li>
   <li>pentru fiecare strat vectorial vizibil, în ordinea listei: entitățile din afara ecranului sunt sărite (încadrare); cele mai mici de 1,5 pixeli sunt desenate ca un singur pixel; poligoanele intră într-o singură plasă de triunghiuri de umplere (sărită când stilul are <code>no_fill</code>; câmpul are <code>#[serde(default)]</code>, deci spațiile de lucru vechi se citesc neschimbate), iar contururile sunt adăugate prin <code>push_stroke</code>; punctele sunt cercuri;</li>
-  <li>selecția, etichetele (fără suprapuneri, cu halou; desenate doar când pe ecran sunt cel mult 3 000 pentru stratul respectiv), măsurarea, dreptunghiul de zoom, scara grafică, controlul de navigație și atribuirea hărții de fundal.</li>
+  <li>selecția, etichetele (fără suprapuneri, cu halo-ul stratului – secțiunea 8.11; desenate doar când pe ecran sunt cel mult 3 000 pentru stratul respectiv), măsurarea, dreptunghiul de zoom, scara grafică, controlul de navigație și atribuirea hărții de fundal.</li>
 </ol>
 
 <p><b>Redraw</b> (<code>App::redraw_all</code>, <kbd>F5</kbd>): golește grafica temporară (măsurarea, dreptunghiul de zoom, marcajul căutării, evidențierea identificării), reface geometria de afișare a tuturor straturilor (<code>refresh_projections</code>), scoate din harta de fundal tile-urile eșuate și plasele reproiectate (<code>Basemap::redraw</code>), apoi cere redesenarea. Vederea și selecțiile rămân.</p>
@@ -361,6 +372,10 @@ operand   := câmp | "câmp" | [câmp] | `câmp` | 'text' | număr | NULL | TRUE
 <p><b>Fereastra</b> (<code>gui/attrsel.rs</code>) compilează expresia la fiecare modificare (doar analiză, fără evaluare) și arată eroarea; „Verifică” și „Selectează” o evaluează pe <code>data.features</code>. Rezultatul trece prin <code>VLayer::apply_sel</code> cu modurile <code>Replace</code>, <code>Add</code>, <code>Remove</code>, iar „din selecția curentă” este intersecția cu selecția existentă, aplicată cu <code>Replace</code>. Lista valorilor distincte ale unui câmp (cel mult 5 000, cu numărul de apariții, sortate numeric sau după <code>fold</code>) este calculată o singură dată pentru strat și câmp. Inserarea din liste folosește cursorul păstrat de <code>TextEditState</code>; dublu-click pe o valoare înlocuiește valoarea inserată la primul click cu <code>câmp = valoare</code>. Expresia scrisă este păstrată pe strat, iar ultimele 20 de expresii folosite sunt în meniul „Recente”.</p>
 <p><b>Zoom pe rezultat</b> (implicit activ): <code>App::focus_selection(id, avoid)</code> ia încadrarea selecției în sistemul hărții (<code>selection_bounds</code>), o lărgește cu 15% și cu un minim (100 m pentru un singur punct, 10 m altfel; 0,001° / 0,0001° în grade), face stratul vizibil și o încadrează. <code>avoid</code> este dreptunghiul ferestrei de selectare din cadrul anterior: <code>free_map_rect</code> alege cea mai mare dintre cele patru fâșii ale hărții neacoperite de fereastră (dacă are cel puțin o treime din hartă și 150 px pe latură), iar <code>zoom_into</code> calculează scara și centrul vederii astfel încât încadrarea să umple acea fâșie.</p>
 
+<h3 id="t8-11"><span class="n">8.11</span>Halo-ul etichetelor</h3>
+<p><code>VectorStyle</code> are patru câmpuri noi, toate cu <code>#[serde(default)]</code> (spațiile de lucru vechi se citesc neschimbate): <code>halo: HaloMode</code> (<code>Outline</code> – implicit, <code>Box</code>, <code>Off</code>), <code>halo_color: Option&lt;[u8; 3]&gt;</code> (<code>None</code> = automat: alb dacă luminanța textului 0,299 R + 0,587 G + 0,114 B ≤ 140, altfel negru), <code>halo_transparency</code> (procente, implicit 25) și <code>halo_width</code> (pt, implicit 1,5). <code>halo_rgba()</code> întoarce culoarea cu alfa = 1 − transparență, sau nimic pentru <code>Off</code> / 100 %.</p>
+<p>Pe ecran (<code>map.rs</code>, <code>draw_label_halo</code>), dreptunghiul este un <code>rect_filled</code> mărit cu grosimea; conturul este desenat ca 8 copii ale textului (<code>galley_with_override_text_color</code>) deplasate pe un cerc de rază egală cu grosimea, plus încă 8 pe un cerc interior pentru grosimi peste 1,6. Copiile se suprapun, așa că opacitatea fiecăreia este redusă la 1 − (1 − a)<sup>1/k</sup> (k = 3, respectiv 5) pentru ca halo-ul să aibă aproximativ transparența cerută; la tipărire transparența este exactă (secțiunea 10.1). Dreptunghiul de evitare a suprapunerilor include grosimea halo-ului.</p>
+
 <!-- ===================================================================== -->
 <h2 id="t9"><span class="n">9</span>Hărți de fundal</h2>
 <ul>
@@ -379,8 +394,8 @@ operand   := câmp | "câmp" | [câmp] | `câmp` | 'text' | număr | NULL | TRUE
 <ol>
   <li><b>Așezarea</b> (<code>print_layout</code>): margini de 10 mm, banda de titlu sus, banda de informații jos (legendă, scară, sistem, dată, notă, atribuire). Scara este cea a vederii sau cea aleasă; extinderea este centrată pe vederea curentă.</li>
   <li><b>Harta de fundal</b> (<code>draw_basemap</code>): o grilă de 16 px este transformată în Web Mercator. Nivelul de zoom este cel mai mic care atinge rezoluția paginii (cel mult 900 de tile-uri), tile-urile sunt descărcate sincron cu 8 fire, iar pixelii sunt eșantionați biliniar și compuși cu opacitatea aleasă, pe benzi de rânduri în paralel.</li>
-  <li><b>Rasterele</b> sunt randate cu <code>render_rgba</code>, la rezoluția chenarului.</li>
-  <li><b>Vectorii</b>: poligoane umplute (regula even-odd), contururi, puncte, etichete fără suprapuneri.</li>
+  <li><b>Rasterele</b> sunt randate cu <code>RLayer::rgba_for</code> (<code>render_rgba</code>; pentru ECW / MrSID dintr-o fereastră citită din fișier), la rezoluția chenarului.</li>
+  <li><b>Vectorii</b>: poligoane umplute (regula even-odd), contururi, puncte, etichete fără suprapuneri, cu halo-ul stratului (<code>draw_label_halo</code>: contururile deplasate pe cerc se combină într-o mască prin maximul acoperirii, aplicată o singură dată cu opacitatea halo-ului, deci transparența este exactă).</li>
   <li><b>Caroiajul</b>: interval „rotund” (aproximativ 6 linii pe latura lungă), cruci la intersecții și coordonatele pe margini. Etichetele care nu încap întregi în chenar sunt omise.</li>
   <li><b>Nordul</b>: săgeata este rotită cu unghiul dintre nordul geografic și nordul caroiajului în centrul hărții (convergența meridianelor).</li>
   <li>Chenarul, titlul, legenda (straturile vizibile, în ordinea de desenare inversă), scara numerică, scara grafică (circa 45 mm, 4 segmente), informațiile și mențiunea „Realizat cu Cadastru”.</li>
@@ -415,7 +430,7 @@ operand   := câmp | "câmp" | [câmp] | `câmp` | 'text' | număr | NULL | TRUE
 <p>Câmpul <code>basemap</code> lipsă (fișiere vechi) păstrează harta de fundal curentă. <code>raster_style</code> conține <code>rgb</code>, <code>bands</code>, <code>min</code>, <code>max</code>, <code>ramp</code>, <code>hillshade</code> și <code>transparent_color</code>.</p>
 
 <h3 id="t11-2"><span class="n">11.2</span>Setările</h3>
-<p><code>%APPDATA%\Cadastru\setari.json</code> (<code>theme::Settings</code>): <code>theme</code>, <code>cgxml</code> (opțiunile de import), <code>show_labels</code>, <code>show_nav</code>, <code>transdatro</code>, <code>height_egg97_only</code>, <code>basemap_opacity</code>, <code>basemap_custom</code>, <code>basemap_custom_zoom</code>, <code>lang</code> (limba interfeței: <code>"ro"</code> sau <code>"en"</code>), <code>select_active_only</code> (selectare doar în stratul activ), <code>geocode_ro_only</code> (căutarea locurilor doar în România), <code>geocoder</code> (sursa: <code>"Osm"</code>, <code>"Google"</code>, <code>"Both"</code>), <code>google_api_key</code> (cheia Google Maps Platform, păstrată ca text simplu în fișier), <code>layers_panel</code> (panoul Straturi afișat sau ascuns), <code>load_area_filter</code>, <code>load_area_partial</code>, <code>load_area_bounds</code> (filtrul de încărcare, secțiunea 6.6). Câmpurile lipsă primesc valorile implicite (<code>#[serde(default)]</code>). La prima pornire sunt preluate setările versiunilor anterioare (dosarul <code>Cartograf</code>).</p>
+<p><code>%APPDATA%\Cadastru\setari.json</code> (<code>theme::Settings</code>): <code>theme</code>, <code>cgxml</code> (opțiunile de import), <code>show_labels</code>, <code>show_nav</code>, <code>transdatro</code>, <code>height_egg97_only</code>, <code>basemap_opacity</code>, <code>basemap_custom</code>, <code>basemap_custom_zoom</code>, <code>lang</code> (limba interfeței: <code>"ro"</code> sau <code>"en"</code>), <code>select_active_only</code> (selectare doar în stratul activ), <code>geocode_ro_only</code> (căutarea locurilor doar în România), <code>geocoder</code> (sursa: <code>"Osm"</code>, <code>"Google"</code>, <code>"Both"</code>), <code>google_api_key</code> (cheia Google Maps Platform, păstrată ca text simplu în fișier), <code>layers_panel</code> (panoul Straturi afișat sau ascuns), <code>load_area_filter</code>, <code>load_area_partial</code>, <code>load_area_bounds</code> (filtrul de încărcare, secțiunea 6.6). <code>gdal_path</code>: dosarul GDAL ales pentru ECW / MrSID (gol = căutare automată, secțiunea 6.8). Câmpurile lipsă primesc valorile implicite (<code>#[serde(default)]</code>). La prima pornire sunt preluate setările versiunilor anterioare (dosarul <code>Cartograf</code>).</p>
 
 <h3 id="t11-3"><span class="n">11.3</span>Manualul inclus</h3>
 <p><code>gui/manual.rs</code> include <code>docs/Manual_Cadastru.pdf</code> în executabil. La <kbd>F1</kbd> sau <span class="ui">Ajutor → Manual de utilizare</span>, manualul este scris în <code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_&lt;versiune&gt;.pdf</code> (doar dacă lipsește sau diferă ca mărime) și este deschis cu programul implicit, prin <code>ShellExecuteW("open")</code>. Dacă fișierul este deja deschis și blocat, se folosește copia existentă.</p>
@@ -483,6 +498,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>rfd</td><td>Dialogurile de fișiere Windows.</td></tr>
   <tr><td>clap, anyhow</td><td>Linia de comandă, erori.</td></tr>
   <tr><td>windows-sys, winreg (doar Windows)</td><td>Tipărire GDI, ShellExecute, proxy din registru.</td></tr>
+  <tr><td>libloading</td><td>Încărcarea la rulare a GDAL-ului opțional (ECW / MrSID / JPEG 2000).</td></tr>
   <tr><td>embed-resource (construire)</td><td>Resursa Windows.</td></tr>
 </table>
 
@@ -561,14 +577,15 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>1.9.0</td><td><b>Selectarea după atribute</b> cu expresii de tip SQL <code>WHERE</code> (<code>status = 1 AND is_active = 1</code>, LIKE, IN, BETWEEN, IS NULL), cu liste de câmpuri și valori; <b>filtrul de încărcare</b>: doar entitățile din interiorul României (EPSG:3844) sau dintr-o zonă proprie, și în linia de comandă (<code>--doar-romania</code>, <code>--where</code>).</td></tr>
   <tr><td>1.10.0</td><td>La citirea DXF se elimină <b>punctele cu „RTCM” în descriere</b> (stațiile de bază GNSS), cu etichetele lor și cu desenul blocurilor (<code>--dxf-pastreaza-rtcm</code> le păstrează); butonul <b>Redraw</b> (<kbd>F5</kbd>), ca REDRAWALL / REGEN în CAD; selectarea după atribute <b>centrează și încadrează harta pe selecție</b>, în partea liberă a hărții; opțiunea <b>Fără umplere (No fill)</b> pentru poligoane; bara de instrumente se compactează în ferestrele înguste.</td></tr>
   <tr><td>1.11.0</td><td>Fereastra se deschide <b>maximizată</b>; <b>panoul Straturi</b> se poate îngusta (numele lungi întregi în indiciu) și <b>ascunde complet</b> (« , <kbd>Ctrl+L</kbd>, meniul Vizualizare sau trăgând marginea), cu o bandă îngustă care îl readuce la click; <b>căutarea Google</b> (Places API / Geocoding API cu cheia utilizatorului, sursa OpenStreetMap / Google / ambele), deschiderea căutării în Google Maps, <b>linkuri Google Maps</b> (inclusiv scurte) și <b>coduri Plus</b> în caseta de căutare; <b>bara de instrumente grupată pe funcționalități</b> (Fișier, Vizualizare, Interogare, Selecție, Instrumente, Hartă), fără butoanele care dublau Zoom + / Zoom −.</td></tr>
+  <tr><td>1.12.0</td><td><b>Halo-ul etichetelor pe fiecare strat</b>: contur, dreptunghi sau fără, culoare automată sau aleasă, transparență 0–100 % și grosime, identic pe hartă și pe planșă; <b>ECW, MrSID și JPEG 2000 (doar citire)</b> prin GDAL-ul unei instalări QGIS / OSGeo4W, încărcat dinamic, cu imagine de ansamblu în memorie și citire pe ferestre a zonei vizibile; titlul rezultatelor căutării arată proveniența reală (link Google Maps, cod Plus, OpenStreetMap, Google), nu sursa aleasă.</td></tr>
 </table>
 
 <!-- ===================================================================== -->
 <h2 id="t17"><span class="n">17</span>Limitări cunoscute</h2>
 <ul>
   <li>Nu are analize de teren (curbe de nivel, pante, volume), nori de puncte LiDAR, servicii WMS/WMTS, digitizare și editare de geometrii.</li>
-  <li>Nu citește ECW, MrSID, JPEG2000, DWG. Nu scrie File Geodatabase. Nu citește geodatabase-urile comprimate, multipatch și adnotările.</li>
-  <li>Rasterele sunt încărcate integral în memorie.</li>
+  <li>Nu citește DWG. ECW, MrSID și JPEG 2000 se citesc doar prin GDAL-ul unei instalări QGIS / OSGeo4W și nu se scriu și nu se convertesc. Nu scrie File Geodatabase. Nu citește geodatabase-urile comprimate, multipatch și adnotările.</li>
+  <li>Rasterele GeoTIFF / ASC / PNG / JPEG sunt încărcate integral în memorie (ECW / MrSID / JPEG 2000 se citesc pe ferestre).</li>
   <li>Planșa PDF este o imagine (textul nu poate fi selectat). Planșele au o singură hartă și o singură pagină.</li>
   <li>Scripturile de configurare automată a proxy-ului (PAC) nu sunt suportate.</li>
   <li>Pe Windows mai vechi, sesiunile Remote Desktop pot să nu aibă OpenGL; linia de comandă funcționează oricând.</li>

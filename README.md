@@ -1,4 +1,4 @@
-# Cadastru 1.11.0
+# Cadastru 1.12.0
 
 Autor: **Ginu Popescu** (scriemiaici@proton.me)
 
@@ -63,9 +63,11 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 - **reproiecție din mers**: fiecare strat se afișează în sistemul hărții, indiferent de sistemul fișierului
 - navigare: rotița mouse-ului pentru zoom la cursor; tragere sau butonul din mijloc pentru deplasare; zoom pe fereastră; extindere completă
 - stiluri pentru vectori: culoare de contur și de umplere, **fără umplere (No fill)** pentru poligoane (doar conturul; și din meniul stratului), grosime, mărimea punctelor, etichete din orice câmp (cu evitarea suprapunerilor)
+- **halo pentru etichete, pe fiecare strat**: contur care urmează literele, dreptunghi sub text sau fără halo; culoare automată (în contrast cu textul) sau aleasă, **transparență** 0–100 % și grosime; la fel pe hartă și la tipărire / PDF
 - **Redraw (F5)**, în bara de instrumente și în *Instrumente*: ca REDRAWALL / REGEN din programele CAD – șterge grafica temporară (măsurătoarea, marcajul căutării, evidențierea de la identificare), regenerează afișarea tuturor straturilor, reîncearcă tile-urile de fundal eșuate și redesenează harta; selecțiile și vederea rămân
 - rastere: compunere RGB din benzi la alegere, întindere min/max automată sau manuală, rampe de culori (Relief, Gri, Spectral, Viridis), umbrire de relief (hillshade), alb transparent pentru hărți scanate, NoData transparent
 - randare adaptivă: rasterele mari se redesenează la rezoluția ecranului după fiecare zoom
+- **ECW, MrSID și JPEG 2000 (doar citire)** prin GDAL-ul unei instalări QGIS / OSGeo4W de pe calculator (vezi *Formate*)
 - scară grafică și scară numerică calculate geodezic; coordonatele cursorului în sistemul hărții și în WGS84 (zecimal și grade-minute-secunde)
 
 ### Instrumente
@@ -127,6 +129,14 @@ Integrarea în restul aplicației:
 | BMP + world file | .bmp | ✔ | – | |
 | CGXML (cadastru ANCPI) | .cgxml, .zip, dosar | ✔ | – | convertit în straturile „teren” și „constructii” (vezi mai sus) |
 | Esri File Geodatabase | dosar .gdb | ✔ | – | vezi mai jos |
+| ECW | .ecw | ✔* | – | *prin GDAL-ul din QGIS / OSGeo4W; doar vizualizare (vezi mai jos) |
+| MrSID | .sid | ✔* | – | *prin GDAL, cu pachetul gdal-mrsid; doar vizualizare |
+| JPEG 2000 | .jp2 | ✔* | – | *prin GDAL (OpenJPEG sau ECW); doar vizualizare |
+
+**ECW, MrSID și JPEG 2000**: formate proprietare, deschise **doar pentru vizualizare**. Decodarea are nevoie de bibliotecile producătorilor (ERDAS ECW/JP2 SDK, MrSID Decode SDK), gratuite pentru citire dar care nu pot fi incluse într-o aplicație cu licență MIT. Cadastru folosește GDAL-ul unei instalări **QGIS** (instalatorul complet include citirea ECW; MrSID cu pachetul OSGeo4W `gdal-mrsid`) sau **OSGeo4W**, găsit automat în `Program Files\QGIS …`, `C:\OSGeo4W`, PATH, ori ales în *Instrumente → Formate ECW / MrSID (GDAL)…*, fereastră care arată și driverele disponibile.
+- în memorie se ține o imagine de ansamblu (cel mult 4096 px pe latură); la zoom, detaliul se citește din fișier doar pentru zona vizibilă, la rezoluția ecranului (și la rezoluția planșei, la tipărire); identificarea dă valorile pixelului la rezoluția completă
+- Cadastru **nu scrie și nu convertește** în ECW / MrSID / JPEG 2000, iar aceste straturi nu se exportă în alte formate
+
 
 **File Geodatabase (.gdb)**: se deschide din *Fișier → Deschide File Geodatabase (.gdb)…*, prin tragerea dosarului `.gdb` peste fereastră, ca argument (`cadastru.exe date.gdb`) sau alegând orice fișier `.gdbtable` din el. Fiecare feature class devine un strat; sunt citite și cele din feature dataset-uri. Tabelele fără geometrie apar ca straturi fără geometrie (cu tabel de atribute).
 - funcționează fără ArcGIS și fără biblioteca Esri; formatul e citit direct (versiunile ArcGIS 10.x și ArcGIS Pro, inclusiv Pro 3.2+ cu întregi pe 64 de biți, date și ore separate și fusuri orare)
@@ -237,9 +247,9 @@ Cadastru acoperă vizualizarea, conversia de format și reproiecția. Nu include
 - analize de teren: curbe de nivel, pante, volume, profile, bazine
 - nori de puncte LiDAR (LAS/LAZ)
 - servicii WMS/WMTS (hărțile de fundal sunt doar tile-uri XYZ), digitizare și editare de geometrii, compoziții de tipărire cu mai multe hărți sau planșe pe mai multe pagini
-- formatele proprietare ECW, MrSID, JPEG2000, DWG (folosiți DXF); scrierea în File Geodatabase
+- formatul DWG (folosiți DXF); scrierea în File Geodatabase; scrierea sau conversia în ECW, MrSID, JPEG 2000 (acestea se pot doar vizualiza, prin GDAL)
 
-Rasterele se încarcă integral în memorie. Pentru ortofotoplanuri foarte mari (mulți GB), decupați-le întâi.
+Rasterele GeoTIFF / ASC / PNG / JPEG se încarcă integral în memorie. Pentru ortofotoplanuri foarte mari (mulți GB), decupați-le întâi sau folosiți ECW / JPEG 2000, care se citesc pe ferestre.
 
 Dacă aplicația nu pornește într-o sesiune Remote Desktop pe Windows mai vechi, cauza e lipsa OpenGL în sesiunea remote. `cadastru-cli.exe` funcționează oricând.
 
@@ -271,7 +281,7 @@ src/
   geomio.rs        WKB / WKT
   convert.rs       conversie de fișiere și conversie în lot
   rasterops.rs     reproiecție raster (warp), reeșantionare, randare, hillshade
-  formats/         shp, gpkg, geojson, kml, gpx, dxf, csv, cgxml, gdb (File Geodatabase), raster (GeoTIFF/ASC/PNG/JPG)
+  formats/         shp, gpkg, geojson, kml, gpx, dxf, csv, cgxml, gdb (File Geodatabase), raster (GeoTIFF/ASC/PNG/JPG), gdalrt (ECW / MrSID / JPEG 2000 prin GDAL încărcat dinamic)
   main.rs          punctul de intrare al interfeței grafice
   gui/             fereastra principală, harta, hărțile de fundal (basemap.rs), tipărirea și PDF-ul (print.rs), selecția (select.rs), căutarea (search.rs), selectarea după atribute (attrsel.rs), filtrul de încărcare (loadfilter.rs), exportul pe tipuri (split.rs), deschiderea în masă (bulk.rs), manualul inclus (manual.rs), controlul de navigație, temele, dialogurile, spațiul de lucru
   bin/cli.rs       linia de comandă
@@ -281,7 +291,7 @@ assets/            pictograma, resursa Windows și gridurile TransDatRO
 docs/              manualul de utilizare (PDF), inclus în executabil
 ```
 
-Biblioteci folosite: egui/eframe (interfață), proj4rs + crs-definitions (proiecții EPSG), proj4wkt (WKT), tiff, image, rusqlite (SQLite inclus), earcutr (triangulare), roxmltree, zip, encoding_rs, rfd (dialoguri de fișiere Windows), clap, ureq + rustls (descărcarea tile-urilor), winreg (proxy-ul Windows), tiny-skia + ab_glyph (desenarea planșei de tipărire), windows-sys (tipărirea prin Windows).
+Biblioteci folosite: egui/eframe (interfață), proj4rs + crs-definitions (proiecții EPSG), proj4wkt (WKT), tiff, image, rusqlite (SQLite inclus), earcutr (triangulare), roxmltree, zip, encoding_rs, rfd (dialoguri de fișiere Windows), clap, ureq + rustls (descărcarea tile-urilor), winreg (proxy-ul Windows), tiny-skia + ab_glyph (desenarea planșei de tipărire), windows-sys (tipărirea prin Windows), libloading (GDAL-ul opțional pentru ECW / MrSID, încărcat la rulare).
 
 ---
 
@@ -311,8 +321,8 @@ Sursele documentației sunt în `docs/src` (HTML + CSS, capturile în `docs/src/
 
 ```bash
 cd docs/src
-python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.11.0 · Manual de utilizare"
-python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.11.0 · Documentație tehnică"
+python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.12.0 · Manual de utilizare"
+python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.12.0 · Documentație tehnică"
 ```
 
 `docs/Manual_Cadastru.pdf` este inclus în `cadastru.exe` (tasta F1), deci după reconstruirea lui trebuie recompilată aplicația.

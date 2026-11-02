@@ -154,6 +154,8 @@ pub struct Settings {
     pub geocoder: Geocoder,
     /// Cheia Google Maps Platform (Places API / Geocoding API)
     pub google_api_key: String,
+    /// Dosarul GDAL (QGIS / OSGeo4W) pentru ECW / MrSID; gol = căutare automată
+    pub gdal_path: String,
 }
 
 /// Unde caută instrumentul Căutare locurile și adresele.
@@ -186,6 +188,7 @@ impl Default for Settings {
             layers_panel: true,
             geocoder: Geocoder::Osm,
             google_api_key: String::new(),
+            gdal_path: String::new(),
         }
     }
 }
