@@ -12,6 +12,7 @@ pub mod i18n;
 pub mod model;
 pub mod query;
 pub mod rasterops;
+pub mod parcel;
 pub mod transdatro;
 
 pub use crs::{Crs, Transformer};

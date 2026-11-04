@@ -56,7 +56,16 @@ impl App {
         }
         match self.save_workspace(&path) {
             Ok(()) => {
-                self.status = tr!("Spațiu de lucru salvat: {}", path.display());
+                let temp = self.layers.iter().filter(|l| l.source().is_none()).count();
+                self.status = if temp > 0 {
+                    tr!(
+                        "Spațiu de lucru salvat: {}. {} straturi temporare (fără fișier) nu au fost incluse – exportați-le ca să le păstrați.",
+                        path.display(),
+                        temp
+                    )
+                } else {
+                    tr!("Spațiu de lucru salvat: {}", path.display())
+                };
                 self.workspace_path = Some(path);
             }
             Err(e) => self

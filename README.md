@@ -1,4 +1,4 @@
-# Cadastru 1.12.0
+# Cadastru 1.13.0
 
 Autor: **Ginu Popescu** (scriemiaici@proton.me)
 
@@ -25,7 +25,8 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 - **bilingvă: română (implicit) și engleză**. Comutatorul **RO | EN** din dreapta barei de instrumente (sau *Vizualizare → Limbă / Language*) schimbă limba imediat, fără repornire; alegerea se păstrează în setări. Se traduc meniurile, dialogurile, mesajele, erorile și textele planșei tipărite; datele (nume de straturi, câmpuri, valori) rămân neschimbate. Manualul și linia de comandă sunt în română.
 - fereastra se deschide **maximizată** (pe tot ecranul, cu bara de titlu și bara de activități Windows vizibile)
 - temă **gri închis** (implicită) sau luminoasă, din *Vizualizare → Temă*; alegerea se păstrează în `%APPDATA%\Cadastru\setari.json`
-- bara de instrumente e **grupată pe funcționalități**, cu numele grupului sub butoane: *Fișier* (Deschide), *Vizualizare* (Deplasare, Zoom +, Zoom −, Extindere completă, Vederea anterioară / următoare, Redraw), *Interogare* (Identificare, Căutare, Tabel), *Selecție* (Selectare, Selectare după atribute), *Instrumente* (Măsurare, Convertor) și *Hartă* (Basemap, sistemul hărții); butoanele care dublau alte comenzi (mărire / micșorare în centrul hărții) au fost scoase – rămân tastele + / − și butoanele de pe hartă. Pe ecrane înguste butoanele rămân doar cu pictograme, cu numele în indiciu
+- bara de instrumente cu **liste derulante** pe funcționalități (fără butoane de tip ribbon): *Deschide*, *Vizualizare ▾* (Deplasare, Zoom +, Zoom −, Extindere completă, Vederea anterioară / următoare, Redraw), *Interogare ▾* (Identificare, Căutare, Tabel), *Selectare ▾* (pe hartă, după atribute, Clear, Zoom la selecție, Make Layer with selected objects), *Parcelare*, *Instrumente ▾* (Măsurare, Convertor) și *Hartă ▾* (Basemap, sistemul hărții, cu codul sistemului pe buton); fiecare rând are pictogramă și tastă, iar instrumentul activ e evidențiat
+- meniul **Selectare**: Selectare pe hartă (S), Selectare după atribute (Ctrl+Shift+F), Clear (Ctrl+Shift+A), Zoom la selecție, Make Layer with selected objects, Selectare doar în stratul activ
 - **panoul Straturi** se poate îngusta trăgând marginea spre stânga (numele lungi se taie și apar întregi în indiciu, la trecerea cu mouse-ul) sau se poate **ascunde complet** cu « din colțul lui, cu *Vizualizare → Panoul Straturi* sau Ctrl+L (ori trăgând marginea până la capăt): harta ocupă toată lățimea și rămâne doar o bandă îngustă, pe care un click readuce panoul; starea se păstrează între porniri
 - **control de navigație pe hartă**: săgeți de deplasare (click = un sfert de ecran, ținut apăsat = deplasare continuă), centru = extindere completă, butoane + / − pentru zoom
 - instrumentele **Zoom +** (click = ×2, dreptunghi = zoom pe zonă) și **Zoom −** (click = ×0,5, dreptunghi = vederea curentă intră în zonă), **Deplasare**, **Identificare**, **Măsurare**
@@ -72,6 +73,9 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 
 ### Instrumente
 - **Identificare (I)**: atributele entității și valorile pixelilor din toate rasterele aflate sub cursor; pentru poligoane și linii afișează și aria, perimetrul și lungimea
+- **Parcelare / detașare** (meniul *Editare* și butonul *Parcelare*): poligonul selectat în prealabil (strict un singur poligon; fără el comanda e inactivă) se împarte în loturi – detașarea unei suprafețe, N loturi egale sau o listă de suprafețe (restul ca lot separat sau adăugat la ultimul) –, cu linii de tăiere **paralele cu o latură**, **perpendiculare pe ea**, **după o orientare** (azimut) sau **în evantai printr-un vârf**; latura și vârful se aleg din listă sau pe hartă; previzualizare cu loturile colorate și etichetate, tabel cu suprafața obținută / cerută (precizie sub 0,0001 mp), strat nou cu loturile (LOT, SUPRAFATA, PERIMETRU, ETICHETA…) și inventar de coordonate copiat în clipboard (X Nord / Y Est în Stereo 70); funcționează și pentru terenuri concave, cu goluri sau din mai multe părți
+- **Make Layer with selected objects**: din meniul contextual al stratului (sau *Editare → Strat nou din obiectele selectate*) se creează un strat nou, temporar, doar cu entitățile selectate – pe hartă, din tabel, prin căutare sau după atribute –, cu atributele, sistemul și stilul stratului de origine
+- **Clear** (meniul și lista *Selectare*, Ctrl+Shift+A) golește selecția din toate straturile, pe toată harta
 - **Selectare (S)**: click = o entitate, Ctrl+click = adaugă / scoate, dreptunghi = toate entitățile atinse (Shift adaugă, Alt scoate); selecția apare cu galben pe hartă și ca număr lângă numele stratului, e sincronizată cu tabelul de atribute (Ctrl/Shift+click, bifa „Doar selecția”) și are operații în meniul stratului: selectează tot, inversează, deselectează, zoom la selecție, **exportă selecția** (în orice format vectorial, cu reproiecție). Ctrl+Shift+A golește selecția
 - **Selectare după atribute (Ctrl+Shift+F)**: expresie în stilul SQL `WHERE` pe un strat – `admin_unit_id = 123`, `status = 1 AND is_active = 1`, `judet LIKE 'Arg%'`, `cod IN (13, 14)`, `supr BETWEEN 100 AND 500`, `obs IS NULL`, paranteze, `NOT`; lista câmpurilor și a valorilor distincte (cu numărul de apariții) se inserează cu click, expresia e verificată pe loc (eroarea cu poziția ei); selecție nouă, adaugă, scoate sau doar din selecția curentă; textele fără deosebire de majuscule și diacritice (sau exact); după selectare harta se **centrează și se încadrează pe selecție** (bifa „Zoom pe rezultat”, activă implicit, și butonul „Zoom pe selecție”)
 - **Filtrul de încărcare** (*Fișier → La deschidere: doar entitățile din interiorul României*): la deschiderea fișierelor vectoriale se încarcă doar entitățile aflate în interiorul încadrării României în Stereo 70 (EPSG:3844: 114000, 235000 – 885000, 764000) – în întregime sau, opțional, și cele care doar ating zona; zona poate fi înlocuită cu alt dreptunghi; se aplică și la deschiderea în masă, la fișierele trase în fereastră și la importul CSV, iar pentru un strat deja încărcat există comanda „Scoate entitățile din afara României”
@@ -276,6 +280,7 @@ src/
   area.rs          filtrul pe zonă la încărcare (încadrarea României în EPSG:3844)
   i18n.rs          limba interfeței (RO/EN), comutarea și traducerea textelor din constante
   model.rs         geometrii, atribute, straturi vectoriale, rastere
+  parcel.rs        parcelarea / detașarea poligoanelor (tăieturi paralele sau în evantai, bisecție pe suprafață)
   crs.rs           sisteme de coordonate, transformări, corecții EPSG
   transdatro.rs    algoritmul TransDatRO (ANCPI) și formatul fișierelor lui
   geomio.rs        WKB / WKT
@@ -291,7 +296,7 @@ assets/            pictograma, resursa Windows și gridurile TransDatRO
 docs/              manualul de utilizare (PDF), inclus în executabil
 ```
 
-Biblioteci folosite: egui/eframe (interfață), proj4rs + crs-definitions (proiecții EPSG), proj4wkt (WKT), tiff, image, rusqlite (SQLite inclus), earcutr (triangulare), roxmltree, zip, encoding_rs, rfd (dialoguri de fișiere Windows), clap, ureq + rustls (descărcarea tile-urilor), winreg (proxy-ul Windows), tiny-skia + ab_glyph (desenarea planșei de tipărire), windows-sys (tipărirea prin Windows), libloading (GDAL-ul opțional pentru ECW / MrSID, încărcat la rulare).
+Biblioteci folosite: egui/eframe (interfață), proj4rs + crs-definitions (proiecții EPSG), proj4wkt (WKT), tiff, image, rusqlite (SQLite inclus), earcutr (triangulare), roxmltree, zip, encoding_rs, rfd (dialoguri de fișiere Windows), clap, ureq + rustls (descărcarea tile-urilor), winreg (proxy-ul Windows), tiny-skia + ab_glyph (desenarea planșei de tipărire), windows-sys (tipărirea prin Windows), libloading (GDAL-ul opțional pentru ECW / MrSID, încărcat la rulare), geo (operații booleene pe poligoane, pentru parcelare).
 
 ---
 
@@ -321,8 +326,8 @@ Sursele documentației sunt în `docs/src` (HTML + CSS, capturile în `docs/src/
 
 ```bash
 cd docs/src
-python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.12.0 · Manual de utilizare"
-python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.12.0 · Documentație tehnică"
+python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.13.0 · Manual de utilizare"
+python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.13.0 · Documentație tehnică"
 ```
 
 `docs/Manual_Cadastru.pdf` este inclus în `cadastru.exe` (tasta F1), deci după reconstruirea lui trebuie recompilată aplicația.

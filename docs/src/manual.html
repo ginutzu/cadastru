@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.12.0 – Manual de utilizare</title>
+<title>Cadastru 1.13.0 – Manual de utilizare</title>
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Manual de utilizare · versiunea 1.12.0</div>
+  <div class="sub">Manual de utilizare · versiunea 1.13.0</div>
   <div class="shot"><img src="img/principal.png" alt=""></div>
   <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Noiembrie 2026</span></div>
 </section>
@@ -83,61 +83,64 @@
 </ol>
 
 <h3 id="c2-1"><span class="n">2.1</span>Meniurile</h3>
+<p>Bara de meniuri are, în ordine: <b>Fișier</b>, <b>Editare</b>, <b>Selectare</b>, <b>Vizualizare</b>, <b>Instrumente</b> și <b>Ajutor</b>.</p>
 <div class="cols">
   <figure><img src="img/menu_fisier.png" alt=""><figcaption><b>Figura 2.2.</b> Meniul Fișier.</figcaption></figure>
   <figure><img src="img/menu_vizualizare.png" alt=""><figcaption><b>Figura 2.3.</b> Meniul Vizualizare.</figcaption></figure>
 </div>
 <div class="cols">
-  <figure><img src="img/menu_instrumente.png" alt=""><figcaption><b>Figura 2.4.</b> Meniul Instrumente.</figcaption></figure>
-  <figure><img src="img/menu_ajutor.png" alt=""><figcaption><b>Figura 2.5.</b> Meniul Ajutor.</figcaption></figure>
+  <figure><img src="img/menu_editare.png" alt=""><figcaption><b>Figura 2.4.</b> Meniul Editare (comenzile se activează când e selectat un poligon, respectiv o entitate).</figcaption></figure>
+  <figure><img src="img/menu_selectare.png" alt=""><figcaption><b>Figura 2.5.</b> Meniul Selectare.</figcaption></figure>
+</div>
+<div class="cols">
+  <figure><img src="img/menu_instrumente.png" alt=""><figcaption><b>Figura 2.6.</b> Meniul Instrumente.</figcaption></figure>
+  <figure><img src="img/menu_ajutor.png" alt=""><figcaption><b>Figura 2.7.</b> Meniul Ajutor.</figcaption></figure>
 </div>
 <table>
   <tr><th style="width:24%">Meniu</th><th>Conține</th></tr>
   <tr><td><b>Fișier</b></td><td>Deschidere de date, File Geodatabase, toate fișierele de un tip dintr-un dosar și dosare CGXML; filtrul de încărcare (doar entitățile din România); spațiul de lucru (deschide, salvează, salvează ca); export; închiderea tuturor straturilor; <b>Tipărire</b> și <b>Salvează ca PDF</b>; ieșire.</td></tr>
+  <tr><td><b>Editare</b></td><td><b>Parcelare / detașare</b> a poligonului selectat (secțiunea 7.10) și <b>Strat nou din obiectele selectate</b> (Make Layer with selected objects, secțiunea 7.11).</td></tr>
+  <tr><td><b>Selectare</b></td><td><b>Selectare pe hartă</b> (<kbd>S</kbd>), <b>Selectare după atribute…</b> (<kbd>Ctrl+Shift+F</kbd>), <b>Clear</b> – golește selecția din toate straturile, pe toată harta (<kbd>Ctrl+Shift+A</kbd>); apoi <b>Zoom la selecție</b>, <b>Make Layer with selected objects</b> (pentru stratul activ) și bifa <b>Selectare doar în stratul activ</b> (secțiunile 7.7, 7.9, 7.11).</td></tr>
   <tr><td><b>Vizualizare</b></td><td>Extindere completă, zoom la stratul selectat, sistemul hărții, tabelul de atribute, vederea anterioară/următoare, afișarea etichetelor, controlul de navigație, fereastra de identificare, <b>panoul Straturi</b> (<kbd>Ctrl+L</kbd>), tema (gri închis sau luminoasă), limba interfeței (română sau engleză).</td></tr>
-  <tr><td><b>Instrumente</b></td><td>Instrumentele hărții, selecția (Selectare, Deselectează tot, Zoom la selecție, selectare doar în stratul activ), Selectare după atribute, Căutare, <b>Redraw</b>, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML, <b>Formate ECW / MrSID (GDAL)</b> (secțiunea 3.10).</td></tr>
+  <tr><td><b>Instrumente</b></td><td>Instrumentele hărții (Deplasare, Zoom + / −, Identificare, Măsurare), Căutare, <b>Redraw</b>, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML, <b>Formate ECW / MrSID (GDAL)</b> (secțiunea 3.10).</td></tr>
   <tr><td><b>Ajutor</b></td><td>Manualul de utilizare (acest document, <kbd>F1</kbd>), lista de scurtături, informații despre aplicație și autor.</td></tr>
 </table>
 
 <h3 id="c2-2"><span class="n">2.2</span>Bara de instrumente</h3>
-<p>Butoanele sunt <b>grupate pe funcționalități</b>; numele grupului este scris dedesubt, cu litere mici. Pe ecranele înguste (sub circa 1500 de puncte) butoanele mai rare rămân doar cu pictograme, iar sub circa 1330 de puncte toate; numele și tasta fiecărui buton apar în indiciu, la trecerea cu mouse-ul.</p>
-<figure class="wide"><img src="img/bara_instrumente.png" alt=""><figcaption><b>Figura 2.6.</b> Bara de instrumente, cu grupurile Fișier, Vizualizare, Interogare, Selecție, Instrumente și Hartă.</figcaption></figure>
+<p>Instrumentele sunt <b>grupate pe funcționalități în liste derulante</b>: un click pe numele grupului (cu săgeata ▾) deschide lista instrumentelor lui, fiecare cu pictogramă și tastă; instrumentul activ e evidențiat. Grupurile cu un singur instrument (<b>Deschide</b>, <b>Parcelare</b>) rămân butoane simple. Butonul grupului arată pictograma instrumentului activ (de exemplu lupa, când e ales Zoom +) și se colorează când instrumentul activ face parte din grup. Pe ecranele foarte înguste (sub circa 900 de puncte) rămân doar pictogramele; numele sunt în indicii.</p>
+<figure class="wide"><img src="img/bara_instrumente.png" alt=""><figcaption><b>Figura 2.8.</b> Bara de instrumente: Deschide, listele Vizualizare, Interogare, Selectare, butonul Parcelare, listele Instrumente și Hartă (cu sistemul hărții), comutatorul de limbă.</figcaption></figure>
+<div class="cols">
+  <figure><img src="img/lista_vizualizare.png" alt=""><figcaption><b>Figura 2.9.</b> Lista derulantă Vizualizare, cu Deplasare activă.</figcaption></figure>
+  <div>
 <table>
-  <tr><th style="width:15%">Grup</th><th style="width:24%">Buton</th><th style="width:13%">Tastă</th><th>Acțiune</th></tr>
-  <tr><td><b>Fișier</b></td><td>Deschide</td><td><kbd>Ctrl+O</kbd></td><td>Deschide fișiere de date.</td></tr>
-  <tr><td rowspan="7"><b>Vizualizare</b></td><td>Deplasare</td><td><kbd>P</kbd></td><td>Trageți harta cu mouse-ul. Dublu-click mărește de două ori.</td></tr>
-  <tr><td>Zoom +</td><td><kbd>Z</kbd></td><td>Click: mărire ×2 în punctul ales. Dreptunghi: zoom pe zona desenată. Tasta <kbd>+</kbd> mărește față de centrul hărții.</td></tr>
-  <tr><td>Zoom −</td><td><kbd>X</kbd></td><td>Click: micșorare ×2. Dreptunghi: vederea curentă încape în dreptunghiul desenat. Tasta <kbd>−</kbd> micșorează față de centrul hărții.</td></tr>
-  <tr><td>Extindere completă</td><td><kbd>Home</kbd></td><td>Arată toate straturile (fără straturi: toată România).</td></tr>
-  <tr><td>← / →</td><td><kbd>Backspace</kbd> / <kbd>Alt+→</kbd></td><td>Vederea anterioară / următoare.</td></tr>
-  <tr><td>Redraw</td><td><kbd>F5</kbd></td><td>Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD (secțiunea 4.4).</td></tr>
-  <tr><td colspan="3" style="font-size:90%">Mărirea și micșorarea în centrul hărții nu mai au butoane separate în bară (făceau același lucru ca Zoom + / Zoom −): rămân tastele <kbd>+</kbd> <kbd>−</kbd>, rotița mouse-ului și butoanele + / − de pe hartă.</td></tr>
-  <tr><td rowspan="3"><b>Interogare</b></td><td>Identificare</td><td><kbd>I</kbd></td><td>Atributele entității și valorile pixelilor de sub cursor (secțiunea 7.1).</td></tr>
-  <tr><td>Căutare</td><td><kbd>Ctrl+F</kbd></td><td>Caută locuri și adrese (OpenStreetMap, Google), linkuri Google Maps, coduri Plus, coordonate sau entități după câmpuri (secțiunea 7.8).</td></tr>
-  <tr><td>Tabel</td><td><kbd>T</kbd></td><td>Tabelul de atribute (secțiunea 7.3).</td></tr>
-  <tr><td rowspan="2"><b>Selecție</b></td><td>Selectare</td><td><kbd>S</kbd></td><td>Selectează entități prin click sau dreptunghi (secțiunea 7.7).</td></tr>
-  <tr><td>Selectare după atribute</td><td><kbd>Ctrl+Shift+F</kbd></td><td>Selectează entitățile unui strat cu o expresie, de exemplu <code>status = 1 AND is_active = 1</code> (secțiunea 7.9).</td></tr>
-  <tr><td rowspan="2"><b>Instrumente</b></td><td>Măsurare</td><td><kbd>M</kbd></td><td>Distanțe, arii și perimetre (secțiunea 7.2).</td></tr>
-  <tr><td>Convertor</td><td></td><td>Convertorul de coordonate (secțiunea 7.5).</td></tr>
-  <tr><td rowspan="2"><b>Hartă</b></td><td>Basemap</td><td></td><td>Harta de fundal (capitolul 5).</td></tr>
-  <tr><td>Sistemul hărții</td><td></td><td>Afișează și schimbă sistemul de coordonate al hărții (secțiunea 8.1). Când bara este îngustă apare doar codul (de exemplu EPSG:3844) sau numai globul; numele complet este în indiciul butonului.</td></tr>
-  <tr><td></td><td>RO | EN</td><td></td><td>Comutatorul de limbă, în dreapta barei (secțiunea 2.5).</td></tr>
+  <tr><th style="width:24%">Listă / buton</th><th>Conține</th></tr>
+  <tr><td><b>Deschide</b></td><td>Deschide fișiere de date (<kbd>Ctrl+O</kbd>).</td></tr>
+  <tr><td><b>Vizualizare ▾</b></td><td>Deplasare (<kbd>P</kbd>), Zoom + (<kbd>Z</kbd>), Zoom − (<kbd>X</kbd>), Extindere completă (<kbd>Home</kbd>), vederea anterioară / următoare (<kbd>Backspace</kbd> / <kbd>Alt+→</kbd>), Redraw (<kbd>F5</kbd>, secțiunea 4.4).</td></tr>
+  <tr><td><b>Interogare ▾</b></td><td>Identificare (<kbd>I</kbd>, secțiunea 7.1), Căutare (<kbd>Ctrl+F</kbd>, secțiunea 7.8), Tabel de atribute (<kbd>T</kbd>, secțiunea 7.3).</td></tr>
+  <tr><td><b>Selectare ▾</b></td><td>Selectare pe hartă (<kbd>S</kbd>), Selectare după atribute (<kbd>Ctrl+Shift+F</kbd>), Clear (<kbd>Ctrl+Shift+A</kbd>), Zoom la selecție, Make Layer with selected objects – la fel ca meniul Selectare.</td></tr>
+  <tr><td><b>Parcelare</b></td><td>Parcelarea / detașarea poligonului selectat (secțiunea 7.10); activ doar când e selectat un singur poligon.</td></tr>
+  <tr><td><b>Instrumente ▾</b></td><td>Măsurare (<kbd>M</kbd>, secțiunea 7.2), Convertor de coordonate (secțiunea 7.5).</td></tr>
+  <tr><td><b>Hartă · EPSG:… ▾</b></td><td>Basemap (capitolul 5) și sistemul hărții (secțiunea 8.1); codul sistemului curent apare pe buton.</td></tr>
+  <tr><td><b>RO | EN</b></td><td>Comutatorul de limbă, în dreapta barei (secțiunea 2.5).</td></tr>
 </table>
+  </div>
+</div>
+<p>Mărirea și micșorarea în centrul hărții se fac și cu tastele <kbd>+</kbd> <kbd>−</kbd>, rotița mouse-ului și butoanele + / − de pe hartă.</p>
 
 <h3 id="c2-3"><span class="n">2.3</span>Panoul Straturi și bara de stare</h3>
 <p>În stânga se află lista straturilor. Stratul aflat <b>sus</b> în listă se desenează <b>deasupra</b> celorlalte. Bifa din dreptul fiecărui strat îl ascunde sau îl afișează. Click pe nume selectează stratul. Dedesubt apar proprietățile lui (capitolul 6). Săgețile ↑ ↓ din antetul panoului urcă sau coboară stratul selectat, iar × îl elimină.</p>
 <p><b>Lățimea panoului</b> se reglează trăgând cu mouse-ul marginea lui dreaptă, inclusiv mult spre stânga. Numele prea lungi pentru lățimea aleasă se termină cu „…”; numele întreg (împreună cu fișierul, conținutul și sistemul de coordonate) apare în indiciu când țineți mouse-ul deasupra.</p>
 <p><b>Ascunderea panoului.</b> Butonul <b>«</b> din colțul stâng al antetului, comanda <span class="ui">Vizualizare → Panoul Straturi</span> sau <kbd>Ctrl+L</kbd> ascund complet panoul (la fel și trăgând marginea până la capăt spre stânga): harta ocupă toată lățimea ferestrei. În stânga rămâne doar o bandă îngustă, cu <b>»</b> și textul <i>Straturi (n)</i>; un click oriunde pe ea readuce panoul, la lățimea avută. Starea panoului se păstrează la repornire.</p>
 <div class="cols">
-  <figure><img src="img/panou_ingust.png" alt=""><figcaption><b>Figura 2.7.</b> Panoul îngustat: numele lung apare întreg în indiciu.</figcaption></figure>
-  <figure><img src="img/panou_ascuns.png" alt=""><figcaption><b>Figura 2.8.</b> Panoul ascuns: harta pe toată lățimea; click pe banda din stânga îl readuce.</figcaption></figure>
+  <figure><img src="img/panou_ingust.png" alt=""><figcaption><b>Figura 2.10.</b> Panoul îngustat: numele lung apare întreg în indiciu.</figcaption></figure>
+  <figure><img src="img/panou_ascuns.png" alt=""><figcaption><b>Figura 2.11.</b> Panoul ascuns: harta pe toată lățimea; click pe banda din stânga îl readuce.</figcaption></figure>
 </div>
 <p>Bara de stare de jos arată coordonatele cursorului în sistemul hărții (X, Y), aceleași coordonate în WGS84, în grade zecimale și în grade-minute-secunde, scara numerică a hărții și ultimul mesaj al aplicației (de exemplu numărul de entități încărcate sau o eroare). Cât timp filtrul de încărcare este activ, în stânga apare indicatorul <span class="ui">Filtru la încărcare: România</span> (secțiunea 3.8).</p>
 <div class="tip"><b>Sfat.</b> Numele unui strat cu sistem de coordonate <i>presupus</i> (fișier fără <code>.prj</code>) este scris cu portocaliu. Vezi secțiunea 3.6.</div>
 
 <h3 id="c2-4"><span class="n">2.4</span>Teme</h3>
 <div class="cols"><p>Aplicația are două teme: <b>gri închis</b> (implicită) și <b>luminoasă</b>. Se schimbă din <span class="ui">Vizualizare → Temă</span>, iar alegerea se păstrează la repornire.</p>
-<figure><img src="img/tema_luminoasa.png" alt=""><figcaption><b>Figura 2.9.</b> Tema luminoasă.</figcaption></figure></div>
+<figure><img src="img/tema_luminoasa.png" alt=""><figcaption><b>Figura 2.12.</b> Tema luminoasă.</figcaption></figure></div>
 
 <h3 id="c2-5"><span class="n">2.5</span>Limba interfeței</h3>
 <div class="cols"><div>
@@ -149,7 +152,7 @@
 <p>Se traduc meniurile, butoanele, ferestrele de dialog, mesajele din bara de stare, erorile și textele planșei tipărite (legendă, scară, sistem, dată). Alegerea se păstrează la repornire, în <code>setari.json</code>.</p>
 <p>Nu se traduc datele: numele straturilor și ale câmpurilor, valorile atributelor și numele fișierelor rămân cum sunt în fișiere. Acest manual și linia de comandă (<code>cadastru-cli</code>) sunt în limba română; în engleză, meniul Ajutor indică „User manual (PDF, Romanian)”.</p>
 </div>
-<figure><img src="img/interfata_en.png" alt=""><figcaption><b>Figura 2.10.</b> Interfața în limba engleză.</figcaption></figure></div>
+<figure><img src="img/interfata_en.png" alt=""><figcaption><b>Figura 2.13.</b> Interfața în limba engleză.</figcaption></figure></div>
 
 <!-- ===================================================================== -->
 <h2 id="c3"><span class="n">3</span>Deschiderea datelor</h2>
@@ -310,7 +313,7 @@
 <p><span class="ui">Vizualizare → Zoom la stratul selectat</span> (sau click dreapta pe strat → <span class="ui">Zoom la strat</span>) arată întregul strat. <span class="ui">Extindere completă</span> arată toate straturile. Când nu este deschis niciun strat, extinderea completă arată toată România.</p>
 
 <h3 id="c4-4"><span class="n">4.4</span>Redraw: curățarea și redesenarea hărții</h3>
-<p>Butonul <span class="ui">Redraw</span> din bara de instrumente (săgeata circulară), <span class="ui">Instrumente → Redraw</span> sau tasta <kbd>F5</kbd> fac ceea ce fac REDRAW / REDRAWALL și REGEN în programele CAD:</p>
+<p><span class="ui">Redraw</span> din lista Vizualizare a barei de instrumente, <span class="ui">Instrumente → Redraw</span> sau tasta <kbd>F5</kbd> fac ceea ce fac REDRAW / REDRAWALL și REGEN în programele CAD:</p>
 <ul>
   <li>șterg <b>grafica temporară</b>: linia și rezultatele măsurării, dreptunghiul de zoom început, marcajul locului găsit cu Căutare și evidențierea entității identificate;</li>
   <li><b>regenerează</b> afișarea tuturor straturilor în sistemul hărții (reproiectare, triangularea poligoanelor, imaginile rasterelor) – util după schimbarea metodei Stereo 70 sau dacă harta pare desenată incomplet;</li>
@@ -322,7 +325,7 @@
 <!-- ===================================================================== -->
 <h2 id="c5"><span class="n">5</span>Hărți de fundal (Basemap)</h2>
 
-<div class="cols"><div><p>Butonul <span class="ui">Basemap</span> din bara de instrumente alege harta de fundal. Hărțile sunt grupate pe furnizori, în submeniuri. Lista conține și opțiunea <span class="ui">Fără basemap</span>.</p>
+<div class="cols"><div><p><span class="ui">Basemap</span>, din lista <span class="ui">Hartă</span> a barei de instrumente, alege harta de fundal. Hărțile sunt grupate pe furnizori, în submeniuri. Lista conține și opțiunea <span class="ui">Fără basemap</span>.</p>
 <p>La pornire este afișată harta OpenStreetMap standard. Alegerea făcută se păstrează în spațiul de lucru.</p></div>
 <figure><img src="img/basemap.png" alt=""><figcaption><b>Figura 5.1.</b> Meniul Basemap, cu hărțile Esri.</figcaption></figure></div>
 <table>
@@ -462,13 +465,13 @@
   <tr><td>Trageți un dreptunghi</td><td>Selectează toate entitățile atinse de dreptunghi.</td></tr>
   <tr><td><kbd>Shift</kbd> (sau <kbd>Ctrl</kbd>) + dreptunghi / click</td><td>Adaugă la selecția existentă.</td></tr>
   <tr><td><kbd>Alt</kbd> + dreptunghi / click</td><td>Scoate din selecție.</td></tr>
-  <tr><td><kbd>Esc</kbd> (cu instrumentul Selectare) sau <kbd>Ctrl+Shift+A</kbd></td><td>Golește selecția din toate straturile.</td></tr>
+  <tr><td><kbd>Esc</kbd> (cu instrumentul Selectare), <kbd>Ctrl+Shift+A</kbd> sau <span class="ui">Clear</span> din meniul și lista Selectare</td><td>Golește selecția din toate straturile, pe toată harta.</td></tr>
 </table>
-<p>Implicit se selectează din toate straturile vectoriale vizibile; la click, câștigă stratul de deasupra (întâi punctele, apoi liniile, apoi poligoanele). Bifa <span class="ui">Instrumente → Selectare doar în stratul activ</span> limitează selecția la stratul ales în listă. Dreptunghiul selectează și poligoanele care îl cuprind, și liniile care îl traversează, nu doar entitățile cu vârfuri în interior.</p>
+<p>Implicit se selectează din toate straturile vectoriale vizibile; la click, câștigă stratul de deasupra (întâi punctele, apoi liniile, apoi poligoanele). Bifa <span class="ui">Selectare → Selectare doar în stratul activ</span> limitează selecția la stratul ales în listă. Dreptunghiul selectează și poligoanele care îl cuprind, și liniile care îl traversează, nu doar entitățile cu vârfuri în interior.</p>
 <div class="cols">
   <figure><img src="img/selectie.png" alt=""><figcaption><b>Figura 7.7.</b> Șapte UAT-uri selectate prin click, <kbd>Ctrl</kbd>+click și dreptunghi.</figcaption></figure>
   <div>
-    <p>Din meniul contextual al stratului, submeniul <span class="ui">Selecție</span> oferă: <b>Selectează tot</b>, <b>Inversează selecția</b>, <b>Deselectează</b>, <b>Zoom la selecție</b> și <b>Exportă selecția…</b>. Aceleași operații sunt și în bara tabelului de atribute, alături de <b>Selectează rândurile afișate</b> (de exemplu după un filtru).</p>
+    <p>Din meniul contextual al stratului, submeniul <span class="ui">Selecție</span> oferă: <b>Selectează tot</b>, <b>Inversează selecția</b>, <b>Deselectează</b>, <b>Zoom la selecție</b> și <b>Exportă selecția…</b>; când stratul are entități selectate apare și <b>Make Layer with selected objects</b> (secțiunea 7.11). Aceleași operații sunt și în bara tabelului de atribute, alături de <b>Selectează rândurile afișate</b> (de exemplu după un filtru).</p>
     <p><b>Exportul selecției.</b> Când stratul are entități selectate, fereastra <span class="ui">Export</span> are opțiunea <span class="ui">Entități: numai cele selectate (N) / toate</span>, cu „numai cele selectate” aleasă implicit. Numele propus pentru fișier primește sufixul <code>_selectie</code>. Toate formatele vectoriale și reproiecția la export funcționează la fel ca pentru întregul strat.</p>
   </div>
 </div>
@@ -511,7 +514,7 @@
 <figure><img src="img/cautare_campuri.png" alt=""><figcaption><b>Figura 7.11.</b> UAT-urile al căror nume începe cu „S”, selectate și încadrate pe hartă.</figcaption></figure>
 
 <h3 id="c7-9"><span class="n">7.9</span>Selectarea după atribute</h3>
-<p><span class="ui">Instrumente → Selectare după atribute…</span> (<kbd>Ctrl+Shift+F</kbd>, butonul cu tabel și rând galben din bara de instrumente, <span class="ui">Selecție → După atribute…</span> din meniul contextual al stratului sau din tabelul de atribute) selectează entitățile unui strat cu o <b>expresie</b>, ca în clauza <code>WHERE</code> din SQL sau ca în „Select by Attributes” din ArcGIS și QGIS:</p>
+<p><span class="ui">Selectare → Selectare după atribute…</span> (<kbd>Ctrl+Shift+F</kbd>, lista Selectare din bara de instrumente, <span class="ui">Selecție → După atribute…</span> din meniul contextual al stratului sau din tabelul de atribute) selectează entitățile unui strat cu o <b>expresie</b>, ca în clauza <code>WHERE</code> din SQL sau ca în „Select by Attributes” din ArcGIS și QGIS:</p>
 <pre><code>admin_unit_id = 123
 status = 1 AND is_active = 1
 (judet = 'Argeș' OR judet = 'Olt') AND suprafata &gt;= 5000</code></pre>
@@ -539,11 +542,45 @@ status = 1 AND is_active = 1
 <p>Textele se compară <b>fără să țină cont de majuscule și de diacritice</b>: <code>judet = 'arges'</code> găsește „Argeș” și „ARGES”. Bifa <span class="ui">Exact (majuscule și diacritice)</span> cere potrivire exactă. Ca în SQL, o valoare lipsă (NULL) nu îndeplinește nicio comparație: <code>supr &lt;&gt; 100</code> nu găsește entitățile fără suprafață; pentru ele folosiți <code>IS NULL</code>.</p>
 <div class="tip"><b>Sfat.</b> Pentru o interogare pe mai multe straturi deodată sau „în orice câmp” folosiți pagina <i>După câmpuri</i> a căutării (secțiunea 7.8). Aceeași sintaxă de expresie se folosește în linia de comandă, cu <code>--where</code>, pentru a converti doar entitățile potrivite.</div>
 
+<h3 id="c7-10"><span class="n">7.10</span>Parcelarea și detașarea unui teren</h3>
+<p><span class="ui">Editare → Parcelare / detașare…</span> (sau butonul <span class="ui">Parcelare</span> din bara de instrumente) împarte un poligon – o parcelă, un teren – în <b>loturi de suprafețe date</b>, cu previzualizare pe hartă. Parcelarea se face <b>strict pe poligonul selectat în prealabil</b>: selectați întâi <b>un singur poligon</b> (instrumentul Selectare, tabelul de atribute, căutarea sau selectarea după atribute); până atunci comanda și butonul sunt inactive, iar indiciul lor spune ce lipsește. Cât timp fereastra e deschisă, ea urmează selecția: dacă selectați alt poligon, parcelarea trece pe el; dacă golirea selecției sau selectarea mai multor entități lasă fără un singur poligon, loturile dispar și fereastra arată ce trebuie selectat. Calculul se face în <b>sistemul hărții</b>, care trebuie să fie proiectat, în metri (de exemplu Stereo 70); suprafețele sunt plane, în mp, ca în documentațiile cadastrale.</p>
+<figure><img src="img/parcelare.png" alt=""><figcaption><b>Figura 7.13.</b> Un teren de 4 783,50 mp împărțit în patru loturi egale, cu linii perpendiculare pe latura 1–2 (roșie); vârfurile sunt numerotate, loturile au culori și etichete cu suprafața.</figcaption></figure>
+<p><b>Operațiunea</b>:</p>
+<ul>
+  <li><b>Detașare</b>: se desprinde o suprafață dată (de exemplu 500 mp), iar restul rămâne al doilea lot;</li>
+  <li><b>Loturi egale</b>: terenul se împarte în N loturi de aceeași suprafață;</li>
+  <li><b>Suprafețe date</b>: o listă de suprafețe, în ordine, separate prin <code>;</code> sau pe rânduri (zecimalele cu virgulă sau punct, de exemplu <code>800; 1200,5; 600</code>). Bifa <span class="ui">Restul terenului rămâne lot separat</span> face din ce rămâne un lot în plus; debifată, restul se adaugă la ultimul lot.</li>
+</ul>
+<p><b>Liniile de tăiere</b>:</p>
+<table>
+  <tr><th style="width:30%">Variantă</th><th>Cum se taie</th></tr>
+  <tr><td>paralele cu o latură</td><td>Liniile sunt paralele cu latura aleasă (desenată cu roșu); primul lot se ia de lângă ea. Util pentru fâșii cu front la un drum.</td></tr>
+  <tr><td>perpendiculare pe o latură</td><td>Liniile sunt perpendiculare pe latura aleasă; primul lot se ia de la capătul laturii marcat cu punct roșu. Așa se obțin loturi alăturate, fiecare cu front la latura aleasă.</td></tr>
+  <tr><td>după o orientare</td><td>Liniile au orientarea scrisă, în grade față de Nord, în sens orar (0° = linii Nord–Sud, primul lot la vest; 90° = linii Est–Vest).</td></tr>
+  <tr><td>printr-un vârf (evantai)</td><td>Toate liniile trec prin vârful ales (cerc roșu) și se rotesc în jurul lui; primul lot este lângă latura care urmează vârfului.</td></tr>
+</table>
+<p>Latura și vârful se aleg din listă – cu lungimea și orientarea fiecărei laturi – sau cu butonul <span class="ui">pe hartă</span>, apoi click lângă latura / vârful dorit (vârfurile sunt numerotate pe hartă). <span class="ui">Sens invers</span> ia primul lot din partea opusă. <kbd>Esc</kbd> anulează alegerea pe hartă.</p>
+<p>Poziția fiecărei linii se calculează prin încercări succesive (bisecție) până când suprafața lotului diferă de cea cerută cu mai puțin de 0,0001 mp; tabelul din fereastră arată, pentru fiecare lot, suprafața obținută, cea cerută, diferența și perimetrul. Terenurile cu goluri (enclave) și cele din mai multe părți se împart corect. La un teren concav, o linie de tăiere poate împărți un lot în mai multe bucăți: tabelul îl marchează („2 părți”), iar o altă direcție sau alt vârf rezolvă de obicei problema.</p>
+<ul>
+  <li><span class="ui">Creează stratul cu loturile</span> adaugă pe hartă un strat nou, <i>Parcelare &lt;strat&gt; #&lt;nr&gt;</i>, cu câmpurile <code>LOT</code>, <code>SUPRAFATA</code>, <code>SUPR_CERUTA</code>, <code>PERIMETRU</code>, <code>ETICHETA</code> (afișată pe hartă, de exemplu „Lot 1 – 500.00 mp”) și <code>SURSA</code>. Stratul este temporar: exportați-l (SHP, DXF, GeoPackage, KML…) ca să-l păstrați; poate fi tipărit ca orice strat.</li>
+  <li><span class="ui">Copiază inventarul de coordonate</span> pune în clipboard coordonatele vârfurilor fiecărui lot, cu suprafața, separate prin tab (se lipesc direct în Excel). În Stereo 70 coloanele sunt <b>X (Nord)</b> și <b>Y (Est)</b>, ca în documentațiile cadastrale.</li>
+</ul>
+<div class="note"><b>De reținut.</b> Parcelarea este o simulare grafică, utilă pentru studii de lotizare, oferte și anunțuri; o dezmembrare reală se face de un specialist autorizat, pe baza măsurătorilor și a reglementărilor de urbanism (front minim, alei de acces etc.).</div>
+
+<h3 id="c7-11"><span class="n">7.11</span>Strat nou din obiectele selectate</h3>
+<div class="cols">
+  <figure><img src="img/strat_selectie.png" alt=""><figcaption><b>Figura 7.14.</b> Meniul contextual al unui strat cu două entități selectate.</figcaption></figure>
+  <div>
+    <p>Când un strat are entități selectate – direct pe hartă, din tabel, prin căutare sau prin selectarea după atribute –, click dreapta pe el în panoul Straturi oferă <span class="ui">Make Layer with selected objects (N)</span>. Comanda adaugă în hartă un strat nou, <i>&lt;strat&gt; – selecție (N)</i>, care conține <b>doar entitățile selectate</b>, cu toate atributele, același sistem de coordonate și același stil (conturul devine portocaliu, ca să se distingă). Aceeași comandă este și în <span class="ui">Editare → Strat nou din obiectele selectate</span> și în meniul / lista <span class="ui">Selectare</span>, pentru stratul activ.</p>
+    <p>Stratul nou este <b>temporar</b> (în panoul Straturi, la <i>Fișier</i>, apare „temporar, în memorie”): nu se salvează în spațiul de lucru, deci exportați-l ca să-l păstrați. La salvarea spațiului de lucru, bara de stare amintește câte straturi temporare n-au fost incluse.</p>
+  </div>
+</div>
+
 <!-- ===================================================================== -->
 <h2 id="c8"><span class="n">8</span>Sisteme de coordonate</h2>
 
 <h3 id="c8-1"><span class="n">8.1</span>Sistemul hărții</h3>
-<p>Butonul cu globul din bara de instrumente (sau <span class="ui">Vizualizare → Sistemul de coordonate al hărții…</span>) schimbă sistemul în care este afișată harta. Toate straturile sunt reproiectate din mers.</p>
+<p>Lista <span class="ui">Hartă</span> din bara de instrumente (<span class="ui">Sistemul hărții…</span>, sau <span class="ui">Vizualizare → Sistemul de coordonate al hărții…</span>) schimbă sistemul în care este afișată harta. Toate straturile sunt reproiectate din mers.</p>
 <figure class="half"><img src="img/crs.png" alt=""><figcaption><b>Figura 8.1.</b> Alegerea sistemului hărții.</figcaption></figure>
 <ul>
   <li>Sus sunt sistemele uzuale în România: Stereo 70, Stereo 30, WGS84, ETRS89, UTM 34N/35N, Web Mercator, LAEA Europa.</li>
@@ -706,7 +743,7 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
   <tr><th style="width:44%">Locație</th><th>Conținut</th></tr>
   <tr><td><code>%APPDATA%\Cadastru\setari.json</code></td><td>Limba interfeței, tema, etichetele, controlul de navigație, metoda pentru Stereo 70, opțiunile CGXML, opacitatea hărții de fundal, ultimul șablon XYZ, dosarul GDAL ales pentru ECW / MrSID.</td></tr>
   <tr><td><code>%LOCALAPPDATA%\Cadastru\tile-cache\</code></td><td>Cache-ul hărților de fundal.</td></tr>
-  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.12.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
+  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.13.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
   <tr><td><code>grile\</code> lângă <code>cadastru.exe</code></td><td>Opțional: griduri TransDatRO mai noi (secțiunea 8.4).</td></tr>
 </table>
 <p>Ștergerea fișierului <code>setari.json</code> readuce setările implicite. Aplicația nu scrie nimic în registrul Windows și nu are nevoie de drepturi de administrator.</p>
@@ -737,7 +774,7 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
 <div class="cols">
   <figure><img src="img/despre.png" alt=""><figcaption><b>Figura 16.1.</b> <span class="ui">Ajutor → Despre Cadastru</span>.</figcaption></figure>
   <div>
-    <p><b>Cadastru 1.12.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
+    <p><b>Cadastru 1.13.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
     <p>Aplicația este scrisă în Rust și distribuită cu codul sursă, sub licența MIT.</p>
     <p class="small">TransDatRO: algoritm și griduri © ANCPI (Agenția Națională de Cadastru și Publicitate Imobiliară).<br>
     Hărțile de fundal aparțin furnizorilor lor (OpenStreetMap, Esri, Google, Microsoft, CARTO, BKG, EOX) și se folosesc conform condițiilor fiecăruia.<br>

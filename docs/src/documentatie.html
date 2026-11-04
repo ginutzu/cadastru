@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.12.0 – Documentație tehnică</title>
+<title>Cadastru 1.13.0 – Documentație tehnică</title>
 <link rel="stylesheet" href="stil.css">
 <style>
   .arch { width: 100%; margin: 2mm 0 1mm; }
@@ -18,7 +18,7 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Documentație tehnică · versiunea 1.12.0</div>
+  <div class="sub">Documentație tehnică · versiunea 1.13.0</div>
   <div class="shot"><img src="img/plansa_lat.png" alt=""></div>
   <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Noiembrie 2026</span></div>
 </section>
@@ -40,7 +40,7 @@
 <h3 id="t1-2"><span class="n">1.2</span>Date de identificare</h3>
 <table>
   <tr><th style="width:30%">Element</th><th>Valoare</th></tr>
-  <tr><td>Nume, versiune</td><td>Cadastru 1.12.0</td></tr>
+  <tr><td>Nume, versiune</td><td>Cadastru 1.13.0</td></tr>
   <tr><td>Autor</td><td>Ginu Popescu, scriemiaici@proton.me</td></tr>
   <tr><td>Licență</td><td>MIT</td></tr>
   <tr><td>Limbaj</td><td>Rust, ediția 2024 (compilator 1.97)</td></tr>
@@ -89,9 +89,10 @@
   <tr><td><code>src/query.rs</code></td><td>374</td><td>Interogări pe atribute: condiții cu operatori, legate prin ȘI / SAU, comparații fără majuscule și diacritice (secțiunea 8.8).</td></tr>
   <tr><td><code>src/i18n.rs</code></td><td>144</td><td>Limba curentă (<code>Lang</code>), comutarea, traducerea la rulare (<code>trs</code>) a textelor din constante (secțiunea 8.6).</td></tr>
   <tr><td><code>i18n-macros/src/lib.rs</code></td><td>121</td><td>Crate <i>proc-macro</i> <code>cadastru-i18n-macros</code>: macrourile <code>tr!</code> și <code>tr_table!</code>.</td></tr>
-  <tr><td><code>lang/en.tsv</code></td><td>901</td><td>Pachetul pentru limba engleză: text românesc ↦ text englez.</td></tr>
+  <tr><td><code>lang/en.tsv</code></td><td>1 012</td><td>Pachetul pentru limba engleză: text românesc ↦ text englez.</td></tr>
   <tr><td><code>src/model.rs</code></td><td>1 167</td><td>Coordonate, dreptunghiuri, geometrii, câmpuri și valori, straturi vectoriale, rastere, statistici.</td></tr>
   <tr><td><code>src/crs.rs</code></td><td>1 028</td><td>Sisteme de coordonate (EPSG, PROJ, WKT, .prj ESRI), căutare, sisteme presupuse, <code>Transformer</code>.</td></tr>
+  <tr><td><code>src/parcel.rs</code></td><td>420</td><td>Parcelarea și detașarea poligoanelor: tăieturi paralele sau în evantai, găsite prin bisecție pe suprafață (secțiunea 8.12).</td></tr>
   <tr><td><code>src/transdatro.rs</code></td><td>999</td><td>Portul algoritmului TransDatRO, gridurile, formatul de fișiere TransDatRO.</td></tr>
   <tr><td><code>src/geomio.rs</code></td><td>498</td><td>Codificare și decodificare WKB (inclusiv GeoPackage) și WKT.</td></tr>
   <tr><td><code>src/convert.rs</code></td><td>544</td><td>Conversia unui fișier, conversia în lot, exportul pe tipuri de geometrie (secțiunea 6.5).</td></tr>
@@ -100,16 +101,17 @@
   <tr><td><code>src/formats/*.rs</code></td><td>7 601</td><td>Câte un modul pe format (capitolul 6).</td></tr>
   <tr><td><code>src/formats/gdalrt.rs</code></td><td>686</td><td>ECW, MrSID și JPEG 2000 prin GDAL încărcat dinamic (<code>libloading</code>): căutarea bibliotecii, imaginea de ansamblu, citirea pe ferestre (secțiunea 6.8).</td></tr>
   <tr><td><code>src/main.rs</code></td><td>72</td><td>Punctul de intrare al interfeței: fereastra (deschisă maximizată), pictograma, argumentele.</td></tr>
-  <tr><td><code>src/gui/mod.rs</code></td><td>2 407</td><td>Starea aplicației (<code>App</code>), meniuri, bara de instrumente grupată (cu comutatorul de limbă), panoul de straturi (ascundere, bandă îngustă), sarcini în fundal, scurtături.</td></tr>
-  <tr><td><code>src/gui/map.rs</code></td><td>1 356</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
+  <tr><td><code>src/gui/mod.rs</code></td><td>2 462</td><td>Starea aplicației (<code>App</code>), meniuri (inclusiv Editare), bara de instrumente grupată (cu comutatorul de limbă), panoul de straturi (ascundere, bandă îngustă), sarcini în fundal, scurtături.</td></tr>
+  <tr><td><code>src/gui/map.rs</code></td><td>1 359</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
   <tr><td><code>src/gui/layers.rs</code></td><td>585</td><td>Straturile hărții, stiluri (inclusiv halo-ul etichetelor), geometria de afișare și triangularea, citirea pe ferestre a rasterelor ECW / MrSID.</td></tr>
   <tr><td><code>src/gui/basemap.rs</code></td><td>1 484</td><td>Hărțile de fundal: furnizori, descărcare, cache, plase reproiectate.</td></tr>
   <tr><td><code>src/gui/print.rs</code></td><td>1 741</td><td>Planșa de tipărire, PDF, tipărirea prin Windows.</td></tr>
-  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 651</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
+  <tr><td><code>src/gui/dialogs.rs</code></td><td>1 653</td><td>Dialogurile: sisteme, export, CSV, tabel, convertor, lot, ajutor.</td></tr>
   <tr><td><code>src/gui/tdr.rs</code></td><td>516</td><td>Fereastra TransDatRO.</td></tr>
-  <tr><td><code>src/gui/workspace.rs</code></td><td>261</td><td>Spațiul de lucru <code>.cgw</code>.</td></tr>
-  <tr><td><code>src/gui/theme.rs</code></td><td>585</td><td>Teme, pictograme desenate vectorial, butoanele și grupurile barei de instrumente, setările persistente.</td></tr>
-  <tr><td><code>src/gui/select.rs</code></td><td>409</td><td>Selecția: instrumentul Selectare, operațiile pe selecție, desenarea entităților selectate (secțiunea 8.7).</td></tr>
+  <tr><td><code>src/gui/workspace.rs</code></td><td>270</td><td>Spațiul de lucru <code>.cgw</code>.</td></tr>
+  <tr><td><code>src/gui/theme.rs</code></td><td>740</td><td>Teme, pictograme desenate vectorial, butoanele și listele derulante ale barei de instrumente, setările persistente.</td></tr>
+  <tr><td><code>src/gui/parcel.rs</code></td><td>764</td><td>Fereastra „Parcelare / detașare”: poligonul selectat în prealabil, alegerea laturii și vârfului pe hartă, previzualizarea loturilor, stratul nou, inventarul de coordonate (secțiunea 8.12).</td></tr>
+  <tr><td><code>src/gui/select.rs</code></td><td>445</td><td>Selecția: instrumentul Selectare, operațiile pe selecție, stratul nou din selecție, golirea selecției, desenarea entităților selectate (secțiunea 8.7).</td></tr>
   <tr><td><code>src/gui/search.rs</code></td><td>1 149</td><td>Fereastra Căutare: sursa locurilor (OpenStreetMap, Google, ambele), geocodare Nominatim, coordonate, căutare rapidă în straturi, interogări pe câmpuri, marcajul locului (secțiunea 8.8).</td></tr>
   <tr><td><code>src/gui/google.rs</code></td><td>568</td><td>Căutarea Google: Places API (New) și Geocoding API, linkuri Google Maps (complete și scurte), coduri Plus, adresele Google Maps pentru browser (secțiunea 8.8).</td></tr>
   <tr><td><code>src/gui/bulk.rs</code></td><td>572</td><td>Deschiderea în masă a fișierelor de un tip dintr-un dosar (secțiunea 8.9).</td></tr>
@@ -289,7 +291,7 @@
 <p>Interfața folosește <b>egui</b> (mod imediat) prin <b>eframe</b>, cu randare OpenGL prin <code>glow</code>. Starea se află în <code>App</code>: straturile (<code>Vec&lt;LayerEntry&gt;</code>), sistemul hărții, vederea (<code>View { cx, cy, scale }</code>, unde scale este numărul de unități de hartă pe pixel), instrumentul activ, selecția, rezultatele identificării, punctele măsurării, istoricul vederilor, sarcinile în fundal, dialogurile, setările și harta de fundal. La fiecare cadru sunt desenate meniul, bara de instrumente, panoul de straturi, harta și dialogurile deschise.</p>
 <p><b>Sarcini în fundal</b>: deschiderea fișierelor, exportul, conversia în lot și tipărirea rulează pe fire separate și trimit rezultatul prin canale <code>mpsc</code> (<code>Job</code>, <code>JobResult</code>). Interfața verifică rezultatele la fiecare cadru și rămâne utilizabilă.</p>
 <p><b>Fereastra și panourile</b>. Fereastra se deschide maximizată (<code>ViewportBuilder::with_maximized</code>; dimensiunea 1400 × 880 rămâne pentru restaurare). Panoul Straturi este desenat cu <code>egui::Panel::show_switched</code>: două panouri stânga cu id-uri diferite – cel extins (redimensionabil, 120–900 px, lățimea ținută de egui) și banda de 26 px afișată când e ascuns. <code>show_switched</code> animă trecerea și schimbă singur starea când marginea este trasă dincolo de lățimea minimă (ascundere) sau a benzii (afișare). Starea se păstrează în setări (<code>layers_panel</code>); butonul «, banda (click oriunde pe ea), meniul și <kbd>Ctrl+L</kbd> pun o cerere în <code>App::layers_toggle</code>, aplicată după desenarea panoului, ca să nu se schimbe starea în timpul cadrului. În listă, numele straturilor sunt butoane <code>selectable</code> cu <code>truncate()</code>: se taie cu „…” la marginea panoului, iar indiciul arată numele întreg, fișierul, conținutul și sistemul.</p>
-<p><b>Bara de instrumente</b> este formată din grupuri (<code>theme::tool_group</code>): un chenar discret cu butoanele pe un rând și numele grupului dedesubt, centrat. Grupurile sunt Fișier, Vizualizare (Deplasare, Zoom +, Zoom −, Extindere completă, Înapoi, Înainte, Redraw), Interogare (Identificare, Căutare, Tabel), Selecție (Selectare, Selectare după atribute), Instrumente (Măsurare, Convertor) și Hartă (Basemap, sistemul hărții). Butoanele + / − (mărire și micșorare în centrul hărții), care dublau Zoom + / Zoom −, au fost scoase; operațiile rămân pe tastele + / − și pe controlul de navigație. Etichetele depind de lățimea disponibilă: toate sub 1 520 px, doar instrumentele principale între 1 330 și 1 520 px, niciuna sub 1 330 px (numele trece atunci în indiciu).</p>
+<p><b>Bara de instrumente</b> este formată din <b>liste derulante</b>, câte una pentru fiecare grup cu mai multe instrumente (<code>theme::tool_dropdown</code>): butonul (<code>dropdown_button</code>: pictogramă, nume, ▾) deschide cu <code>egui::Popup::menu</code> o listă de rânduri <code>menu_item</code> – pictogramă, nume, tastă aliniată la dreapta, instrumentul activ evidențiat. Toate rândurile unei liste au aceeași lățime: cea mai mare lățime cerută este ținută în memoria interfeței (<code>scope_id</code> al listei), deci lista nu „crește” de la un cadru la altul. Butonul unei liste arată pictograma instrumentului activ din grup și se colorează când acesta e activ. Listele sunt Vizualizare (Deplasare, Zoom +, Zoom −, Extindere completă, Înapoi, Înainte, Redraw), Interogare (Identificare, Căutare, Tabel), Selectare (pe hartă, după atribute, Clear, Zoom la selecție, Make Layer…, bifa „doar în stratul activ” – aceleași rânduri ca meniul Selectare, din <code>App::selection_menu_items</code>), Instrumente (Măsurare, Convertor) și Hartă (Basemap, sistemul hărții, cu codul sistemului pe buton). Grupurile cu un singur instrument – Deschide, Parcelare – rămân butoane simple (<code>icon_button</code>). Sub circa 900 px de lățime numele dispar și rămân pictogramele.</p>
 <p><b>Fonturi</b>: pe Windows sunt încărcate Segoe UI și fonturile de rezervă din <code>%WINDIR%\Fonts</code>; altfel, fonturile implicite egui.</p>
 
 <h3 id="t8-2"><span class="n">8.2</span>Straturi și geometria de afișare</h3>
@@ -338,6 +340,8 @@
   <li><b>Dreptunghi</b>: se testează geometria de afișare (în sistemul hărții) cu <code>Geometry::intersects_bounds</code>: încadrarea inclusă în dreptunghi, un vârf în interior, o latură care taie dreptunghiul (decupare Liang–Barsky, <code>segment_hits_bounds</code>) sau centrul dreptunghiului în interiorul unui poligon (ținând cont de goluri).</li>
   <li><b>Desenare</b>: <code>draw_selected</code> adaugă peste straturi umplerea galbenă semitransparentă (din aceeași triangulare ca la desenarea normală) și contururile prin <code>push_stroke</code>.</li>
   <li><b>Export</b>: <code>VLayer::selected_data</code> construiește o copie a stratului cu doar entitățile selectate, în ordinea indicilor; restul exportului (reproiecție, formate) este neschimbat.</li>
+  <li><b>Strat nou din selecție</b> (<code>App::layer_from_selection</code>, „Make Layer with selected objects”): aceeași copie, cu <code>source = None</code>, adăugată prin <code>add_datasets</code> ca strat temporar, cu stilul stratului de origine (conturul portocaliu) și indicatorul „sistem presupus” preluat. Straturile fără sursă nu intră în spațiul de lucru; <code>save_workspace_dialog</code> le numără și le amintește în bara de stare.</li>
+  <li><b>Clear</b> (meniul și lista Selectare, <kbd>Ctrl+Shift+A</kbd>): <code>App::clear_selection</code> golește selecția tuturor straturilor și evidențierea de la identificare.</li>
 </ul>
 
 <h3 id="t8-8"><span class="n">8.8</span>Căutarea și interogările</h3>
@@ -375,6 +379,15 @@ operand   := câmp | "câmp" | [câmp] | `câmp` | 'text' | număr | NULL | TRUE
 <h3 id="t8-11"><span class="n">8.11</span>Halo-ul etichetelor</h3>
 <p><code>VectorStyle</code> are patru câmpuri noi, toate cu <code>#[serde(default)]</code> (spațiile de lucru vechi se citesc neschimbate): <code>halo: HaloMode</code> (<code>Outline</code> – implicit, <code>Box</code>, <code>Off</code>), <code>halo_color: Option&lt;[u8; 3]&gt;</code> (<code>None</code> = automat: alb dacă luminanța textului 0,299 R + 0,587 G + 0,114 B ≤ 140, altfel negru), <code>halo_transparency</code> (procente, implicit 25) și <code>halo_width</code> (pt, implicit 1,5). <code>halo_rgba()</code> întoarce culoarea cu alfa = 1 − transparență, sau nimic pentru <code>Off</code> / 100 %.</p>
 <p>Pe ecran (<code>map.rs</code>, <code>draw_label_halo</code>), dreptunghiul este un <code>rect_filled</code> mărit cu grosimea; conturul este desenat ca 8 copii ale textului (<code>galley_with_override_text_color</code>) deplasate pe un cerc de rază egală cu grosimea, plus încă 8 pe un cerc interior pentru grosimi peste 1,6. Copiile se suprapun, așa că opacitatea fiecăreia este redusă la 1 − (1 − a)<sup>1/k</sup> (k = 3, respectiv 5) pentru ca halo-ul să aibă aproximativ transparența cerută; la tipărire transparența este exactă (secțiunea 10.1). Dreptunghiul de evitare a suprapunerilor include grosimea halo-ului.</p>
+
+<h3 id="t8-12"><span class="n">8.12</span>Parcelarea și detașarea</h3>
+<p><b>Poligonul.</b> Parcelarea lucrează strict pe entitatea selectată în prealabil: <code>App::parcel_selection</code> cere harta într-un sistem proiectat și exact o entitate selectată în toate straturile, de tip poligon; altfel întoarce mesajul afișat în indiciul comenzii (inactivă) și în fereastră. La fiecare cadru, <code>parcel_follow_selection</code> leagă fereastra de selecție: alt poligon selectat devine sursa, iar o selecție nevalidă golește loturile.</p>
+<p><b>Date.</b> Fereastra ia geometria de afișare a entității (<code>DispGeom</code>, deja în sistemul hărții, care trebuie să fie proiectat) și o mută în coordonate locale, cu originea în centrul încadrării rotunjit la metru (<code>parcel::to_geo</code>), ca operațiile booleene să lucreze cu numere mici (precizie de sub 1 µm la coordonatele Stereo 70). Geometria devine un <code>geo::MultiPolygon</code>, cu goluri și părți multiple. Laturile și orientarea (<code>parcel::sides</code>, <code>is_ccw</code>) se iau din inelul exterior al celei mai mari părți.</p>
+<p><b>Tăieturi paralele</b> (<code>Method::Parallel</code>, direcția d, normala n). Pentru o cotă t, regiunea „până la t” este o bandă (dreptunghi rotit) între cota minimă a poligonului pe n și t, mult mai lungă decât poligonul pe direcția d; suprafața f(t) = |poligon ∩ bandă| crește monoton cu t. Pentru suprafețele cumulate A₁ &lt; A₂ &lt; … ale loturilor, fiecare cotă tₖ se găsește prin bisecție pe [tₖ₋₁, t<sub>max</sub>] (cel mult 200 de pași, oprire la |f − Aₖ| &lt; 10⁻⁶ mp), iar lotul k este poligonul ∩ banda [tₖ₋₁, tₖ]. Variantele din fereastră diferă doar prin d și n: <i>paralele cu latura</i> – d de-a lungul laturii, n spre interior (la stânga laturii pentru un inel trigonometric); <i>perpendiculare</i> – d perpendicular pe latură, n de-a lungul ei, din capătul de început; <i>după orientare</i> – d din azimutul topografic α (unghiul matematic 90° − α), n la dreapta lui d. <i>Sens invers</i> schimbă semnul lui n.</p>
+<p><b>Evantai printr-un vârf</b> (<code>Method::Pivot</code>). Regiunea „până la unghiul φ” este sectorul de cerc cu centrul în vârf, între direcția spre vârful următor și φ (rază de patru ori diagonala, aproximat cu un punct la cel mult 10°), parcurs în sensul inelului (spre interior); suprafața crește monoton cu φ ∈ [0, 2π), deci aceeași bisecție găsește unghiurile, inclusiv la terenuri concave.</p>
+<p><b>Suprafețele cerute</b> (<code>Sizes</code>): <code>Equal(n)</code> dă n − 1 tăieturi la A·k/n; <code>Areas</code> dă tăieturi la sumele parțiale, verifică să nu depășească suprafața terenului și, după <code>rest</code>, lasă restul lot separat (fără țintă) sau îl adaugă la ultimul lot. La final se verifică faptul că loturile acoperă terenul (|Σ − A| ≤ max(10⁻⁶·A, 0,01)) și că niciun lot nu e gol. Intersecțiile folosesc <code>geo::BooleanOps</code> (crate-ul <code>geo</code> 0.31, cu <code>i_overlay</code>), suprafețele <code>unsigned_area</code>, perimetrul suma lungimilor inelelor.</p>
+<p><b>Interfață.</b> <code>ParcelDlg</code> recalculează loturile doar când se schimbă parametrii (o cheie text cu toți parametrii); previzualizarea (<code>draw_parcel</code>) triangulează loturile cu <code>earcutr</code> și le eticheteză în <code>interior_point</code>; vârfurile sunt numerotate. Alegerea laturii sau a vârfului pe hartă interceptează click-ul înaintea instrumentului curent (<code>parcel_click</code>), deci nu schimbă selecția: latura după distanța punct–segment, vârful după distanța minimă. Stratul creat are câmpurile <code>LOT</code>, <code>SUPRAFATA</code>, <code>SUPR_CERUTA</code>, <code>PERIMETRU</code>, <code>ETICHETA</code>, <code>SURSA</code>, în sistemul hărții; inventarul de coordonate scrie, pentru Stereo 70 / 30, X = Nord și Y = Est.</p>
+<p>Testele (<code>parcel::tests</code>) verifică loturi egale paralele cu o latură, detașarea cu și fără rest, evantaiul dintr-un vârf, un teren în L cu gol la coordonate Stereo 70 și convențiile de azimut.</p>
 
 <!-- ===================================================================== -->
 <h2 id="t9"><span class="n">9</span>Hărți de fundal</h2>
@@ -498,6 +511,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>rfd</td><td>Dialogurile de fișiere Windows.</td></tr>
   <tr><td>clap, anyhow</td><td>Linia de comandă, erori.</td></tr>
   <tr><td>windows-sys, winreg (doar Windows)</td><td>Tipărire GDI, ShellExecute, proxy din registru.</td></tr>
+  <tr><td>geo (i_overlay)</td><td>Operațiile booleene pe poligoane pentru parcelare.</td></tr>
   <tr><td>libloading</td><td>Încărcarea la rulare a GDAL-ului opțional (ECW / MrSID / JPEG 2000).</td></tr>
   <tr><td>embed-resource (construire)</td><td>Resursa Windows.</td></tr>
 </table>
@@ -578,6 +592,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>1.10.0</td><td>La citirea DXF se elimină <b>punctele cu „RTCM” în descriere</b> (stațiile de bază GNSS), cu etichetele lor și cu desenul blocurilor (<code>--dxf-pastreaza-rtcm</code> le păstrează); butonul <b>Redraw</b> (<kbd>F5</kbd>), ca REDRAWALL / REGEN în CAD; selectarea după atribute <b>centrează și încadrează harta pe selecție</b>, în partea liberă a hărții; opțiunea <b>Fără umplere (No fill)</b> pentru poligoane; bara de instrumente se compactează în ferestrele înguste.</td></tr>
   <tr><td>1.11.0</td><td>Fereastra se deschide <b>maximizată</b>; <b>panoul Straturi</b> se poate îngusta (numele lungi întregi în indiciu) și <b>ascunde complet</b> (« , <kbd>Ctrl+L</kbd>, meniul Vizualizare sau trăgând marginea), cu o bandă îngustă care îl readuce la click; <b>căutarea Google</b> (Places API / Geocoding API cu cheia utilizatorului, sursa OpenStreetMap / Google / ambele), deschiderea căutării în Google Maps, <b>linkuri Google Maps</b> (inclusiv scurte) și <b>coduri Plus</b> în caseta de căutare; <b>bara de instrumente grupată pe funcționalități</b> (Fișier, Vizualizare, Interogare, Selecție, Instrumente, Hartă), fără butoanele care dublau Zoom + / Zoom −.</td></tr>
   <tr><td>1.12.0</td><td><b>Halo-ul etichetelor pe fiecare strat</b>: contur, dreptunghi sau fără, culoare automată sau aleasă, transparență 0–100 % și grosime, identic pe hartă și pe planșă; <b>ECW, MrSID și JPEG 2000 (doar citire)</b> prin GDAL-ul unei instalări QGIS / OSGeo4W, încărcat dinamic, cu imagine de ansamblu în memorie și citire pe ferestre a zonei vizibile; titlul rezultatelor căutării arată proveniența reală (link Google Maps, cod Plus, OpenStreetMap, Google), nu sursa aleasă.</td></tr>
+  <tr><td>1.13.0</td><td>Bara de instrumente cu <b>liste derulante</b> în locul grupurilor de butoane (ribbon); meniul <b>Selectare</b> (pe hartă, după atribute, Clear, Zoom la selecție, Make Layer…); meniul <b>Editare</b>, cu <b>parcelarea / detașarea</b> poligoanelor: detașarea unei suprafețe, loturi egale sau suprafețe date, cu linii paralele cu o latură, perpendiculare pe ea, după o orientare sau în evantai printr-un vârf, cu previzualizare, strat nou cu loturile și inventar de coordonate; <b>Make Layer with selected objects</b> în meniul contextual al stratului (strat temporar doar cu entitățile selectate); <b>Clear</b>, care golește selecția de pe toată harta.</td></tr>
 </table>
 
 <!-- ===================================================================== -->

@@ -925,7 +925,9 @@ impl App {
             && let Some(p) = resp.interact_pointer_pos()
         {
             let (x, y) = self.s2w(p);
+            let used = self.parcel_click(x, y);
             match self.tool {
+                _ if used => {}
                 Tool::Identify => self.identify_at(x, y),
                 Tool::Measure => {
                     if self.measure_done {
@@ -1115,6 +1117,7 @@ impl App {
         self.draw_selected(&painter, &vb);
         self.draw_selection(&painter);
         self.draw_search_marker(&painter);
+        self.draw_parcel(&painter);
 
         // măsurare
         if !self.measure.is_empty() {

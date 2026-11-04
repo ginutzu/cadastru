@@ -8,6 +8,7 @@ mod basemap;
 mod bulk;
 mod manual;
 mod loadfilter;
+mod parcel;
 mod map;
 mod print;
 mod search;
@@ -26,7 +27,7 @@ use eframe::egui::{self, Color32, Key, RichText};
 use layers::*;
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{Receiver, channel};
-use theme::{Icon, Settings, Theme, icon_button, small_icon_button, tool_group};
+use theme::{Icon, Settings, Theme, icon_button, menu_item, small_icon_button, tool_dropdown};
 use cadastru::i18n::tr;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -716,6 +717,7 @@ impl App {
             self.zoom_full();
         }
         if k.esc {
+            self.dlg.parcel.pick = parcel::Pick::None;
             // Esc cu instrumentul Selectare (fără altă operație în curs) golește selecția
             if self.tool == Tool::Select && self.zoom_box_start.is_none() && self.measure.is_empty() {
                 self.clear_selection();
@@ -1053,6 +1055,39 @@ impl App {
                     ui.ctx().send_viewport_cmd(egui::ViewportCommand::Close);
                 }
             });
+            ui.menu_button(tr!("Editare"), |ui| {
+                let can_parcel = self.parcel_selection();
+                if ui
+                    .add_enabled(can_parcel.is_ok(), egui::Button::new(tr!("Parcelare / detașare…")))
+                    .on_hover_text(tr!("Împarte poligonul selectat în loturi: detașarea unei suprafețe, loturi egale sau suprafețe date, cu linii paralele, perpendiculare, după o orientare sau printr-un vârf"))
+                    .on_disabled_hover_text(can_parcel.err().unwrap_or_default())
+                    .clicked()
+                {
+                    ui.close();
+                    self.open_parcel();
+                }
+                ui.separator();
+                let lid = self.selected_layer;
+                let nsel = lid
+                    .and_then(|id| self.layer(id))
+                    .map(|l| match &l.kind {
+                        LayerKind::Vector(v) => v.sel.len(),
+                        _ => 0,
+                    })
+                    .unwrap_or(0);
+                if ui
+                    .add_enabled(nsel > 0, egui::Button::new(tr!("Strat nou din obiectele selectate (Make Layer with selected objects)")))
+                    .on_hover_text(tr!("Pentru stratul activ din panoul Straturi"))
+                    .clicked()
+                    && let Some(id) = lid
+                {
+                    ui.close();
+                    self.layer_from_selection(id);
+                }
+            });
+            ui.menu_button(tr!("Selectare"), |ui| {
+                self.selection_menu_items(ui);
+            });
             ui.menu_button(tr!("Vizualizare"), |ui| {
                 if ui.button(tr!("Extindere completă   Home")).clicked() {
                     ui.close();
@@ -1161,39 +1196,6 @@ impl App {
                     ui.close();
                 }
                 ui.separator();
-                if ui.button(tr!("Selectare   S")).clicked() {
-                    self.tool = Tool::Select;
-                    ui.close();
-                }
-                let (nsel, _) = self.selection_totals();
-                if ui
-                    .add_enabled(nsel > 0, egui::Button::new(tr!("Deselectează tot   Ctrl+Shift+A")))
-                    .clicked()
-                {
-                    self.clear_selection();
-                    ui.close();
-                }
-                if ui
-                    .add_enabled(nsel > 0, egui::Button::new(tr!("Zoom la selecție")))
-                    .clicked()
-                {
-                    self.zoom_to_selection(None);
-                    ui.close();
-                }
-                if ui
-                    .checkbox(
-                        &mut self.settings.select_active_only,
-                        tr!("Selectare doar în stratul activ"),
-                    )
-                    .on_hover_text(tr!("Altfel, în toate straturile vectoriale vizibile"))
-                    .changed()
-                {
-                    self.settings.save();
-                }
-                if ui.button(tr!("Selectare după atribute…   Ctrl+Shift+F")).clicked() {
-                    self.open_attr_select(None);
-                    ui.close();
-                }
                 if ui.button(tr!("Căutare…   Ctrl+F")).clicked() {
                     self.dlg.search.open = true;
                     self.dlg.search.focus = true;
@@ -1273,214 +1275,257 @@ impl App {
     fn toolbar(&mut self, ui: &mut egui::Ui) {
         ui.horizontal(|ui| {
             ui.spacing_mut().item_spacing.x = 4.0;
-            // fereastră îngustă: butoanele doar cu pictograme (numele rămâne în indicii);
-            // la lățime medie păstrează numele doar instrumentele principale
-            let w = ui.available_width();
-            let compact = w < 1520.0;
-            let medium = w >= 1330.0;
+            // fereastră foarte îngustă: listele derulante doar cu pictograme (numele în indicii)
+            let compact = ui.available_width() < 900.0;
             let lbl = |s: &'static str| if compact { "" } else { s };
-            // instrumentele principale: cu nume și la lățime medie
-            let lbl1 = |s: &'static str| if compact && !medium { "" } else { s };
-            let tipc = |label: &str, tip: &str| {
-                if compact { format!("{label} – {tip}") } else { tip.to_string() }
-            };
 
-            tool_group(ui, tr!("Fișier"), |ui| {
-                if icon_button(
-                    ui,
-                    Icon::Open,
-                    lbl(tr!("Deschide")),
-                    false,
-                    &tipc(tr!("Deschide"), tr!("Deschide fișiere: SHP, GPKG, DXF, CGXML, GeoTIFF … (Ctrl+O)")),
-                )
-                .clicked()
-                {
-                    self.open_dialog();
-                }
-            });
+            // Fișier: un singur instrument → buton simplu
+            if icon_button(
+                ui,
+                Icon::Open,
+                lbl(tr!("Deschide")),
+                false,
+                tr!("Deschide fișiere: SHP, GPKG, DXF, CGXML, GeoTIFF … (Ctrl+O)"),
+            )
+            .clicked()
+            {
+                self.open_dialog();
+            }
+            ui.separator();
 
             // Vizualizare: tot ce schimbă doar vederea hărții
-            tool_group(ui, tr!("Vizualizare"), |ui| {
-                for (t, icon, label, tip) in [
-                    (
-                        Tool::Pan,
-                        Icon::Pan,
-                        tr!("Deplasare"),
-                        tr!("Trage harta (P). Rotița mouse-ului = zoom, săgețile = deplasare."),
-                    ),
-                    (
-                        Tool::ZoomIn,
-                        Icon::ZoomIn,
-                        tr!("Zoom +"),
-                        tr!("Click = mărire ×2, dreptunghi = zoom pe zonă (Z). Tasta + mărește în centrul hărții."),
-                    ),
-                    (
-                        Tool::ZoomOut,
-                        Icon::ZoomOut,
-                        tr!("Zoom −"),
-                        tr!("Click = micșorare ×2, dreptunghi = vederea curentă intră în zonă (X). Tasta − micșorează în centrul hărții."),
-                    ),
-                ] {
-                    let l = if t == Tool::Pan { lbl1(label) } else { lbl(label) };
-                    if icon_button(ui, icon, l, self.tool == t, &tipc(label, tip)).clicked() {
-                        self.tool = t;
-                    }
-                }
-                if icon_button(ui, Icon::FullExtent, "", false, tr!("Extindere completă (Home)")).clicked() {
-                    self.zoom_full();
-                }
-                if icon_button(ui, Icon::Back, "", false, tr!("Vederea anterioară (Backspace)")).clicked() {
-                    self.history_back();
-                }
-                if icon_button(ui, Icon::Forward, "", false, tr!("Vederea următoare (Alt+Dreapta)")).clicked() {
-                    self.history_forward();
-                }
-                if icon_button(
-                    ui,
-                    Icon::Redraw,
-                    lbl(tr!("Redraw")),
-                    false,
-                    &tipc(tr!("Redraw"), tr!("Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD: șterge măsurătoarea, marcajele și evidențierile temporare, regenerează straturile și reîncarcă tile-urile de fundal eșuate (F5)")),
-                )
-                .clicked()
-                {
-                    self.redraw_all(ui.ctx());
-                }
-            });
-
-            // Interogare: informații despre entități și locuri
-            tool_group(ui, tr!("Interogare"), |ui| {
-                if icon_button(
-                    ui,
-                    Icon::Identify,
-                    lbl1(tr!("Identificare")),
-                    self.tool == Tool::Identify,
-                    &tipc(tr!("Identificare"), tr!("Click pe o entitate pentru atribute (I)")),
-                )
-                .clicked()
-                {
-                    self.tool = Tool::Identify;
-                }
-                if icon_button(
-                    ui,
-                    Icon::Search,
-                    lbl1(tr!("Căutare")),
-                    self.dlg.search.open,
-                    &tipc(tr!("Căutare"), tr!("Caută un loc sau o adresă (OpenStreetMap, Google), ori entități după valorile câmpurilor (Ctrl+F)")),
-                )
-                .clicked()
-                {
-                    self.dlg.search.open = !self.dlg.search.open;
-                    self.dlg.search.focus = self.dlg.search.open;
-                }
-                if icon_button(
-                    ui,
-                    Icon::Table,
-                    lbl(tr!("Tabel")),
-                    self.dlg.table.open,
-                    &tipc(tr!("Tabel"), tr!("Tabel de atribute (T)")),
-                )
-                .clicked()
-                {
-                    self.open_table();
-                }
-            });
-
-            tool_group(ui, tr!("Selecție"), |ui| {
-                if icon_button(
-                    ui,
-                    Icon::Select,
-                    lbl1(tr!("Selectare")),
-                    self.tool == Tool::Select,
-                    &tipc(tr!("Selectare"), tr!("Click = selectează entitatea, Ctrl+click = adaugă / scoate, Shift = adaugă, Alt = scoate, dreptunghi = selectează în zonă (S)")),
-                )
-                .clicked()
-                {
-                    self.tool = Tool::Select;
-                }
-                if icon_button(
-                    ui,
-                    Icon::SelectAttr,
-                    "",
-                    self.dlg.attrsel.open,
-                    tr!("Selectare după atribute: expresie de tipul status = 1 AND is_active = 1 (Ctrl+Shift+F)"),
-                )
-                .clicked()
-                {
-                    if self.dlg.attrsel.open {
-                        self.dlg.attrsel.open = false;
-                    } else {
-                        self.open_attr_select(None);
-                    }
-                }
-            });
-
-            tool_group(ui, tr!("Instrumente"), |ui| {
-                if icon_button(
-                    ui,
-                    Icon::Measure,
-                    lbl1(tr!("Măsurare")),
-                    self.tool == Tool::Measure,
-                    &tipc(tr!("Măsurare"), tr!("Click pentru puncte, dublu-click pentru final, Esc pentru ștergere (M)")),
-                )
-                .clicked()
-                {
-                    self.tool = Tool::Measure;
-                }
-                if icon_button(
-                    ui,
-                    Icon::Convert,
-                    lbl(tr!("Convertor")),
-                    self.dlg.converter.open,
-                    &tipc(tr!("Convertor"), tr!("Convertor de coordonate")),
-                )
-                .clicked()
-                {
-                    self.open_converter();
-                }
-            });
-
-            tool_group(ui, tr!("Hartă"), |ui| {
-                self.basemap_menu(ui);
-                // numele complet al sistemului doar dacă încape lângă comutatorul de limbă
-                let label = match self.map_crs.as_ref() {
-                    Some(c) => {
-                        let full = c.to_string();
-                        let short = c.short();
-                        let room = ui.available_width();
-                        if room > full.chars().count() as f32 * 7.2 + 120.0 {
-                            full
-                        } else if room > short.chars().count() as f32 * 7.2 + 100.0 {
-                            short
-                        } else {
-                            // bara e prea îngustă: doar globul (sistemul e în indiciul butonului)
-                            String::new()
+            let view_tool = matches!(self.tool, Tool::Pan | Tool::ZoomIn | Tool::ZoomOut);
+            let view_icon = match self.tool {
+                Tool::ZoomIn => Icon::ZoomIn,
+                Tool::ZoomOut => Icon::ZoomOut,
+                _ => Icon::Pan,
+            };
+            tool_dropdown(
+                ui,
+                view_icon,
+                lbl(tr!("Vizualizare")),
+                view_tool,
+                tr!("Vizualizare: deplasare, zoom, extindere completă, vederea anterioară / următoare, Redraw"),
+                |ui| {
+                    for (t, icon, label, key) in [
+                        (Tool::Pan, Icon::Pan, tr!("Deplasare"), "P"),
+                        (Tool::ZoomIn, Icon::ZoomIn, tr!("Zoom + (click sau dreptunghi)"), "Z"),
+                        (Tool::ZoomOut, Icon::ZoomOut, tr!("Zoom − (click sau dreptunghi)"), "X"),
+                    ] {
+                        if menu_item(ui, Some(icon), label, key, self.tool == t, true).clicked() {
+                            self.tool = t;
+                            ui.close();
                         }
                     }
-                    None => tr!("nedefinit").into(),
-                };
-                if icon_button(
-                    ui,
-                    Icon::Globe,
-                    &label,
-                    false,
-                    &format!(
-                        "{}\n{}",
-                        self.map_crs.as_ref().map(|c| c.to_string()).unwrap_or_default(),
-                        tr!("Sistemul de coordonate al hărții – click pentru schimbare")
-                    ),
-                )
-                .clicked()
-                {
-                    self.dlg.crs_picker = Some(CrsPicker::new(CrsPurpose::Map, self.map_crs.clone()));
-                }
+                    ui.separator();
+                    if menu_item(ui, Some(Icon::FullExtent), tr!("Extindere completă"), "Home", false, true).clicked() {
+                        self.zoom_full();
+                        ui.close();
+                    }
+                    if menu_item(ui, Some(Icon::Back), tr!("Vederea anterioară"), "Backspace", false, true).clicked() {
+                        self.history_back();
+                        ui.close();
+                    }
+                    if menu_item(ui, Some(Icon::Forward), tr!("Vederea următoare"), tr!("Alt+Dreapta"), false, true).clicked() {
+                        self.history_forward();
+                        ui.close();
+                    }
+                    ui.separator();
+                    if menu_item(ui, Some(Icon::Redraw), tr!("Redraw (curăță și redesenează)"), "F5", false, true)
+                        .on_hover_text(tr!("Curăță și redesenează harta, ca REDRAWALL / REGEN în CAD: șterge măsurătoarea, marcajele și evidențierile temporare, regenerează straturile și reîncarcă tile-urile de fundal eșuate (F5)"))
+                        .clicked()
+                    {
+                        ui.close();
+                        self.redraw_all(ui.ctx());
+                    }
+                },
+            );
+
+            // Interogare: informații despre entități și locuri
+            tool_dropdown(
+                ui,
+                Icon::Identify,
+                lbl(tr!("Interogare")),
+                self.tool == Tool::Identify,
+                tr!("Interogare: identificare, căutare, tabel de atribute"),
+                |ui| {
+                    if menu_item(ui, Some(Icon::Identify), tr!("Identificare"), "I", self.tool == Tool::Identify, true)
+                        .on_hover_text(tr!("Click pe o entitate pentru atribute (I)"))
+                        .clicked()
+                    {
+                        self.tool = Tool::Identify;
+                        ui.close();
+                    }
+                    if menu_item(ui, Some(Icon::Search), tr!("Căutare…"), "Ctrl+F", self.dlg.search.open, true)
+                        .on_hover_text(tr!("Caută un loc sau o adresă (OpenStreetMap, Google), ori entități după valorile câmpurilor (Ctrl+F)"))
+                        .clicked()
+                    {
+                        self.dlg.search.open = !self.dlg.search.open;
+                        self.dlg.search.focus = self.dlg.search.open;
+                        ui.close();
+                    }
+                    if menu_item(ui, Some(Icon::Table), tr!("Tabel de atribute"), "T", self.dlg.table.open, true).clicked() {
+                        self.open_table();
+                        ui.close();
+                    }
+                },
+            );
+
+            // Selectare: pe hartă, după atribute, Clear
+            let (nsel, nlay) = self.selection_totals();
+            let sel_tip = if nsel > 0 {
+                tr!("Selectare: pe hartă, după atribute, Clear – {} entități selectate în {} straturi", nsel, nlay)
+            } else {
+                tr!("Selectare: pe hartă, după atribute, Clear").to_string()
+            };
+            tool_dropdown(ui, Icon::Select, lbl(tr!("Selectare")), self.tool == Tool::Select, &sel_tip, |ui| {
+                self.selection_menu_items(ui);
             });
+
+            // Editare: un singur instrument → buton simplu
+            let can_parcel = self.parcel_selection();
+            let tip = match &can_parcel {
+                Ok(_) => tr!("Parcelare / detașare: împarte poligonul selectat în loturi").to_string(),
+                Err(e) => e.clone(),
+            };
+            if ui
+                .add_enabled_ui(can_parcel.is_ok() || self.dlg.parcel.open, |ui| {
+                    icon_button(ui, Icon::Parcel, lbl(tr!("Parcelare")), self.dlg.parcel.open, &tip)
+                })
+                .inner
+                .clicked()
+            {
+                if self.dlg.parcel.open {
+                    self.dlg.parcel.open = false;
+                    self.dlg.parcel.pick = parcel::Pick::None;
+                } else {
+                    self.open_parcel();
+                }
+            }
+
+            // Instrumente
+            tool_dropdown(
+                ui,
+                if self.dlg.converter.open && self.tool != Tool::Measure { Icon::Convert } else { Icon::Measure },
+                lbl(tr!("Instrumente")),
+                self.tool == Tool::Measure,
+                tr!("Instrumente: măsurare, convertor de coordonate"),
+                |ui| {
+                    if menu_item(ui, Some(Icon::Measure), tr!("Măsurare distanță / arie"), "M", self.tool == Tool::Measure, true)
+                        .on_hover_text(tr!("Click pentru puncte, dublu-click pentru final, Esc pentru ștergere (M)"))
+                        .clicked()
+                    {
+                        self.tool = Tool::Measure;
+                        ui.close();
+                    }
+                    if menu_item(ui, Some(Icon::Convert), tr!("Convertor de coordonate…"), "", self.dlg.converter.open, true).clicked() {
+                        self.open_converter();
+                        ui.close();
+                    }
+                },
+            );
+
+            // Hartă: harta de fundal și sistemul hărții (codul sistemului rămâne vizibil)
+            let crs_short = self.map_crs.as_ref().map(|c| c.short()).unwrap_or_else(|| tr!("nedefinit").into());
+            let map_label = if compact { String::new() } else { format!("{} · {}", tr!("Hartă"), crs_short) };
+            let mut pick_crs = false;
+            tool_dropdown(
+                ui,
+                Icon::Globe,
+                &map_label,
+                false,
+                &format!(
+                    "{}\n{}",
+                    self.map_crs.as_ref().map(|c| c.to_string()).unwrap_or_default(),
+                    tr!("Hartă: harta de fundal (Basemap) și sistemul de coordonate al hărții")
+                ),
+                |ui| {
+                    self.basemap_menu(ui);
+                    if menu_item(
+                        ui,
+                        Some(Icon::Globe),
+                        &format!("{} ({})…", tr!("Sistemul hărții"), crs_short),
+                        "",
+                        false,
+                        true,
+                    )
+                    .on_hover_text(self.map_crs.as_ref().map(|c| c.to_string()).unwrap_or_default())
+                    .clicked()
+                    {
+                        pick_crs = true;
+                        ui.close();
+                    }
+                },
+            );
+            if pick_crs {
+                self.dlg.crs_picker = Some(CrsPicker::new(CrsPurpose::Map, self.map_crs.clone()));
+            }
             // comutatorul de limbă, aliniat la dreapta
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_space(4.0);
                 self.lang_toggle(ui);
             });
         });
+    }
+
+    /// Instrumentele de selecție: în meniul „Selectare” și în lista derulantă din bară.
+    fn selection_menu_items(&mut self, ui: &mut egui::Ui) {
+        let (nsel, nlay) = self.selection_totals();
+        if menu_item(ui, Some(Icon::Select), tr!("Selectare pe hartă"), "S", self.tool == Tool::Select, true)
+            .on_hover_text(tr!("Click = selectează entitatea, Ctrl+click = adaugă / scoate, Shift = adaugă, Alt = scoate, dreptunghi = selectează în zonă (S)"))
+            .clicked()
+        {
+            self.tool = Tool::Select;
+            ui.close();
+        }
+        if menu_item(ui, Some(Icon::SelectAttr), tr!("Selectare după atribute…"), "Ctrl+Shift+F", self.dlg.attrsel.open, true)
+            .on_hover_text(tr!("Selectare după atribute: expresie de tipul status = 1 AND is_active = 1 (Ctrl+Shift+F)"))
+            .clicked()
+        {
+            ui.close();
+            self.open_attr_select(None);
+        }
+        let clear_label = match (nsel, nlay) {
+            (0, _) => "Clear".to_string(),
+            (1, _) => tr!("Clear (o entitate selectată)").to_string(),
+            (n, 1) => tr!("Clear ({} entități selectate)", n),
+            (n, k) => tr!("Clear ({} entități selectate în {} straturi)", n, k),
+        };
+        if menu_item(ui, Some(Icon::ClearSel), &clear_label, "Ctrl+Shift+A", false, nsel > 0 || self.selection.is_some())
+            .on_hover_text(tr!("Golește selecția din toate straturile, pe toată harta"))
+            .clicked()
+        {
+            self.clear_selection();
+            ui.close();
+        }
+        ui.separator();
+        if menu_item(ui, None, tr!("Zoom la selecție"), "", false, nsel > 0).clicked() {
+            self.zoom_to_selection(None);
+            ui.close();
+        }
+        let lid = self.selected_layer;
+        let n_active = lid
+            .and_then(|id| self.layer(id))
+            .map(|l| match &l.kind {
+                LayerKind::Vector(v) => v.sel.len(),
+                _ => 0,
+            })
+            .unwrap_or(0);
+        if menu_item(ui, None, tr!("Make Layer with selected objects"), "", false, n_active > 0)
+            .on_hover_text(tr!("Strat nou doar cu obiectele selectate din stratul activ (panoul Straturi)"))
+            .clicked()
+            && let Some(id) = lid
+        {
+            ui.close();
+            self.layer_from_selection(id);
+        }
+        if ui
+            .checkbox(&mut self.settings.select_active_only, tr!("Selectare doar în stratul activ"))
+            .on_hover_text(tr!("Altfel, în toate straturile vectoriale vizibile"))
+            .changed()
+        {
+            self.settings.save();
+        }
     }
 
     /// Butonul RO | EN din bara de instrumente.
@@ -1669,6 +1714,15 @@ impl App {
                                         ui.close();
                                     }
                                 });
+                                if n > 0
+                                    && ui
+                                        .button(tr!("Make Layer with selected objects ({n})"))
+                                        .on_hover_text(tr!("Adaugă în hartă un strat nou, doar cu obiectele selectate din acest strat"))
+                                        .clicked()
+                                {
+                                    action = Some((l.id, "sel_layer"));
+                                    ui.close();
+                                }
                                 if ui
                                     .button(tr!("Scoate entitățile din afara României…"))
                                     .on_hover_text(tr!("Fereastra filtrului de zonă, cu acest strat ales"))
@@ -1734,6 +1788,7 @@ impl App {
                 "sel_invert" => self.selection_action(id, "invert"),
                 "sel_clear" => self.selection_action(id, "clear"),
                 "sel_zoom" => self.selection_action(id, "zoom"),
+                "sel_layer" => self.layer_from_selection(id),
                 "sel_attr" => self.open_attr_select(Some(id)),
                 "area" => {
                     self.open_load_filter_dialog();
@@ -1816,12 +1871,12 @@ impl App {
             .spacing([8.0, 2.0])
             .show(ui, |ui| {
                 ui.label(tr!("Fișier:"));
-                ui.label(
-                    l.source()
-                        .and_then(|p| p.file_name())
-                        .map(|s| s.to_string_lossy().to_string())
-                        .unwrap_or_default(),
-                );
+                match l.source().and_then(|p| p.file_name()) {
+                    Some(f) => ui.label(f.to_string_lossy().to_string()),
+                    None => ui
+                        .label(RichText::new(tr!("(temporar, în memorie)")).italics().weak())
+                        .on_hover_text(tr!("Stratul nu are fișier: exportați-l (Export…) ca să-l păstrați; nu se salvează în spațiul de lucru.")),
+                };
                 ui.end_row();
                 ui.label(tr!("Conținut:"));
                 ui.label(l.summary());

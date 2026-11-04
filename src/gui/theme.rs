@@ -258,6 +258,10 @@ pub enum Icon {
     /// panoul lateral: » (arată)
     Expand,
     Layers,
+    /// golirea selecției: dreptunghi punctat cu X
+    ClearSel,
+    /// parcelare: poligon tăiat în loturi
+    Parcel,
 }
 
 fn arrow_head(p: &Painter, tip: Pos2, dir: egui::Vec2, size: f32, c: Color32) {
@@ -401,6 +405,36 @@ pub fn paint_icon(p: &Painter, r: Rect, icon: Icon, c: Color32) {
                 Stroke::NONE,
             ));
             p.line_segment([pt(2.8, 5.0), pt(4.6, 8.0)], Stroke::new(1.6, c));
+        }
+        Icon::ClearSel => {
+            // dreptunghi punctat + X roșu
+            let thin = Stroke::new(1.2, c);
+            let (x0, y0, x1, y1) = (-7.0f32, -6.0f32, 5.0f32, 5.0f32);
+            let mut t = x0;
+            while t < x1 {
+                let e = (t + 2.0).min(x1);
+                p.line_segment([pt(t, y0), pt(e, y0)], thin);
+                p.line_segment([pt(t, y1), pt(e, y1)], thin);
+                t += 3.5;
+            }
+            let mut t = y0;
+            while t < y1 {
+                let e = (t + 2.0).min(y1);
+                p.line_segment([pt(x0, t), pt(x0, e)], thin);
+                p.line_segment([pt(x1, t), pt(x1, e)], thin);
+                t += 3.5;
+            }
+            let red = Stroke::new(2.0, Color32::from_rgb(230, 80, 70));
+            p.line_segment([pt(1.0, 1.0), pt(8.0, 8.0)], red);
+            p.line_segment([pt(8.0, 1.0), pt(1.0, 8.0)], red);
+        }
+        Icon::Parcel => {
+            // patrulater tăiat de două linii paralele
+            let poly = vec![pt(-7.5, -5.5), pt(6.5, -7.0), pt(7.5, 6.0), pt(-6.5, 7.0)];
+            p.add(Shape::closed_line(poly, s));
+            let cut = Stroke::new(1.3, Color32::from_rgb(255, 170, 0));
+            p.line_segment([pt(-2.8, -6.0), pt(-2.0, 6.6)], cut);
+            p.line_segment([pt(2.0, -6.5), pt(2.8, 6.3)], cut);
         }
         Icon::SelectAttr => {
             // tabel cu un rând selectat
@@ -553,6 +587,127 @@ pub fn icon_button(
 
 /// Grup de butoane în bara de instrumente: chenar discret și numele grupului dedesubt
 /// (ca grupurile din panglica programelor de birou).
+/// Butonul unei liste derulante din bara de instrumente: pictogramă, nume și ▾.
+pub fn dropdown_button(ui: &mut egui::Ui, icon: Icon, text: &str, selected: bool, tip: &str) -> egui::Response {
+    let font = egui::TextStyle::Button.resolve(ui.style());
+    let galley = ui.painter().layout_no_wrap(text.to_string(), font, Color32::PLACEHOLDER);
+    let pad = vec2(6.0, 3.0);
+    let icon_sz = 18.0;
+    let gap = if text.is_empty() { 0.0 } else { 5.0 };
+    let arrow = 12.0;
+    let size = vec2(
+        pad.x * 2.0 + icon_sz + gap + galley.size().x + arrow,
+        (icon_sz + pad.y * 2.0).max(galley.size().y + pad.y * 2.0),
+    );
+    let (rect, resp) = ui.allocate_exact_size(size, egui::Sense::click());
+    let resp = if tip.is_empty() { resp } else { resp.on_hover_text(tip) };
+    if ui.is_rect_visible(rect) {
+        let v = ui.visuals();
+        let open = egui::Popup::is_id_open(ui.ctx(), egui::Popup::default_response_id(&resp));
+        let (bg, stroke) = if selected {
+            (v.selection.bg_fill, Stroke::new(1.0, v.selection.stroke.color.gamma_multiply(0.6)))
+        } else if resp.hovered() || open {
+            (v.widgets.hovered.weak_bg_fill, v.widgets.hovered.bg_stroke)
+        } else {
+            (Color32::TRANSPARENT, Stroke::new(1.0, v.widgets.noninteractive.bg_stroke.color.gamma_multiply(0.8)))
+        };
+        let p = ui.painter();
+        p.rect(rect, CornerRadius::same(4), bg, stroke, egui::StrokeKind::Inside);
+        let fg = if selected { Color32::WHITE } else { v.text_color() };
+        let ir = Rect::from_min_size(
+            rect.min + pad + vec2(0.0, (rect.height() - pad.y * 2.0 - icon_sz) / 2.0),
+            vec2(icon_sz, icon_sz),
+        );
+        paint_icon(p, ir, icon, fg);
+        if !text.is_empty() {
+            let tp = Pos2::new(ir.right() + gap, rect.center().y - galley.size().y / 2.0);
+            p.galley(tp, galley, fg);
+        }
+        // ▾
+        let c = Pos2::new(rect.right() - pad.x - 4.0, rect.center().y + 1.0);
+        p.add(Shape::convex_polygon(
+            vec![c + vec2(-3.5, -2.0), c + vec2(3.5, -2.0), c + vec2(0.0, 2.5)],
+            fg,
+            Stroke::NONE,
+        ));
+    }
+    resp
+}
+
+/// Un rând dintr-o listă derulantă: pictogramă, nume, tastă (în dreapta); `checked`
+/// marchează instrumentul activ.
+pub fn menu_item(
+    ui: &mut egui::Ui,
+    icon: Option<Icon>,
+    text: &str,
+    shortcut: &str,
+    checked: bool,
+    enabled: bool,
+) -> egui::Response {
+    let font = egui::TextStyle::Button.resolve(ui.style());
+    let galley = ui.painter().layout_no_wrap(text.to_string(), font.clone(), Color32::PLACEHOLDER);
+    let sc = ui.painter().layout_no_wrap(shortcut.to_string(), font, Color32::PLACEHOLDER);
+    let h = 24.0;
+    // aceeași lățime pentru toate rândurile listei: cea mai mare dintre ele (ținută minte)
+    let needed = 30.0 + galley.size().x + 28.0 + sc.size().x + 10.0;
+    let key = ui.scope_id().with("menu_item_w");
+    let prev: f32 = ui.data(|d| d.get_temp(key)).unwrap_or(0.0);
+    let w = needed.max(prev).max(220.0);
+    if needed > prev {
+        ui.data_mut(|d| d.insert_temp(key, needed));
+    }
+    let sense = if enabled { egui::Sense::click() } else { egui::Sense::hover() };
+    let (rect, resp) = ui.allocate_exact_size(vec2(w, h), sense);
+    if ui.is_rect_visible(rect) {
+        let v = ui.visuals();
+        let p = ui.painter();
+        if checked {
+            p.rect_filled(rect, CornerRadius::same(3), v.selection.bg_fill.gamma_multiply(0.55));
+        } else if enabled && resp.hovered() {
+            p.rect_filled(rect, CornerRadius::same(3), v.widgets.hovered.weak_bg_fill);
+        }
+        let fg = if !enabled {
+            v.weak_text_color()
+        } else if checked {
+            Color32::WHITE
+        } else {
+            v.text_color()
+        };
+        if let Some(ic) = icon {
+            let ir = Rect::from_center_size(Pos2::new(rect.left() + 14.0, rect.center().y), vec2(17.0, 17.0));
+            paint_icon(p, ir, ic, fg);
+        }
+        p.galley(Pos2::new(rect.left() + 30.0, rect.center().y - galley.size().y / 2.0), galley, fg);
+        if !shortcut.is_empty() {
+            p.galley(
+                Pos2::new(rect.right() - 8.0 - sc.size().x, rect.center().y - sc.size().y / 2.0),
+                sc,
+                v.weak_text_color(),
+            );
+        }
+    }
+    resp
+}
+
+/// Lista derulantă a unui grup de instrumente: butonul și meniul lui.
+pub fn tool_dropdown<R>(
+    ui: &mut egui::Ui,
+    icon: Icon,
+    text: &str,
+    selected: bool,
+    tip: &str,
+    content: impl FnOnce(&mut egui::Ui) -> R,
+) -> Option<R> {
+    let resp = dropdown_button(ui, icon, text, selected, tip);
+    egui::Popup::menu(&resp)
+        .show(|ui| {
+            ui.spacing_mut().item_spacing.y = 1.0;
+            content(ui)
+        })
+        .map(|r| r.inner)
+}
+
+#[allow(dead_code)]
 pub fn tool_group(ui: &mut egui::Ui, title: &str, add_contents: impl FnOnce(&mut egui::Ui)) {
     let v = ui.visuals();
     let frame = egui::Frame::new()

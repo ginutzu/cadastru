@@ -899,3 +899,114 @@ Dimensiune: {} x {} px; în memorie: imagine de ansamblu {} x {} px	Size: {} x {
 Cadastru nu scrie în formatele ECW, MrSID sau JPEG 2000: acestea se pot doar deschide (citire).	Cadastru does not write ECW, MrSID or JPEG 2000: these can only be opened (read).
 Rasterele ECW, MrSID și JPEG 2000 se pot doar vizualiza în Cadastru; nu se exportă și nu se convertesc în alte formate.	ECW, MrSID and JPEG 2000 rasters can only be viewed in Cadastru; they are not exported or converted to other formats.
 Grosime halo:	Halo width:
+Numărul de loturi trebuie să fie cel puțin 2.	The number of lots must be at least 2.
+Scrieți cel puțin o suprafață.	Enter at least one area.
+Suprafețele trebuie să fie numere pozitive.	Areas must be positive numbers.
+Suprafețele cerute ({:.2}) depășesc suprafața terenului ({:.2}).	The requested areas ({:.2}) exceed the land area ({:.2}).
+Poligonul nu are suprafață.	The polygon has no area.
+Loturile nu acoperă tot terenul ({:.2} din {:.2}); verificați poligonul (auto-intersecții?).	The lots do not cover the whole land ({:.2} of {:.2}); check the polygon (self-intersections?).
+Lotul {} ar ieși gol: direcția sau punctul ales nu permit această împărțire.	Lot {} would be empty: the chosen direction or point does not allow this division.
+„{}” nu este un număr.	“{}” is not a number.
+Poligonul nu are laturi.	The polygon has no sides.
+Parcelare: faceți click pe poligonul de împărțit.	Parcel division: click the polygon to divide.
+Parcelarea se face într-un sistem de coordonate proiectat (în metri). Schimbați sistemul hărții, de exemplu în Stereo 70 (EPSG:3844).	Parcel division needs a projected coordinate system (in metres). Change the map CRS, for example to Stereo 70 (EPSG:3844).
+Entitatea aleasă nu este un poligon.	The chosen feature is not a polygon.
+Parcelare: {} – {:.2} mp.	Parcel division: {} – {:.2} m².
+Niciun poligon la poziția indicată.	No polygon at that position.
+Lot	Lot
+Parcelare / detașare	Parcel division / detachment
+Teren:	Land:
+(niciun poligon ales)	(no polygon chosen)
+Alege poligonul pe hartă	Pick the polygon on the map
+Apoi faceți click pe un poligon dintr-un strat vizibil (sau selectați un singur poligon și redeschideți fereastra)	Then click a polygon in a visible layer (or select a single polygon and reopen the window)
+Zoom la teren	Zoom to land
+Operațiune:	Operation:
+Detașare	Detach
+Loturi egale	Equal lots
+Suprafețe date	Given areas
+Suprafața de detașat:	Area to detach:
+rest: {:.2} mp	remainder: {:.2} m²
+Număr de loturi:	Number of lots:
+≈ {:.2} mp / lot	≈ {:.2} m² / lot
+Suprafețele loturilor, în ordine (mp), separate prin „;” sau pe rânduri:	Lot areas, in order (m²), separated by “;” or on separate lines:
+Restul terenului rămâne lot separat	The remaining land is a separate lot
+Debifat: restul se adaugă la ultimul lot	Unticked: the remainder is added to the last lot
+Liniile de tăiere:	Cut lines:
+paralele cu o latură	parallel to a side
+perpendiculare pe o latură	perpendicular to a side
+după o orientare	along a bearing
+printr-un vârf (evantai)	through a vertex (fan)
+Latura	Side
+pe hartă	on the map
+Click lângă latura dorită	Click next to the side you want
+Primul lot se ia de lângă latura aleasă (roșie pe hartă).	The first lot is taken next to the chosen side (red on the map).
+Primul lot se ia de la capătul laturii marcat cu punct roșu.	The first lot is taken from the end of the side marked with a red dot.
+Orientarea liniilor:	Bearing of the lines:
+Unghiul față de Nord, în sens orar (0° = Nord, 90° = Est)	Angle from North, clockwise (0° = North, 90° = East)
+Vârful:	Vertex:
+Punctul	Point
+Click lângă vârful dorit	Click next to the vertex you want
+Liniile pleacă din vârf; primul lot se ia lângă latura care urmează vârfului.	The lines start at the vertex; the first lot is taken next to the side that follows the vertex.
+Sens invers (primul lot din partea opusă)	Reverse (first lot from the opposite side)
+Suprafață (mp)	Area (m²)
+Cerută	Requested
+Diferență	Difference
+Perimetru (m)	Perimeter (m)
+rest	remainder
+{} ({} părți)	{} ({} parts)
+Linia de tăiere împarte lotul în mai multe bucăți (teren concav): alegeți altă direcție sau alt vârf.	The cut line splits the lot into several pieces (concave land): choose another direction or vertex.
+Total: {:.2} mp din {:.2} mp	Total: {:.2} m² of {:.2} m²
+Creează stratul cu loturile	Create the lots layer
+Copiază inventarul de coordonate	Copy the coordinate inventory
+Coordonatele vârfurilor fiecărui lot, ca text (se poate lipi în Excel)	The vertex coordinates of each lot, as text (can be pasted into Excel)
+Inventarul de coordonate a fost copiat.	The coordinate inventory has been copied.
+Inventar de coordonate – {} ({})\n	Coordinate inventory – {} ({})\n
+Parcelare {}	Subdivision {}
+Strat nou: {} ({} loturi). Exportați-l (de ex. în SHP sau DXF) ca să-l păstrați.	New layer: {} ({} lots). Export it (e.g. to SHP or DXF) to keep it.
+Editare	Edit
+Parcelare / detașare…	Parcel division / detachment…
+Împarte un poligon în loturi: detașarea unei suprafețe, loturi egale sau suprafețe date, cu linii paralele, perpendiculare, după o orientare sau printr-un vârf	Divides a polygon into lots: detach an area, equal lots or given areas, with parallel or perpendicular lines, along a bearing or through a vertex
+Strat nou din obiectele selectate (Make Layer with selected objects)	Make Layer with selected objects
+Pentru stratul activ din panoul Straturi	For the active layer in the Layers panel
+Clear: golește selecția de pe toată harta   Ctrl+Shift+A	Clear: clears the selection on the whole map   Ctrl+Shift+A
+Clear: golește selecția din toate straturile ({} entități în {} straturi) (Ctrl+Shift+A)	Clear: clears the selection in all layers ({} features in {} layers) (Ctrl+Shift+A)
+Clear: golește selecția din toate straturile (Ctrl+Shift+A)	Clear: clears the selection in all layers (Ctrl+Shift+A)
+Parcelare	Subdivide
+Parcelare / detașare: împarte poligonul selectat în loturi	Parcel division / detachment: divides the selected polygon into lots
+Make Layer with selected objects ({n})	Make Layer with selected objects ({n})
+Adaugă în hartă un strat nou, doar cu obiectele selectate din acest strat	Adds a new layer to the map with only the selected objects of this layer
+(temporar, în memorie)	(temporary, in memory)
+Stratul nu are fișier: exportați-l (Export…) ca să-l păstrați; nu se salvează în spațiul de lucru.	The layer has no file: export it (Export…) to keep it; it is not saved in the workspace.
+Stratul nu are entități selectate.	The layer has no selected features.
+{} – selecție ({})	{} – selection ({})
+Strat nou: {} ({} entități). Este temporar: exportați-l ca să-l păstrați.	New layer: {} ({} features). It is temporary: export it to keep it.
+Spațiu de lucru salvat: {}. {} straturi temporare (fără fișier) nu au fost incluse – exportați-le ca să le păstrați.	Workspace saved: {}. {} temporary layers (without a file) were not included – export them to keep them.
+Selectați întâi poligonul de parcelat: instrumentul Selectare, tabelul de atribute sau selectarea după atribute.	First select the polygon to subdivide: the Select tool, the attribute table or select by attributes.
+Entitatea selectată nu este un poligon.	The selected feature is not a polygon.
+Sunt selectate {} entități: parcelarea se face pe un singur poligon selectat.	{} features are selected: subdivision works on a single selected polygon.
+Poligonul selectat:	Selected polygon:
+(niciunul)	(none)
+Împarte poligonul selectat în loturi: detașarea unei suprafețe, loturi egale sau suprafețe date, cu linii paralele, perpendiculare, după o orientare sau printr-un vârf	Divides the selected polygon into lots: detach an area, equal lots or given areas, with parallel or perpendicular lines, along a bearing or through a vertex
+Alt+Dreapta	Alt+Right
+Vizualizare: deplasare, zoom, extindere completă, vederea anterioară / următoare, Redraw	View: pan, zoom, full extent, previous / next view, Redraw
+Zoom + (click sau dreptunghi)	Zoom in (click or rectangle)
+Zoom − (click sau dreptunghi)	Zoom out (click or rectangle)
+Vederea anterioară	Previous view
+Vederea următoare	Next view
+Redraw (curăță și redesenează)	Redraw (clear and redraw)
+Interogare: identificare, căutare, tabel de atribute	Query: identify, search, attribute table
+Căutare…	Search…
+Selectare: pe hartă, după atribute, Clear – {} entități selectate în {} straturi	Selection: on the map, by attributes, Clear – {} features selected in {} layers
+Selectare: pe hartă, după atribute, Clear	Selection: on the map, by attributes, Clear
+Instrumente: măsurare, convertor de coordonate	Tools: measure, coordinate converter
+Măsurare distanță / arie	Measure distance / area
+Hartă: harta de fundal (Basemap) și sistemul de coordonate al hărții	Map: basemap and the map coordinate system
+Sistemul hărții	Map CRS
+Selectare pe hartă	Select on the map
+Selectare după atribute…	Select by attributes…
+Clear (o entitate selectată)	Clear (one feature selected)
+Clear ({} entități selectate)	Clear ({} features selected)
+Clear ({} entități selectate în {} straturi)	Clear ({} features selected in {} layers)
+Golește selecția din toate straturile, pe toată harta	Clears the selection in all layers, on the whole map
+Make Layer with selected objects	Make Layer with selected objects
+Strat nou doar cu obiectele selectate din stratul activ (panoul Straturi)	New layer with only the selected objects of the active layer (Layers panel)

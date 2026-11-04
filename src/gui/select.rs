@@ -195,6 +195,42 @@ impl App {
         }
     }
 
+    /// „Make Layer with selected objects”: un strat nou, în hartă, doar cu entitățile
+    /// selectate din stratul `lid` (copie în memorie, cu același stil și sistem).
+    pub fn layer_from_selection(&mut self, lid: u64) {
+        let Some(l) = self.layer(lid) else { return };
+        let LayerKind::Vector(v) = &l.kind else { return };
+        if v.sel.is_empty() {
+            self.status = tr!("Stratul nu are entități selectate.").into();
+            return;
+        }
+        let mut data = v.selected_data();
+        let n = data.features.len();
+        let name = tr!("{} – selecție ({})", l.name, n);
+        data.name = name.clone();
+        data.source = None;
+        let mut style = v.style.clone();
+        // alt contur, ca stratul nou să se distingă de cel original
+        style.stroke = [255, 61, 0, 255];
+        style.width = style.width.max(1.5) + 0.5;
+        let assumed = l.crs_assumed;
+        let seq = self.next_seq();
+        let ids = self.add_datasets(std::path::Path::new(""), vec![Dataset::Vector(data)], seq);
+        if let Some(id) = ids.first().copied()
+            && let Some(e) = self.layer_mut(id)
+        {
+            e.crs_assumed = assumed;
+            if let LayerKind::Vector(nv) = &mut e.kind {
+                nv.style = style;
+            }
+        }
+        self.status = tr!(
+            "Strat nou: {} ({} entități). Este temporar: exportați-l ca să-l păstrați.",
+            name,
+            n
+        );
+    }
+
     /// Golește selecția din toate straturile.
     pub fn clear_selection(&mut self) {
         self.clear_selection_quiet();
