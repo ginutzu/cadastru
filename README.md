@@ -1,4 +1,4 @@
-# Cadastru 1.13.0
+# Cadastru 1.13.1
 
 Autor: **Ginu Popescu** (scriemiaici@proton.me)
 
@@ -27,6 +27,7 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 - temă **gri închis** (implicită) sau luminoasă, din *Vizualizare → Temă*; alegerea se păstrează în `%APPDATA%\Cadastru\setari.json`
 - bara de instrumente cu **liste derulante** pe funcționalități (fără butoane de tip ribbon): *Deschide*, *Vizualizare ▾* (Deplasare, Zoom +, Zoom −, Extindere completă, Vederea anterioară / următoare, Redraw), *Interogare ▾* (Identificare, Căutare, Tabel), *Selectare ▾* (pe hartă, după atribute, Clear, Zoom la selecție, Make Layer with selected objects), *Parcelare*, *Instrumente ▾* (Măsurare, Convertor) și *Hartă ▾* (Basemap, sistemul hărții, cu codul sistemului pe buton); fiecare rând are pictogramă și tastă, iar instrumentul activ e evidențiat
 - meniul **Selectare**: Selectare pe hartă (S), Selectare după atribute (Ctrl+Shift+F), Clear (Ctrl+Shift+A), Zoom la selecție, Make Layer with selected objects, Selectare doar în stratul activ
+- bara de meniuri: *Fișier*, *Editare*, *Selectare*, *Vizualizare*, *Instrumente*, **Nomenclatoare**, *Ajutor*
 - **panoul Straturi** se poate îngusta trăgând marginea spre stânga (numele lungi se taie și apar întregi în indiciu, la trecerea cu mouse-ul) sau se poate **ascunde complet** cu « din colțul lui, cu *Vizualizare → Panoul Straturi* sau Ctrl+L (ori trăgând marginea până la capăt): harta ocupă toată lățimea și rămâne doar o bandă îngustă, pe care un click readuce panoul; starea se păstrează între porniri
 - **control de navigație pe hartă**: săgeți de deplasare (click = un sfert de ecran, ținut apăsat = deplasare continuă), centru = extindere completă, butoane + / − pentru zoom
 - instrumentele **Zoom +** (click = ×2, dreptunghi = zoom pe zonă) și **Zoom −** (click = ×0,5, dreptunghi = vederea curentă intră în zonă), **Deplasare**, **Identificare**, **Măsurare**
@@ -89,6 +90,13 @@ Aplicația s-a numit anterior *Cartograf*; setările versiunii anterioare sunt p
 - **Conversie în lot**: un dosar întreg (opțional cu subdosarele) într-un alt format și/sau alt sistem de coordonate
 - **Spațiu de lucru (.cgw)**: salvează straturile, stilurile, ordinea, sistemul hărții, vederea curentă și harta de fundal
 - meniu contextual pe hartă: copiere coordonate (inclusiv lat/lon WGS84), centrare, identificare
+- **Nomenclatoare → SIRUTA**: modulul SIRUTA (din proiectul SIRUTA, același autor, licență MIT), deschis **într-o fereastră separată** a sistemului, cu toate facilitățile lui:
+  - căutare pe măsură ce tastați, după denumire (fără să conteze diacriticele sau majusculele: `bistrita`, `Bistrița`, `BISTRIŢA`) sau după **cod SIRUTA**; tabel cu cod, denumire, județ și clasificare (municipiu reședință de județ, municipiu, oraș, comună, sector, Municipiul București)
+  - filtru pe **județ** și opțiunea **Include și localitățile** (sate și localități componente, cu UAT-ul de apartenență)
+  - buton de copiere a codului pe fiecare rând (devine bifă verde), dublu-click = copiază codul, click dreapta = copiază codul, denumirea sau rândul (tab); panoul **Detalii** (DENLOC, cod JUD, SIRSUP, NIV/TIP) cu butoane de copiere
+  - **actualizare automată** la fiecare deschidere: caută prin API-ul data.gov.ro (CKAN) cea mai recentă ediție publicată de INS (an + semestru din numele fișierului, apoi data publicării) și descarcă doar dacă e nouă sau modificată; ⟳ forțează actualizarea, ⓘ deschide fereastra *Despre* (autor, licența MIT în română și engleză)
+  - **funcționează offline**: lista se păstrează în `%LOCALAPPDATA%\SIRUTA\` (`siruta.csv` + `meta.json`, comun cu aplicația SIRUTA de sine stătătoare); bara de jos arată ultima actualizare reușită, sursa, numărul de UAT-uri / localități și starea conexiunii; la prima utilizare fără internet se poate pune un `siruta.csv` de la INS lângă `cadastru.exe`
+  - tema proprie, gri închis cu accente neon, numai în fereastra SIRUTA; textele urmează limba interfeței (RO / EN)
 - deschidere prin tragerea fișierelor peste fereastră sau ca argumente: `cadastru.exe fisier1.shp fisier2.tif`
 
 ### Import CGXML (cadastru ANCPI)
@@ -288,7 +296,7 @@ src/
   rasterops.rs     reproiecție raster (warp), reeșantionare, randare, hillshade
   formats/         shp, gpkg, geojson, kml, gpx, dxf, csv, cgxml, gdb (File Geodatabase), raster (GeoTIFF/ASC/PNG/JPG), gdalrt (ECW / MrSID / JPEG 2000 prin GDAL încărcat dinamic)
   main.rs          punctul de intrare al interfeței grafice
-  gui/             fereastra principală, harta, hărțile de fundal (basemap.rs), tipărirea și PDF-ul (print.rs), selecția (select.rs), căutarea (search.rs), selectarea după atribute (attrsel.rs), filtrul de încărcare (loadfilter.rs), exportul pe tipuri (split.rs), deschiderea în masă (bulk.rs), manualul inclus (manual.rs), controlul de navigație, temele, dialogurile, spațiul de lucru
+  gui/             fereastra principală, harta, hărțile de fundal (basemap.rs), tipărirea și PDF-ul (print.rs), selecția (select.rs), căutarea (search.rs), selectarea după atribute (attrsel.rs), filtrul de încărcare (loadfilter.rs), exportul pe tipuri (split.rs), deschiderea în masă (bulk.rs), manualul inclus (manual.rs), controlul de navigație, temele, dialogurile, spațiul de lucru; siruta/ – modulul SIRUTA (fereastra separată din *Nomenclatoare*: data.rs citirea și căutarea, update.rs actualizarea de pe data.gov.ro, ui.rs tema și pictogramele, app.rs interfața)
   bin/cli.rs       linia de comandă
 i18n-macros/       macroul tr! (crate proc-macro): alege textul român sau englez, verificat la compilare
 lang/en.tsv        pachetul pentru limba engleză: text românesc <TAB> text englez
@@ -296,7 +304,7 @@ assets/            pictograma, resursa Windows și gridurile TransDatRO
 docs/              manualul de utilizare (PDF), inclus în executabil
 ```
 
-Biblioteci folosite: egui/eframe (interfață), proj4rs + crs-definitions (proiecții EPSG), proj4wkt (WKT), tiff, image, rusqlite (SQLite inclus), earcutr (triangulare), roxmltree, zip, encoding_rs, rfd (dialoguri de fișiere Windows), clap, ureq + rustls (descărcarea tile-urilor), winreg (proxy-ul Windows), tiny-skia + ab_glyph (desenarea planșei de tipărire), windows-sys (tipărirea prin Windows), libloading (GDAL-ul opțional pentru ECW / MrSID, încărcat la rulare), geo (operații booleene pe poligoane, pentru parcelare).
+Biblioteci folosite: egui/eframe (interfață), proj4rs + crs-definitions (proiecții EPSG), proj4wkt (WKT), tiff, image, rusqlite (SQLite inclus), earcutr (triangulare), roxmltree, zip, encoding_rs, rfd (dialoguri de fișiere Windows), clap, ureq + rustls (descărcarea tile-urilor), winreg (proxy-ul Windows), tiny-skia + ab_glyph (desenarea planșei de tipărire), windows-sys (tipărirea prin Windows), libloading (GDAL-ul opțional pentru ECW / MrSID, încărcat la rulare), geo (operații booleene pe poligoane, pentru parcelare), chrono (datele afișate de modulul SIRUTA).
 
 ---
 
@@ -326,8 +334,8 @@ Sursele documentației sunt în `docs/src` (HTML + CSS, capturile în `docs/src/
 
 ```bash
 cd docs/src
-python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.13.0 · Manual de utilizare"
-python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.13.0 · Documentație tehnică"
+python3 build.py manual.html ../Manual_Cadastru.pdf "Cadastru 1.13.1 · Manual de utilizare"
+python3 build.py documentatie.html ../Documentatie_tehnica_Cadastru.pdf "Cadastru 1.13.1 · Documentație tehnică"
 ```
 
 `docs/Manual_Cadastru.pdf` este inclus în `cadastru.exe` (tasta F1), deci după reconstruirea lui trebuie recompilată aplicația.

@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.13.0 – Documentație tehnică</title>
+<title>Cadastru 1.13.1 – Documentație tehnică</title>
 <link rel="stylesheet" href="stil.css">
 <style>
   .arch { width: 100%; margin: 2mm 0 1mm; }
@@ -18,7 +18,7 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Documentație tehnică · versiunea 1.13.0</div>
+  <div class="sub">Documentație tehnică · versiunea 1.13.1</div>
   <div class="shot"><img src="img/plansa_lat.png" alt=""></div>
   <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Noiembrie 2026</span></div>
 </section>
@@ -40,7 +40,7 @@
 <h3 id="t1-2"><span class="n">1.2</span>Date de identificare</h3>
 <table>
   <tr><th style="width:30%">Element</th><th>Valoare</th></tr>
-  <tr><td>Nume, versiune</td><td>Cadastru 1.13.0</td></tr>
+  <tr><td>Nume, versiune</td><td>Cadastru 1.13.1</td></tr>
   <tr><td>Autor</td><td>Ginu Popescu, scriemiaici@proton.me</td></tr>
   <tr><td>Licență</td><td>MIT</td></tr>
   <tr><td>Limbaj</td><td>Rust, ediția 2024 (compilator 1.97)</td></tr>
@@ -101,7 +101,7 @@
   <tr><td><code>src/formats/*.rs</code></td><td>7 601</td><td>Câte un modul pe format (capitolul 6).</td></tr>
   <tr><td><code>src/formats/gdalrt.rs</code></td><td>686</td><td>ECW, MrSID și JPEG 2000 prin GDAL încărcat dinamic (<code>libloading</code>): căutarea bibliotecii, imaginea de ansamblu, citirea pe ferestre (secțiunea 6.8).</td></tr>
   <tr><td><code>src/main.rs</code></td><td>72</td><td>Punctul de intrare al interfeței: fereastra (deschisă maximizată), pictograma, argumentele.</td></tr>
-  <tr><td><code>src/gui/mod.rs</code></td><td>2 462</td><td>Starea aplicației (<code>App</code>), meniuri (inclusiv Editare), bara de instrumente grupată (cu comutatorul de limbă), panoul de straturi (ascundere, bandă îngustă), sarcini în fundal, scurtături.</td></tr>
+  <tr><td><code>src/gui/mod.rs</code></td><td>2 488</td><td>Starea aplicației (<code>App</code>), meniuri (inclusiv Editare, Selectare, Nomenclatoare), bara de instrumente grupată (cu comutatorul de limbă), panoul de straturi (ascundere, bandă îngustă), sarcini în fundal, scurtături.</td></tr>
   <tr><td><code>src/gui/map.rs</code></td><td>1 359</td><td>Desenarea hărții, interacțiunea, identificare, măsurare, scara grafică, controlul de navigație.</td></tr>
   <tr><td><code>src/gui/layers.rs</code></td><td>585</td><td>Straturile hărții, stiluri (inclusiv halo-ul etichetelor), geometria de afișare și triangularea, citirea pe ferestre a rasterelor ECW / MrSID.</td></tr>
   <tr><td><code>src/gui/basemap.rs</code></td><td>1 484</td><td>Hărțile de fundal: furnizori, descărcare, cache, plase reproiectate.</td></tr>
@@ -120,6 +120,7 @@
   <tr><td><code>src/gui/split.rs</code></td><td>285</td><td>Fereastra „Export pe tipuri de geometrie”.</td></tr>
   <tr><td><code>src/gui/ecw.rs</code></td><td>136</td><td>Fereastra „Formate ECW / MrSID (GDAL)”: starea GDAL, driverele, dosarul ales (secțiunea 6.8).</td></tr>
   <tr><td><code>src/gui/manual.rs</code></td><td>94</td><td>Manualul de utilizare inclus și deschiderea lui (<kbd>F1</kbd>); deschiderea adreselor web în browserul implicit.</td></tr>
+  <tr><td><code>src/gui/siruta/</code></td><td>2 132</td><td>Modulul SIRUTA din <span class="ui">Nomenclatoare</span>, preluat din proiectul SIRUTA, într-o fereastră separată (secțiunea 8.13): <code>mod.rs</code> fereastra (viewport), <code>data.rs</code> citirea CSV-ului INS, clasificarea și căutarea, <code>update.rs</code> actualizarea de pe data.gov.ro și cache-ul local, <code>ui.rs</code> tema și pictogramele, <code>app.rs</code> interfața.</td></tr>
   <tr><td><code>src/bin/cli.rs</code></td><td>696</td><td>Linia de comandă.</td></tr>
 </table>
 
@@ -292,7 +293,7 @@
 <p><b>Sarcini în fundal</b>: deschiderea fișierelor, exportul, conversia în lot și tipărirea rulează pe fire separate și trimit rezultatul prin canale <code>mpsc</code> (<code>Job</code>, <code>JobResult</code>). Interfața verifică rezultatele la fiecare cadru și rămâne utilizabilă.</p>
 <p><b>Fereastra și panourile</b>. Fereastra se deschide maximizată (<code>ViewportBuilder::with_maximized</code>; dimensiunea 1400 × 880 rămâne pentru restaurare). Panoul Straturi este desenat cu <code>egui::Panel::show_switched</code>: două panouri stânga cu id-uri diferite – cel extins (redimensionabil, 120–900 px, lățimea ținută de egui) și banda de 26 px afișată când e ascuns. <code>show_switched</code> animă trecerea și schimbă singur starea când marginea este trasă dincolo de lățimea minimă (ascundere) sau a benzii (afișare). Starea se păstrează în setări (<code>layers_panel</code>); butonul «, banda (click oriunde pe ea), meniul și <kbd>Ctrl+L</kbd> pun o cerere în <code>App::layers_toggle</code>, aplicată după desenarea panoului, ca să nu se schimbe starea în timpul cadrului. În listă, numele straturilor sunt butoane <code>selectable</code> cu <code>truncate()</code>: se taie cu „…” la marginea panoului, iar indiciul arată numele întreg, fișierul, conținutul și sistemul.</p>
 <p><b>Bara de instrumente</b> este formată din <b>liste derulante</b>, câte una pentru fiecare grup cu mai multe instrumente (<code>theme::tool_dropdown</code>): butonul (<code>dropdown_button</code>: pictogramă, nume, ▾) deschide cu <code>egui::Popup::menu</code> o listă de rânduri <code>menu_item</code> – pictogramă, nume, tastă aliniată la dreapta, instrumentul activ evidențiat. Toate rândurile unei liste au aceeași lățime: cea mai mare lățime cerută este ținută în memoria interfeței (<code>scope_id</code> al listei), deci lista nu „crește” de la un cadru la altul. Butonul unei liste arată pictograma instrumentului activ din grup și se colorează când acesta e activ. Listele sunt Vizualizare (Deplasare, Zoom +, Zoom −, Extindere completă, Înapoi, Înainte, Redraw), Interogare (Identificare, Căutare, Tabel), Selectare (pe hartă, după atribute, Clear, Zoom la selecție, Make Layer…, bifa „doar în stratul activ” – aceleași rânduri ca meniul Selectare, din <code>App::selection_menu_items</code>), Instrumente (Măsurare, Convertor) și Hartă (Basemap, sistemul hărții, cu codul sistemului pe buton). Grupurile cu un singur instrument – Deschide, Parcelare – rămân butoane simple (<code>icon_button</code>). Sub circa 900 px de lățime numele dispar și rămân pictogramele.</p>
-<p><b>Fonturi</b>: pe Windows sunt încărcate Segoe UI și fonturile de rezervă din <code>%WINDIR%\Fonts</code>; altfel, fonturile implicite egui.</p>
+<p><b>Fonturi</b>: pe Windows sunt încărcate Segoe UI și fonturile de rezervă din <code>%WINDIR%\Fonts</code>; altfel, fonturile implicite egui. Familiile <code>bold</code> și <code>siruta_mono</code> (Segoe UI Semibold, Consolas) servesc ferestrei SIRUTA (secțiunea 8.13).</p>
 
 <h3 id="t8-2"><span class="n">8.2</span>Straturi și geometria de afișare</h3>
 <p><code>LayerEntry</code> are un id unic, nume, vizibilitate, opacitate, indicatorul „sistem presupus” și tipul: <code>Vector(VLayer)</code> sau <code>Raster(RLayer)</code>. <code>VLayer</code> păstrează datele originale (<code>VectorLayer</code>), stilul (<code>VectorStyle</code>) și geometria de afișare <code>disp: Vec&lt;DispGeom&gt;</code>. Fiecare <code>DispGeom</code> conține geometria în sistemul hărții, încadrarea, punctul de etichetă și triangularea poligonului (vârfuri + indici, calculată cu <code>earcutr</code>).</p>
@@ -388,6 +389,15 @@ operand   := câmp | "câmp" | [câmp] | `câmp` | 'text' | număr | NULL | TRUE
 <p><b>Suprafețele cerute</b> (<code>Sizes</code>): <code>Equal(n)</code> dă n − 1 tăieturi la A·k/n; <code>Areas</code> dă tăieturi la sumele parțiale, verifică să nu depășească suprafața terenului și, după <code>rest</code>, lasă restul lot separat (fără țintă) sau îl adaugă la ultimul lot. La final se verifică faptul că loturile acoperă terenul (|Σ − A| ≤ max(10⁻⁶·A, 0,01)) și că niciun lot nu e gol. Intersecțiile folosesc <code>geo::BooleanOps</code> (crate-ul <code>geo</code> 0.31, cu <code>i_overlay</code>), suprafețele <code>unsigned_area</code>, perimetrul suma lungimilor inelelor.</p>
 <p><b>Interfață.</b> <code>ParcelDlg</code> recalculează loturile doar când se schimbă parametrii (o cheie text cu toți parametrii); previzualizarea (<code>draw_parcel</code>) triangulează loturile cu <code>earcutr</code> și le eticheteză în <code>interior_point</code>; vârfurile sunt numerotate. Alegerea laturii sau a vârfului pe hartă interceptează click-ul înaintea instrumentului curent (<code>parcel_click</code>), deci nu schimbă selecția: latura după distanța punct–segment, vârful după distanța minimă. Stratul creat are câmpurile <code>LOT</code>, <code>SUPRAFATA</code>, <code>SUPR_CERUTA</code>, <code>PERIMETRU</code>, <code>ETICHETA</code>, <code>SURSA</code>, în sistemul hărții; inventarul de coordonate scrie, pentru Stereo 70 / 30, X = Nord și Y = Est.</p>
 <p>Testele (<code>parcel::tests</code>) verifică loturi egale paralele cu o latură, detașarea cu și fără rest, evantaiul dintr-un vârf, un teren în L cu gol la coordonate Stereo 70 și convențiile de azimut.</p>
+
+
+<h3 id="t8-13"><span class="n">8.13</span>Modulul SIRUTA (Nomenclatoare)</h3>
+<p><b>Origine.</b> Modulul este aplicația SIRUTA (același autor, licență MIT), integrată în <code>src/gui/siruta/</code> cu toate funcțiile ei. Portarea a însemnat trecerea de la egui 0.31 la 0.37 (panourile <code>Panel::top/bottom/right</code> desenate în <code>Ui</code>-ul ferestrei, <code>ui.close()</code> în meniuri, <code>TextEdit::frame(Frame::NONE)</code>) și de la ureq 2 cu native-tls la ureq 3 cu rustls și verificatorul de certificate al sistemului, ca restul aplicației (proxy din <code>HTTPS_PROXY</code> sau din registrul Windows, prin <code>basemap::proxy</code>; conectare max. 10 s, răspuns și corp max. 60 s). Textele trec prin <code>tr!</code> (pachetul englez conține și clasificările INS, traduse la afișare cu <code>trs_static</code>).</p>
+<p><b>Fereastra separată.</b> <code>SirutaWin</code> (în <code>Dialogs</code>) ține starea într-un <code>Arc&lt;Mutex&lt;SirutaApp&gt;&gt;</code> și un indicator <code>open</code> (<code>AtomicBool</code>). Cât timp e deschisă, fereastra principală apelează la fiecare cadru <code>Context::show_viewport_deferred</code> cu <code>ViewportId::from_hash_of("cadastru_siruta")</code>: o fereastră nativă cu titlu, pictograma SIRUTA (128 × 128 RGBA, inclusă în executabil), dimensiune minimă 980 × 560, pornită maximizată (comanda <code>Maximized</code> este retrimisă în primele trei cadre, ca în aplicația originală). Fereastra deferred are bucla ei de redesenare: căutarea și animațiile nu redesenează harta. Închiderea (<code>close_requested</code>) pune <code>open = false</code> și cere o redesenare a ferestrei principale, care nu mai apelează viewport-ul, deci egui îl închide. Datele rămân în memorie; la redeschidere (<code>reopen</code>) se pornește doar o nouă verificare a actualizărilor. Comanda din meniu, cu fereastra deja deschisă, trimite <code>Minimized(false)</code> și <code>Focus</code>.</p>
+<p><b>Tema limitată la fereastră.</b> Stilul egui este global (pe <code>Context</code>), comun tuturor ferestrelor. <code>SirutaApp::ui</code> salvează stilul temei curente (<code>style_of(theme)</code>), aplică pentru durata cadrului ferestrei SIRUTA stilul neon (<code>ui::style</code>, calculat o dată din stilul aplicației) – pe context, pentru listele derulante, indiciile și fereastra modală, și pe <code>Ui</code>-ul rădăcină – și îl readuce la final. Cadrele ferestrelor se desenează pe rând, pe firul principal, deci fereastra principală își păstrează tema. Familiile de fonturi <code>bold</code> (Segoe UI Semibold) și <code>siruta_mono</code> (Consolas) sunt înregistrate în <code>setup_fonts</code>, cu fonturile implicite ca rezervă, deci există și pe sisteme fără fonturile Windows.</p>
+<p><b>Date și căutare</b> (<code>data.rs</code>). CSV-ul INS (separator <code>;</code>, UTF-8 cu BOM sau Windows-1250) este citit după antet (coloanele SIRUTA, DENLOC, JUD, SIRSUP, TIP, NIV); NIV/TIP sunt clasificate după legenda INS; denumirile UAT pierd prefixele (MUNICIPIUL, ORAȘ), localitățile primesc UAT-ul de apartenență prin SIRSUP. Fișierul este respins sub 1 000 de UAT-uri recunoscute. Cheia de căutare este textul normalizat (fără diacritice, inclusiv ş/ţ cu sedilă, litere mici); un număr caută după cod. Căutarea rulează doar când se schimbă textul sau filtrele.</p>
+<p><b>Actualizarea</b> (<code>update.rs</code>) rulează pe un fir separat și trimite mesaje prin <code>mpsc</code> (<code>Progress</code>, <code>Done</code>), cu <code>request_repaint_of</code> pentru fereastra SIRUTA. Interoghează <code>package_search</code> al CKAN (organizația INS, „siruta”), alege resursa CSV cu „siruta” în nume (fără „zone” sau „jud”) cu cea mai mare ediție (an, semestru din nume: <code>S1_2026</code> &gt; <code>AN_2025</code> &gt; <code>S1_2025</code>), apoi după data modificării, și o descarcă (max. 60 MB) doar dacă adresa sau data diferă de <code>meta.json</code> ori lipsește fișierul local; scrierea este atomică (fișier temporar + redenumire). Cache-ul este <code>%LOCALAPPDATA%\SIRUTA\</code>, același cu al aplicației SIRUTA, iar un <code>siruta.csv</code> lângă executabil servește la prima pornire fără internet.</p>
+<p>Testele <code>parse_and_classify</code>, <code>search_works</code>, <code>picks_latest_csv</code> și <code>editions</code> (preluate din proiectul SIRUTA) verifică citirea, clasificarea, căutarea fără diacritice, alegerea ultimei ediții și ordinea edițiilor.</p>
 
 <!-- ===================================================================== -->
 <h2 id="t9"><span class="n">9</span>Hărți de fundal</h2>
@@ -506,7 +516,8 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>tiff, image</td><td>GeoTIFF, PNG, JPEG, BMP.</td></tr>
   <tr><td>earcutr</td><td>Triangularea poligoanelor pentru umplere.</td></tr>
   <tr><td>roxmltree, zip, encoding_rs, csv, serde, serde_json</td><td>XML (KML, GPX, CGXML), arhive, codificări, CSV, JSON.</td></tr>
-  <tr><td>ureq (rustls, platform-verifier)</td><td>Descărcarea tile-urilor.</td></tr>
+  <tr><td>ureq (rustls, platform-verifier)</td><td>Descărcarea tile-urilor, căutarea și actualizarea listei SIRUTA.</td></tr>
+  <tr><td>chrono</td><td>Data ultimei actualizări SIRUTA, în ora locală.</td></tr>
   <tr><td>tiny-skia, ab_glyph, epaint_default_fonts</td><td>Planșa de tipărire.</td></tr>
   <tr><td>rfd</td><td>Dialogurile de fișiere Windows.</td></tr>
   <tr><td>clap, anyhow</td><td>Linia de comandă, erori.</td></tr>
@@ -519,7 +530,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
 <!-- ===================================================================== -->
 <h2 id="t14"><span class="n">14</span>Testare și validare</h2>
 <h3 id="t14-1"><span class="n">14.1</span>Teste automate</h3>
-<p><code>cargo test</code> rulează 51 de teste, printre care:</p>
+<p><code>cargo test</code> rulează 68 de teste (3 dintre ele, lente sau dependente de date externe, sunt marcate <code>#[ignore]</code>), printre care:</p>
 <table>
   <tr><th style="width:40%">Test</th><th>Verifică</th></tr>
   <tr><td><code>official_stereo70</code>, <code>official_stereo30</code></td><td>Punctele de test oficiale ANCPI, în ambele sensuri, în toleranța 3 mm / 0,00003″.</td></tr>
@@ -542,6 +553,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td><code>rtcm_points_dropped</code></td><td>Eliminarea punctelor RTCM din DXF: după etichetă, atribut de bloc (cu desenul blocului) și XDATA; păstrarea cu <code>dxf_keep_rtcm</code>.</td></tr>
   <tr><td><code>distinct_sorted</code></td><td>Lista valorilor distincte din fereastra de selectare.</td></tr>
   <tr><td><code>coords</code>, <code>encode</code>, <code>nominatim_json</code></td><td>Recunoașterea coordonatelor, codificarea URL și citirea răspunsului Nominatim.</td></tr>
+  <tr><td><code>parse_and_classify</code>, <code>search_works</code>, <code>picks_latest_csv</code>, <code>editions</code></td><td>Modulul SIRUTA: citirea și clasificarea CSV-ului INS, căutarea fără diacritice, alegerea ultimei ediții de pe data.gov.ro (secțiunea 8.13).</td></tr>
   <tr><td><code>google_json</code>, <code>maps_links</code>, <code>plus_codes</code>, <code>decode_url</code></td><td>Răspunsurile Places API (New) și Geocoding API (inclusiv erorile), linkurile Google Maps (pin, centru, parametri, pagina de consimțământ), codurile Plus (exemplul din specificație, refacerea codurilor scurte), decodarea procentuală.</td></tr>
 </table>
 <h3 id="t14-2"><span class="n">14.2</span>Validare față de implementări de referință</h3>
@@ -593,6 +605,7 @@ RUSTC_BOOTSTRAP=1 cargo build --release --target x86_64-pc-windows-gnu -Zbuild-s
   <tr><td>1.11.0</td><td>Fereastra se deschide <b>maximizată</b>; <b>panoul Straturi</b> se poate îngusta (numele lungi întregi în indiciu) și <b>ascunde complet</b> (« , <kbd>Ctrl+L</kbd>, meniul Vizualizare sau trăgând marginea), cu o bandă îngustă care îl readuce la click; <b>căutarea Google</b> (Places API / Geocoding API cu cheia utilizatorului, sursa OpenStreetMap / Google / ambele), deschiderea căutării în Google Maps, <b>linkuri Google Maps</b> (inclusiv scurte) și <b>coduri Plus</b> în caseta de căutare; <b>bara de instrumente grupată pe funcționalități</b> (Fișier, Vizualizare, Interogare, Selecție, Instrumente, Hartă), fără butoanele care dublau Zoom + / Zoom −.</td></tr>
   <tr><td>1.12.0</td><td><b>Halo-ul etichetelor pe fiecare strat</b>: contur, dreptunghi sau fără, culoare automată sau aleasă, transparență 0–100 % și grosime, identic pe hartă și pe planșă; <b>ECW, MrSID și JPEG 2000 (doar citire)</b> prin GDAL-ul unei instalări QGIS / OSGeo4W, încărcat dinamic, cu imagine de ansamblu în memorie și citire pe ferestre a zonei vizibile; titlul rezultatelor căutării arată proveniența reală (link Google Maps, cod Plus, OpenStreetMap, Google), nu sursa aleasă.</td></tr>
   <tr><td>1.13.0</td><td>Bara de instrumente cu <b>liste derulante</b> în locul grupurilor de butoane (ribbon); meniul <b>Selectare</b> (pe hartă, după atribute, Clear, Zoom la selecție, Make Layer…); meniul <b>Editare</b>, cu <b>parcelarea / detașarea</b> poligoanelor: detașarea unei suprafețe, loturi egale sau suprafețe date, cu linii paralele cu o latură, perpendiculare pe ea, după o orientare sau în evantai printr-un vârf, cu previzualizare, strat nou cu loturile și inventar de coordonate; <b>Make Layer with selected objects</b> în meniul contextual al stratului (strat temporar doar cu entitățile selectate); <b>Clear</b>, care golește selecția de pe toată harta.</td></tr>
+  <tr><td>1.13.1</td><td>Meniul <b>Nomenclatoare</b> (după Instrumente), cu <b>SIRUTA</b>: modulul SIRUTA integrat cu toate facilitățile și deschis într-o fereastră separată – căutare după denumire (fără diacritice) sau cod, filtru pe județ, localități, copiere, detalii, actualizare automată de pe data.gov.ro, funcționare offline, fereastra Despre; tema neon numai în fereastra SIRUTA; textele modulului în română și engleză.</td></tr>
 </table>
 
 <!-- ===================================================================== -->

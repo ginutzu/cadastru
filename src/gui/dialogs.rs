@@ -353,6 +353,8 @@ pub struct Dialogs {
     pub help: bool,
     pub ecw: super::ecw::EcwDlg,
     pub parcel: super::parcel::ParcelDlg,
+    /// Fereastra separată „Nomenclatoare > SIRUTA”.
+    pub siruta: super::siruta::SirutaWin,
     pub pending_settings: HashMap<PathBuf, Vec<LayerSettings>>,
     pub ws_order: HashMap<u64, usize>,
     pub ws_view: Option<super::View>,
@@ -513,6 +515,7 @@ impl App {
         self.batch_window(ctx);
         self.help_windows(ctx);
         self.ecw_window(ctx);
+        self.dlg.siruta.show(ctx);
         self.parcel_window(ctx);
     }
 

@@ -13,6 +13,7 @@ mod map;
 mod print;
 mod search;
 mod select;
+mod siruta;
 mod split;
 mod tdr;
 pub mod theme;
@@ -1255,6 +1256,17 @@ impl App {
                     self.dlg.ecw.open = true;
                 }
             });
+            ui.menu_button(tr!("Nomenclatoare"), |ui| {
+                ui.set_min_width(190.0);
+                if ui
+                    .button(tr!("SIRUTA"))
+                    .on_hover_text(tr!("Registrul unităților administrativ-teritoriale (INS), într-o fereastră separată: căutare după denumire sau cod, actualizare automată de pe data.gov.ro"))
+                    .clicked()
+                {
+                    ui.close();
+                    self.dlg.siruta.open(ui.ctx());
+                }
+            });
             ui.menu_button(tr!("Ajutor"), |ui| {
                 if ui.button(tr!("Manual de utilizare (PDF)   F1")).clicked() {
                     ui.close();
@@ -2371,21 +2383,26 @@ pub fn setup_fonts(ctx: &egui::Context) {
         .map(|w| PathBuf::from(w).join("Fonts"))
         .unwrap_or_else(|_| PathBuf::from("C:\\Windows\\Fonts"));
     let mut added = vec![];
+    let mut extra = vec![];
     for (name, file) in [
         ("segoeui", "segoeui.ttf"),
         ("seguisym", "seguisym.ttf"),
         ("seguiemj", "seguiemj.ttf"),
+        // folosite de fereastra SIRUTA: titluri (Segoe UI Semibold) și coduri (Consolas)
+        ("seguisb", "seguisb.ttf"),
+        ("consola", "consola.ttf"),
     ] {
         if let Ok(bytes) = std::fs::read(dir.join(file)) {
             fonts.font_data.insert(
                 name.to_owned(),
                 std::sync::Arc::new(egui::FontData::from_owned(bytes)),
             );
-            added.push(name.to_owned());
+            if matches!(name, "seguisb" | "consola") {
+                extra.push(name);
+            } else {
+                added.push(name.to_owned());
+            }
         }
-    }
-    if added.is_empty() {
-        return;
     }
     if let Some(prop) = fonts.families.get_mut(&egui::FontFamily::Proportional) {
         for (i, n) in added.iter().enumerate() {
@@ -2401,6 +2418,15 @@ pub fn setup_fonts(ctx: &egui::Context) {
             mono.push(n.clone());
         }
     }
+    // familiile SIRUTA există mereu (altfel egui s-ar opri la un font necunoscut)
+    let prop = fonts.families[&egui::FontFamily::Proportional].clone();
+    let mono = fonts.families[&egui::FontFamily::Monospace].clone();
+    let mut bold: Vec<String> = extra.iter().filter(|n| **n == "seguisb").map(|n| n.to_string()).collect();
+    bold.extend(prop);
+    let mut smono: Vec<String> = extra.iter().filter(|n| **n == "consola").map(|n| n.to_string()).collect();
+    smono.extend(mono);
+    fonts.families.insert(egui::FontFamily::Name("bold".into()), bold);
+    fonts.families.insert(egui::FontFamily::Name("siruta_mono".into()), smono);
     ctx.set_fonts(fonts);
 }
 

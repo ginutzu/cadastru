@@ -1,6 +1,6 @@
 [package]
 name = "cadastru"
-version = "1.13.0"
+version = "1.13.1"
 edition = "2024"
 description = "Cadastru - aplicație GIS desktop: vizualizare hărți, conversie formate, reproiecție"
 license = "MIT"
@@ -31,6 +31,7 @@ csv = "1.4.0"
 earcutr = "0.5.0"
 eframe = { version = "0.37.0", default-features = false, features = ["glow", "default_fonts", "clipboard", "x11"] }
 egui_extras = "0.37.0"
+chrono = { version = "0.4", default-features = false, features = ["clock", "std"] }
 encoding_rs = "0.8.42"
 epaint_default_fonts = "0.37.0"
 libloading = "0.8.9"

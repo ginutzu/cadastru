@@ -2,7 +2,7 @@
 <html lang="ro">
 <head>
 <meta charset="utf-8">
-<title>Cadastru 1.13.0 – Manual de utilizare</title>
+<title>Cadastru 1.13.1 – Manual de utilizare</title>
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
@@ -12,7 +12,7 @@
   <img class="icon" src="img/icon.png" alt="">
   <div class="kicker">Aplicație GIS pentru Windows</div>
   <div class="title">Cadastru</div>
-  <div class="sub">Manual de utilizare · versiunea 1.13.0</div>
+  <div class="sub">Manual de utilizare · versiunea 1.13.1</div>
   <div class="shot"><img src="img/principal.png" alt=""></div>
   <div class="meta"><span>Autor: <b>Ginu Popescu</b> · scriemiaici@proton.me</span><span>Noiembrie 2026</span></div>
 </section>
@@ -32,7 +32,8 @@
   <li><b>Conversie</b>: un strat, toate straturile sau dosare întregi, în alt format și/sau alt sistem de coordonate.</li>
   <li><b>TransDatRO</b>: transformările oficiale ETRS89 ↔ Stereo 70 / Stereo 30 și altitudinile Marea Neagră 1975, cu precizie centimetrică.</li>
   <li><b>Hărți de fundal</b>: OpenStreetMap, Esri, Google, Bing, CARTO și altele, reproiectate exact peste date.</li>
-  <li><b>Instrumente</b>: identificare, măsurare (distanțe, arii), tabel de atribute, convertor de coordonate.</li>
+  <li><b>Instrumente</b>: identificare, măsurare (distanțe, arii), tabel de atribute, convertor de coordonate, parcelare.</li>
+  <li><b>Nomenclatoare</b>: registrul SIRUTA al unităților administrativ-teritoriale, cu date oficiale INS actualizate automat.</li>
   <li><b>Tipărire și PDF</b>: planșă cu titlu, legendă, scară, nord și caroiaj de coordonate.</li>
   <li><b>Linie de comandă</b>: <code>cadastru-cli.exe</code> pentru conversii și transformări automate.</li>
 </ul>
@@ -68,10 +69,10 @@
 <figure class="wide"><img src="img/principal_adnotat.png" alt=""><figcaption><b>Figura 2.1.</b> Fereastra principală, cu unitățile administrativ-teritoriale ale județului Argeș.</figcaption></figure>
 
 <ol class="legend">
-  <li><b>Bara de meniuri</b>: Fișier, Vizualizare, Instrumente, Ajutor.</li>
-  <li><b>Bara de instrumente</b>, grupată pe funcționalități: Fișier, Vizualizare, Interogare, Selecție, Instrumente (secțiunea 2.2).</li>
-  <li><b>Basemap</b>: alegerea hărții de fundal.</li>
-  <li><b>Sistemul de coordonate al hărții</b>: click pentru a-l schimba.</li>
+  <li><b>Bara de meniuri</b>: Fișier, Editare, Selectare, Vizualizare, Instrumente, Nomenclatoare, Ajutor.</li>
+  <li><b>Bara de instrumente</b>, cu liste derulante pe funcționalități: Vizualizare, Interogare, Selectare, Instrumente, Hartă (secțiunea 2.2).</li>
+  <li><b>Basemap</b>: alegerea hărții de fundal, din lista <b>Hartă ▾</b>.</li>
+  <li><b>Sistemul de coordonate al hărții</b>, afișat pe butonul listei Hartă: click pentru a-l schimba.</li>
   <li><b>Lista straturilor</b>, cu bife de vizibilitate.</li>
   <li><b>Proprietățile stratului selectat</b>: fișier, conținut, sistem, opacitate, stil, câmpuri.</li>
   <li><b>Controlul de navigație</b>: deplasare și zoom.</li>
@@ -83,7 +84,7 @@
 </ol>
 
 <h3 id="c2-1"><span class="n">2.1</span>Meniurile</h3>
-<p>Bara de meniuri are, în ordine: <b>Fișier</b>, <b>Editare</b>, <b>Selectare</b>, <b>Vizualizare</b>, <b>Instrumente</b> și <b>Ajutor</b>.</p>
+<p>Bara de meniuri are, în ordine: <b>Fișier</b>, <b>Editare</b>, <b>Selectare</b>, <b>Vizualizare</b>, <b>Instrumente</b>, <b>Nomenclatoare</b> și <b>Ajutor</b>.</p>
 <div class="cols">
   <figure><img src="img/menu_fisier.png" alt=""><figcaption><b>Figura 2.2.</b> Meniul Fișier.</figcaption></figure>
   <figure><img src="img/menu_vizualizare.png" alt=""><figcaption><b>Figura 2.3.</b> Meniul Vizualizare.</figcaption></figure>
@@ -94,7 +95,10 @@
 </div>
 <div class="cols">
   <figure><img src="img/menu_instrumente.png" alt=""><figcaption><b>Figura 2.6.</b> Meniul Instrumente.</figcaption></figure>
-  <figure><img src="img/menu_ajutor.png" alt=""><figcaption><b>Figura 2.7.</b> Meniul Ajutor.</figcaption></figure>
+  <div>
+    <figure><img src="img/menu_nomenclatoare.png" alt=""><figcaption><b>Figura 2.7.</b> Meniul Nomenclatoare.</figcaption></figure>
+    <figure><img src="img/menu_ajutor.png" alt=""><figcaption><b>Figura 2.8.</b> Meniul Ajutor.</figcaption></figure>
+  </div>
 </div>
 <table>
   <tr><th style="width:24%">Meniu</th><th>Conține</th></tr>
@@ -103,14 +107,15 @@
   <tr><td><b>Selectare</b></td><td><b>Selectare pe hartă</b> (<kbd>S</kbd>), <b>Selectare după atribute…</b> (<kbd>Ctrl+Shift+F</kbd>), <b>Clear</b> – golește selecția din toate straturile, pe toată harta (<kbd>Ctrl+Shift+A</kbd>); apoi <b>Zoom la selecție</b>, <b>Make Layer with selected objects</b> (pentru stratul activ) și bifa <b>Selectare doar în stratul activ</b> (secțiunile 7.7, 7.9, 7.11).</td></tr>
   <tr><td><b>Vizualizare</b></td><td>Extindere completă, zoom la stratul selectat, sistemul hărții, tabelul de atribute, vederea anterioară/următoare, afișarea etichetelor, controlul de navigație, fereastra de identificare, <b>panoul Straturi</b> (<kbd>Ctrl+L</kbd>), tema (gri închis sau luminoasă), limba interfeței (română sau engleză).</td></tr>
   <tr><td><b>Instrumente</b></td><td>Instrumentele hărții (Deplasare, Zoom + / −, Identificare, Măsurare), Căutare, <b>Redraw</b>, convertorul de coordonate, TransDatRO, alegerea metodei pentru Stereo 70 (TransDatRO sau Helmert), conversia în lot, opțiunile de import CGXML, <b>Formate ECW / MrSID (GDAL)</b> (secțiunea 3.10).</td></tr>
+  <tr><td><b>Nomenclatoare</b></td><td><b>SIRUTA</b>: registrul oficial al unităților administrativ-teritoriale (INS), într-o fereastră separată – căutare după denumire sau cod SIRUTA, actualizare automată de pe data.gov.ro, funcționare offline (secțiunea 7.12).</td></tr>
   <tr><td><b>Ajutor</b></td><td>Manualul de utilizare (acest document, <kbd>F1</kbd>), lista de scurtături, informații despre aplicație și autor.</td></tr>
 </table>
 
 <h3 id="c2-2"><span class="n">2.2</span>Bara de instrumente</h3>
 <p>Instrumentele sunt <b>grupate pe funcționalități în liste derulante</b>: un click pe numele grupului (cu săgeata ▾) deschide lista instrumentelor lui, fiecare cu pictogramă și tastă; instrumentul activ e evidențiat. Grupurile cu un singur instrument (<b>Deschide</b>, <b>Parcelare</b>) rămân butoane simple. Butonul grupului arată pictograma instrumentului activ (de exemplu lupa, când e ales Zoom +) și se colorează când instrumentul activ face parte din grup. Pe ecranele foarte înguste (sub circa 900 de puncte) rămân doar pictogramele; numele sunt în indicii.</p>
-<figure class="wide"><img src="img/bara_instrumente.png" alt=""><figcaption><b>Figura 2.8.</b> Bara de instrumente: Deschide, listele Vizualizare, Interogare, Selectare, butonul Parcelare, listele Instrumente și Hartă (cu sistemul hărții), comutatorul de limbă.</figcaption></figure>
+<figure class="wide"><img src="img/bara_instrumente.png" alt=""><figcaption><b>Figura 2.9.</b> Bara de instrumente: Deschide, listele Vizualizare, Interogare, Selectare, butonul Parcelare, listele Instrumente și Hartă (cu sistemul hărții), comutatorul de limbă.</figcaption></figure>
 <div class="cols">
-  <figure><img src="img/lista_vizualizare.png" alt=""><figcaption><b>Figura 2.9.</b> Lista derulantă Vizualizare, cu Deplasare activă.</figcaption></figure>
+  <figure><img src="img/lista_vizualizare.png" alt=""><figcaption><b>Figura 2.10.</b> Lista derulantă Vizualizare, cu Deplasare activă.</figcaption></figure>
   <div>
 <table>
   <tr><th style="width:24%">Listă / buton</th><th>Conține</th></tr>
@@ -132,15 +137,15 @@
 <p><b>Lățimea panoului</b> se reglează trăgând cu mouse-ul marginea lui dreaptă, inclusiv mult spre stânga. Numele prea lungi pentru lățimea aleasă se termină cu „…”; numele întreg (împreună cu fișierul, conținutul și sistemul de coordonate) apare în indiciu când țineți mouse-ul deasupra.</p>
 <p><b>Ascunderea panoului.</b> Butonul <b>«</b> din colțul stâng al antetului, comanda <span class="ui">Vizualizare → Panoul Straturi</span> sau <kbd>Ctrl+L</kbd> ascund complet panoul (la fel și trăgând marginea până la capăt spre stânga): harta ocupă toată lățimea ferestrei. În stânga rămâne doar o bandă îngustă, cu <b>»</b> și textul <i>Straturi (n)</i>; un click oriunde pe ea readuce panoul, la lățimea avută. Starea panoului se păstrează la repornire.</p>
 <div class="cols">
-  <figure><img src="img/panou_ingust.png" alt=""><figcaption><b>Figura 2.10.</b> Panoul îngustat: numele lung apare întreg în indiciu.</figcaption></figure>
-  <figure><img src="img/panou_ascuns.png" alt=""><figcaption><b>Figura 2.11.</b> Panoul ascuns: harta pe toată lățimea; click pe banda din stânga îl readuce.</figcaption></figure>
+  <figure><img src="img/panou_ingust.png" alt=""><figcaption><b>Figura 2.11.</b> Panoul îngustat: numele lung apare întreg în indiciu.</figcaption></figure>
+  <figure><img src="img/panou_ascuns.png" alt=""><figcaption><b>Figura 2.12.</b> Panoul ascuns: harta pe toată lățimea; click pe banda din stânga îl readuce.</figcaption></figure>
 </div>
 <p>Bara de stare de jos arată coordonatele cursorului în sistemul hărții (X, Y), aceleași coordonate în WGS84, în grade zecimale și în grade-minute-secunde, scara numerică a hărții și ultimul mesaj al aplicației (de exemplu numărul de entități încărcate sau o eroare). Cât timp filtrul de încărcare este activ, în stânga apare indicatorul <span class="ui">Filtru la încărcare: România</span> (secțiunea 3.8).</p>
 <div class="tip"><b>Sfat.</b> Numele unui strat cu sistem de coordonate <i>presupus</i> (fișier fără <code>.prj</code>) este scris cu portocaliu. Vezi secțiunea 3.6.</div>
 
 <h3 id="c2-4"><span class="n">2.4</span>Teme</h3>
 <div class="cols"><p>Aplicația are două teme: <b>gri închis</b> (implicită) și <b>luminoasă</b>. Se schimbă din <span class="ui">Vizualizare → Temă</span>, iar alegerea se păstrează la repornire.</p>
-<figure><img src="img/tema_luminoasa.png" alt=""><figcaption><b>Figura 2.12.</b> Tema luminoasă.</figcaption></figure></div>
+<figure><img src="img/tema_luminoasa.png" alt=""><figcaption><b>Figura 2.13.</b> Tema luminoasă.</figcaption></figure></div>
 
 <h3 id="c2-5"><span class="n">2.5</span>Limba interfeței</h3>
 <div class="cols"><div>
@@ -152,7 +157,7 @@
 <p>Se traduc meniurile, butoanele, ferestrele de dialog, mesajele din bara de stare, erorile și textele planșei tipărite (legendă, scară, sistem, dată). Alegerea se păstrează la repornire, în <code>setari.json</code>.</p>
 <p>Nu se traduc datele: numele straturilor și ale câmpurilor, valorile atributelor și numele fișierelor rămân cum sunt în fișiere. Acest manual și linia de comandă (<code>cadastru-cli</code>) sunt în limba română; în engleză, meniul Ajutor indică „User manual (PDF, Romanian)”.</p>
 </div>
-<figure><img src="img/interfata_en.png" alt=""><figcaption><b>Figura 2.13.</b> Interfața în limba engleză.</figcaption></figure></div>
+<figure><img src="img/interfata_en.png" alt=""><figcaption><b>Figura 2.14.</b> Interfața în limba engleză.</figcaption></figure></div>
 
 <!-- ===================================================================== -->
 <h2 id="c3"><span class="n">3</span>Deschiderea datelor</h2>
@@ -576,6 +581,21 @@ status = 1 AND is_active = 1
   </div>
 </div>
 
+
+<h3 id="c7-12"><span class="n">7.12</span>Nomenclatorul SIRUTA</h3>
+<p><span class="ui">Nomenclatoare → SIRUTA</span> deschide, <b>într-o fereastră separată</b>, modulul SIRUTA: căutarea rapidă în Registrul unităților administrativ-teritoriale ale României, pe baza <b>datelor oficiale INS</b> publicate pe data.gov.ro. Fereastra se deschide maximizată, are propria pictogramă în bara de activități și poate fi mutată pe alt monitor; harta rămâne utilizabilă în paralel. Dacă fereastra e deja deschisă, comanda o aduce în față.</p>
+<figure class="wide"><img src="img/siruta.png" alt=""><figcaption><b>Figura 7.15.</b> Fereastra SIRUTA: căutarea „bucium” cu localitățile incluse; în dreapta, detaliile rândului selectat.</figcaption></figure>
+<ul>
+  <li><b>Căutare pe măsură ce tastați</b>, după denumire – fără să conteze diacriticele sau majusculele (<code>bistrita</code>, <code>Bistrița</code>, <code>BISTRIŢA</code>) – sau după <b>cod SIRUTA</b> (<code>54975</code>). <kbd>Esc</kbd> golește căutarea, <kbd>Enter</kbd> selectează primul rezultat.</li>
+  <li>Rezultatele apar ca tabel: <b>cod SIRUTA</b>, <b>denumire</b>, <b>județ</b>, <b>clasificare</b> (municipiu reședință de județ, municipiu, oraș, comună, sector al Bucureștiului, Municipiul București), cu numărul de rezultate în dreapta.</li>
+  <li>Filtru pe <b>județ</b> și bifa <span class="ui">Include și localitățile</span> (sate și localități componente), cu coloana <b>UAT de apartenență</b>.</li>
+  <li>Pe fiecare rând, după eticheta de clasificare, <b>butonul de copiere</b> (două foi) pune codul SIRUTA în clipboard; pictograma devine o bifă verde. <b>Dublu-click</b> pe rând copiază codul, iar <b>click dreapta</b> oferă copierea codului, a denumirii sau a întregului rând (separat cu tab, pentru Excel).</li>
+  <li>Panoul <b>Detalii</b> (click pe un rând): denumirea oficială DENLOC, județul cu codul JUD, UAT-ul de apartenență, codul SIRUTA superior (SIRSUP), nivelul și tipul din legenda INS, cu butoane de copiere.</li>
+</ul>
+<p><b>Actualizare automată.</b> La fiecare deschidere a ferestrei, modulul caută prin API-ul data.gov.ro (CKAN) <b>cea mai recentă ediție</b> a catalogului SIRUTA publicată de INS – ediția se stabilește din numele fișierului (an și semestru, de exemplu <code>S1_2026</code> &gt; <code>AN_2025</code>), apoi după data publicării – și descarcă fișierul doar dacă a apărut o ediție nouă sau dacă cea existentă s-a modificat. Butonul ⟳ din dreapta sus forțează o actualizare, iar ⓘ deschide fereastra <b>Despre</b> (autor, licența MIT în română și engleză).</p>
+<p><b>Funcționare offline.</b> Ultima listă descărcată se păstrează în <code>%LOCALAPPDATA%\SIRUTA\</code> (<code>siruta.csv</code> și <code>meta.json</code>) – același dosar ca al aplicației SIRUTA de sine stătătoare, deci datele sunt comune. Bara de jos arată data ultimei actualizări reușite, sursa (fișierul INS și data publicării), numărul de UAT-uri și de localități și starea conexiunii (online și la zi, actualizată sau offline). La prima utilizare fără internet se poate pune un fișier SIRUTA CSV de la INS cu numele <code>siruta.csv</code> lângă <code>cadastru.exe</code>; el se folosește până la prima actualizare reușită.</p>
+<div class="note"><b>De reținut.</b> Fereastra SIRUTA păstrează tema proprie (gri închis cu accente neon), indiferent de tema aleasă în Cadastru. Textele ei urmează limba interfeței (română sau engleză); denumirile din registru rămân cele oficiale.</div>
+
 <!-- ===================================================================== -->
 <h2 id="c8"><span class="n">8</span>Sisteme de coordonate</h2>
 
@@ -743,7 +763,8 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
   <tr><th style="width:44%">Locație</th><th>Conținut</th></tr>
   <tr><td><code>%APPDATA%\Cadastru\setari.json</code></td><td>Limba interfeței, tema, etichetele, controlul de navigație, metoda pentru Stereo 70, opțiunile CGXML, opacitatea hărții de fundal, ultimul șablon XYZ, dosarul GDAL ales pentru ECW / MrSID.</td></tr>
   <tr><td><code>%LOCALAPPDATA%\Cadastru\tile-cache\</code></td><td>Cache-ul hărților de fundal.</td></tr>
-  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.13.0.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
+  <tr><td><code>%LOCALAPPDATA%\Cadastru\Manual_Cadastru_1.13.1.pdf</code></td><td>Copia manualului deschisă din meniul Ajutor.</td></tr>
+  <tr><td><code>%LOCALAPPDATA%\SIRUTA\</code></td><td>Lista SIRUTA descărcată de la INS (<code>siruta.csv</code>) și informațiile despre ediție (<code>meta.json</code>), pentru funcționarea offline a modulului SIRUTA (secțiunea 7.12).</td></tr>
   <tr><td><code>grile\</code> lângă <code>cadastru.exe</code></td><td>Opțional: griduri TransDatRO mai noi (secțiunea 8.4).</td></tr>
 </table>
 <p>Ștergerea fișierului <code>setari.json</code> readuce setările implicite. Aplicația nu scrie nimic în registrul Windows și nu are nevoie de drepturi de administrator.</p>
@@ -774,7 +795,7 @@ cadastru-cli batch D:\europa D:\romania --to gpkg --doar-romania -r -o</code></p
 <div class="cols">
   <figure><img src="img/despre.png" alt=""><figcaption><b>Figura 16.1.</b> <span class="ui">Ajutor → Despre Cadastru</span>.</figcaption></figure>
   <div>
-    <p><b>Cadastru 1.13.0</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
+    <p><b>Cadastru 1.13.1</b><br>Autor: <b>Ginu Popescu</b><br>E-mail: <a href="mailto:scriemiaici@proton.me">scriemiaici@proton.me</a></p>
     <p>Aplicația este scrisă în Rust și distribuită cu codul sursă, sub licența MIT.</p>
     <p class="small">TransDatRO: algoritm și griduri © ANCPI (Agenția Națională de Cadastru și Publicitate Imobiliară).<br>
     Hărțile de fundal aparțin furnizorilor lor (OpenStreetMap, Esri, Google, Microsoft, CARTO, BKG, EOX) și se folosesc conform condițiilor fiecăruia.<br>

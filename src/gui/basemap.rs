@@ -462,7 +462,7 @@ pub fn cache_dir() -> Option<PathBuf> {
 }
 
 /// Proxy: variabilele de mediu HTTPS_PROXY / HTTP_PROXY sau setările Windows (Internet Options).
-fn proxy() -> Option<ureq::Proxy> {
+pub(crate) fn proxy() -> Option<ureq::Proxy> {
     if let Some(p) = ureq::Proxy::try_from_env() {
         return Some(p);
     }

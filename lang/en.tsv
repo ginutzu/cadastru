@@ -1010,3 +1010,103 @@ Clear ({} entități selectate în {} straturi)	Clear ({} features selected in {
 Golește selecția din toate straturile, pe toată harta	Clears the selection in all layers, on the whole map
 Make Layer with selected objects	Make Layer with selected objects
 Strat nou doar cu obiectele selectate din stratul activ (panoul Straturi)	New layer with only the selected objects of the active layer (Layers panel)
+# Nomenclatoare > SIRUTA (1.13.1)
+Se verifică actualizările…	Checking for updates…
+Copiat {label}: {text}	Copied {label}: {text}
+Registrul unităților administrativ-teritoriale ale României · date oficiale INS	Register of Romania's administrative-territorial units · official INS data
+Actualizează acum lista SIRUTA de la INS (data.gov.ro)	Update the SIRUTA list from INS now (data.gov.ro)
+Despre SIRUTA (autor, licență)	About SIRUTA (author, licence)
+Ultima actualizare reușită: {} ({})	Last successful update: {} ({})
+Ultima actualizare reușită: niciuna încă	Last successful update: none yet
+Sursa: INS · {}	Source: INS · {}
+ (publicat {d})	 (published {d})
+· {} UAT · {} localități	· {} ATUs · {} localities
+Online · datele sunt la zi	Online · data is up to date
+Online · lista a fost actualizată	Online · the list has been updated
+Offline · se folosesc datele salvate local	Offline · using locally saved data
+Offline · nu există date locale	Offline · no local data
+Caută UAT după denumire sau cod SIRUTA (ex: Cluj-Napoca, Bucium, 54975)	Search an ATU by name or SIRUTA code (e.g. Cluj-Napoca, Bucium, 54975)
+Șterge căutarea (Esc)	Clear the search (Esc)
+Județ:	County:
+Toate județele	All counties
+Include și localitățile (sate, localități componente)	Include localities too (villages, component localities)
+rezultat	result
+rezultate	results
+COD SIRUTA	SIRUTA CODE
+DENUMIRE	NAME
+JUDEȚ	COUNTY
+CLASIFICARE	CLASSIFICATION
+UAT DE APARTENENȚĂ	PARENT ATU
+Copiat în clipboard	Copied to clipboard
+Copiază codul SIRUTA {} în clipboard	Copy SIRUTA code {} to the clipboard
+codul SIRUTA	the SIRUTA code
+Copiază codul SIRUTA	Copy SIRUTA code
+Copiază denumirea	Copy name
+denumirea	the name
+Copiază rândul (separat cu tab)	Copy row (tab-separated)
+rândul	the row
+Detalii	Details
+DENUMIRE OFICIALĂ (DENLOC)	OFFICIAL NAME (DENLOC)
+{} (cod JUD {})	{} (JUD code {})
+COD SIRUTA SUPERIOR (SIRSUP)	PARENT SIRUTA CODE (SIRSUP)
+codul SIRSUP	the SIRSUP code
+NIVEL / TIP (legenda INS)	LEVEL / TYPE (INS legend)
+Se folosește fișierul siruta.csv de lângă aplicație până la prima actualizare reușită.	Using the siruta.csv file next to the application until the first successful update.
+Niciun rezultat pentru căutarea curentă	No results for the current search
+Sfat: bifați „Include și localitățile” pentru a căuta și satele.	Tip: tick “Include localities too” to search villages as well.
+Se descarcă lista SIRUTA de la INS…	Downloading the SIRUTA list from INS…
+Nu există încă date salvate local și nu s-a putut contacta INS.	There is no locally saved data yet and INS could not be reached.
+Conectați-vă la internet o singură dată; după aceea aplicația funcționează și offline.	Connect to the internet once; after that the module also works offline.
+  Reîncearcă  	  Retry  
+Versiunea {} · modul integrat în Cadastru {}	Version {} · module integrated in Cadastru {}
+Căutare în Registrul unităților administrativ-teritoriale ale României (SIRUTA), pe baza datelor oficiale publicate de Institutul Național de Statistică.	Search in the Register of Romania's administrative-territorial units (SIRUTA), based on the official data published by the National Institute of Statistics.
+Autor	Author
+E-mail	E-mail
+Licență	Licence
+Date	Data
+Textul licenței:	Licence text:
+Traducere cu caracter informativ; în caz de neconcordanță, prevalează textul original în limba engleză.	Informative translation; in case of discrepancy, the original English text prevails.
+   Închide   	   Close   
+chiar acum	just now
+acum {} min	{} min ago
+acum o oră	an hour ago
+acum {h} ore	{h} hours ago
+acum o zi	a day ago
+acum {d} zile	{d} days ago
+Antetul fișierului nu are coloanele SIRUTA/DENLOC/JUD/SIRSUP/TIP/NIV: {header}	The file header lacks the SIRUTA/DENLOC/JUD/SIRSUP/TIP/NIV columns: {header}
+Fișierul pare incomplet: doar {uat_count} UAT-uri recunoscute	The file looks incomplete: only {uat_count} ATUs recognised
+SIRUTA – nomenclatorul unităților administrativ-teritoriale	SIRUTA – register of administrative-territorial units
+siruta.csv (fișier local lângă aplicație)	siruta.csv (local file next to the application)
+Se verifică ultima ediție SIRUTA publicată de INS…	Checking the latest SIRUTA edition published by INS…
+Nu se poate contacta data.gov.ro ({})	Cannot reach data.gov.ro ({})
+Răspuns invalid de la data.gov.ro: {e}	Invalid response from data.gov.ro: {e}
+Răspuns JSON invalid: {e}	Invalid JSON response: {e}
+Nu a fost găsit niciun fișier SIRUTA CSV pe data.gov.ro	No SIRUTA CSV file was found on data.gov.ro
+Nu se poate salva local: {e}	Cannot save locally: {e}
+Se descarcă {}…	Downloading {}…
+Descărcarea a eșuat ({})	Download failed ({})
+Descărcare întreruptă: {e}	Download interrupted: {e}
+Se verifică datele descărcate…	Checking the downloaded data…
+fără conexiune la internet / DNS	no internet connection / DNS
+conexiune eșuată	connection failed
+timp de așteptare depășit sau conexiune întreruptă	timed out or connection interrupted
+Nomenclatoare	Registers
+SIRUTA	SIRUTA
+Registrul unităților administrativ-teritoriale (INS), într-o fereastră separată: căutare după denumire sau cod, actualizare automată de pe data.gov.ro	Register of administrative-territorial units (INS), in a separate window: search by name or code, automatic updates from data.gov.ro
+Municipiu reședință de județ	County-seat municipality
+Oraș	Town
+Comună	Commune
+Municipiu	Municipality
+Oraș reședință de județ	County-seat town
+Municipiul București (capitală)	Bucharest Municipality (capital)
+UAT	ATU
+Sector al municipiului București	Sector of Bucharest Municipality
+Localitate componentă, reședință de municipiu	Component locality, seat of the municipality
+Localitate componentă a municipiului	Component locality of the municipality
+Sat aparținător de municipiu	Village belonging to the municipality
+Localitate componentă, reședință de oraș	Component locality, seat of the town
+Localitate componentă a orașului	Component locality of the town
+Sat aparținător de oraș	Village belonging to the town
+Sat reședință de comună	Commune-seat village
+Sat aparținător de comună	Village belonging to the commune
+Localitate	Locality
